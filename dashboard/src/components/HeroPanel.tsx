@@ -19,6 +19,7 @@ interface Props {
   plan: ParetoPoint;
   base: Kpis;
   scenarioLabel: string;
+  title: string;
 }
 
 function Stat({ icon: Icon, value, unit, label, good }: { icon: LucideIcon; value: string; unit?: string; label: string; good: boolean }) {
@@ -94,7 +95,7 @@ function Compare({ title, today, plan, todayText, planText, todayLabel, planLabe
   );
 }
 
-export function HeroPanel({ lang, plan, base, scenarioLabel }: Props) {
+export function HeroPanel({ lang, plan, base, scenarioLabel, title }: Props) {
   const costDelta = plan.cost_rp - base.annual_cost_rp;
   const co2Delta = plan.co2_t - base.co2_t;
   const co2Pct = Math.abs((100 * co2Delta) / base.co2_t);
@@ -110,7 +111,7 @@ export function HeroPanel({ lang, plan, base, scenarioLabel }: Props) {
         <Box>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
             <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4, letterSpacing: 0.6 }}>
-              {t(lang, plan.label ?? 'balanced')} · {scenarioLabel}
+              {title} · {scenarioLabel}
             </Typography>
             <EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} />
           </Stack>

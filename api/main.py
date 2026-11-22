@@ -53,6 +53,11 @@ class SolveRequest(BaseModel):
     min_avg_safety: float | None = Field(default=None, ge=1, le=5)
 
 
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok", "scenarios": [s.id for s in _inputs().scenarios]}
+
+
 @app.get("/scenarios")
 def list_scenarios() -> dict:
     summary = _read("summary")
@@ -87,5 +92,11 @@ def solve(request: SolveRequest) -> dict:
         "chargers": [row.model_dump() for row in plan.chargers],
         "routes": [row.model_dump() for row in plan.routes],
         "kpis": plan.kpis.model_dump(),
+        # Today's fleet re-priced with the same overrides, so comparisons stay like for like
+        "baseline": {
+            "fleet_plan": [row.model_dump() for row in baseline.fleet_plan],
+            "routes": [row.model_dump() for row in baseline.routes],
+            "kpis": baseline.kpis.model_dump(),
+        },
         "baseline_comparison": compare_to_baseline(baseline, plan),
     }

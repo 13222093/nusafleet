@@ -23,6 +23,10 @@ import { HeroPanel } from './components/HeroPanel';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
 import { MapView } from './components/MapView';
+import { WhatIfPanel } from './components/WhatIfPanel';
+import type { Knob } from './components/WhatIfPanel';
+import { useLiveSolve } from './live';
+import type { Overrides } from './live';
 import { RouteDrawer } from './components/RouteDrawer';
 import { num, rpBn, t } from './i18n';
 import type { Lang, ScenarioResult, Summary } from './types';
@@ -50,6 +54,8 @@ function App() {
   const [failed, setFailed] = useState(false);
   const [mapView, setMapView] = useState<'plan' | 'today'>('plan');
   const [routeId, setRouteId] = useState<string | null>(null);
+  const [overrides, setOverrides] = useState<Overrides>({});
+  const live = useLiveSolve(scenarioId, overrides);
 
   useEffect(() => {
     (async () => {
@@ -80,14 +86,23 @@ function App() {
 
   const result = results[scenarioId];
   const index = Math.min(planIndex, result.pareto.length - 1);
-  const plan = result.pareto[index];
-  const base = result.baseline.kpis;
+  const sliderPlan = result.pareto[index];
+  // While a what-if is active, the live result replaces the plan on the map and in the numbers
+  const plan = live.result?.plan ?? sliderPlan;
+  const base = live.result?.base ?? result.baseline.kpis;
+  const todayFleet = live.result?.baseFleet ?? result.baseline.fleet_plan;
+  const todayRoutes = live.result?.baseRoutes ?? result.baseline.routes;
+  const knobs: Knob[] = [
+    { key: 'diesel', label: 'wiDiesel', unit: '/ L', min: Math.min(...result.sensitivity.diesel_prices), max: Math.max(...result.sensitivity.diesel_prices), step: 100, fallback: summary.assumptions.diesel_price_rp_per_l.value },
+    { key: 'elec', label: 'wiElec', unit: '/ kWh', min: Math.min(...result.sensitivity.elec_prices), max: Math.max(...result.sensitivity.elec_prices), step: 25, fallback: result.scenario.elec_price_rp_per_kwh },
+    { key: 'carbon', label: 'wiCarbon', unit: '/ t CO2', min: 0, max: Math.max(...result.carbon_sweep.map((p) => p.carbon_price_rp_per_tco2)), step: 10000, fallback: summary.assumptions.carbon_price_rp_per_tco2.value },
+  ];
   const scenarioLabel = (id: string) => (lang === 'id' ? results[id].scenario.label_id : results[id].scenario.label_en);
 
 
   const selectScenario = (id: string) => {
     // Keep the same kind of plan when switching scenario, if it exists there
-    const next = results[id].pareto.findIndex((p) => p.label === plan.label);
+    const next = results[id].pareto.findIndex((p) => p.label === sliderPlan.label);
     setScenarioId(id);
     setPlanIndex(next >= 0 ? next : 0);
   };
@@ -120,7 +135,7 @@ function App() {
           </Paper>
           <Paper variant="outlined" sx={{ mt: 3, p: { xs: 2, md: 3 }, borderRadius: 6, display: 'flex', flexWrap: 'wrap', gap: { xs: 3, md: 6 }, alignItems: 'flex-start' }}>
             <ScenarioTimeline lang={lang} ids={summary.scenario_ids} results={results} activeId={scenarioId} onSelect={selectScenario} />
-            <AmbitionSlider lang={lang} points={result.pareto} index={index} onSelect={setPlanIndex} />
+            <AmbitionSlider lang={lang} points={result.pareto} index={index} onSelect={(i) => { setOverrides({}); setPlanIndex(i); }} />
           </Paper>
         </>
       ) : null}
@@ -157,14 +172,16 @@ function App() {
               }
             />
             <CardContent sx={{ pt: 0 }}>
-              <MapView lang={lang} routes={summary.routes} ports={summary.ports} vesselTypes={summary.vessel_types} fleet={mapView === 'today' ? result.baseline.fleet_plan : plan.fleet_plan} chargers={mapView === 'today' ? [] : plan.chargers} selectedRouteId={routeId} onRouteClick={setRouteId} />
+              <MapView lang={lang} routes={summary.routes} ports={summary.ports} vesselTypes={summary.vessel_types} fleet={mapView === 'today' ? todayFleet : plan.fleet_plan} chargers={mapView === 'today' ? [] : plan.chargers} selectedRouteId={routeId} onRouteClick={setRouteId} />
             </CardContent>
           </Card>
         </Grid>
         <Grid size={{ xs: 12, lg: 4 }}>
-          <HeroPanel lang={lang} plan={plan} base={base} scenarioLabel={scenarioLabel(scenarioId)} />
+          <HeroPanel lang={lang} plan={plan} base={base} scenarioLabel={scenarioLabel(scenarioId)} title={live.result ? t(lang, 'liveTitle') : t(lang, plan.label ?? 'customPlan')} />
         </Grid>
       </Grid>
+
+      <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} apiOnline={live.apiOnline} />
 
       {/* Fleet table */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
@@ -196,13 +213,13 @@ function App() {
         </Grid>
       </Grid>
 
-      <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={plan.label} />
+      <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={sliderPlan.label} />
 
       <RouteDrawer
         lang={lang}
         route={summary.routes.find((r) => r.route_id === routeId) ?? null}
         onClose={() => setRouteId(null)}
-        today={{ fleet: result.baseline.fleet_plan, routes: result.baseline.routes }}
+        today={{ fleet: todayFleet, routes: todayRoutes }}
         plan={{ fleet: plan.fleet_plan, routes: plan.routes }}
         chargers={plan.chargers}
         ports={summary.ports}

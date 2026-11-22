@@ -17,6 +17,24 @@ def test_solve_returns_a_plan():
     assert body["kpis"]["annual_cost_rp"] > 0
 
 
+def test_health_lists_scenarios():
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert "A_grid" in response.json()["scenarios"]
+
+
+def test_solve_reprices_todays_fleet_with_the_same_overrides():
+    base = client.post("/solve", json={"scenario_id": "A_grid"}).json()
+    pricey = client.post(
+        "/solve", json={"scenario_id": "A_grid", "diesel_price_rp_per_l": 26000}
+    ).json()
+    assert len(pricey["baseline"]["routes"]) == len(pricey["routes"])
+    assert (
+        pricey["baseline"]["kpis"]["annual_cost_rp"]
+        > base["baseline"]["kpis"]["annual_cost_rp"]
+    )
+
+
 def test_solve_applies_overrides():
     base = client.post("/solve", json={"scenario_id": "A_grid"}).json()
     pricey = client.post(

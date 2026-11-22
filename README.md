@@ -25,6 +25,8 @@ This solves today's fleet plus the three scenarios and writes `outputs/<scenario
 | API | `make api` | `uv run uvicorn api.main:app --port 8000` |
 | Dashboard | `make dashboard` | `cd dashboard`, `npm install`, `npm run dev` |
 
+The dashboard reads the precomputed JSON, so it works as a static site. The "What if prices change?" sliders are the exception: they call `POST /solve`, so the API must be running (default `http://localhost:8000`, or set `VITE_API_URL` when building the dashboard). Without the API those sliders are disabled and everything else still works.
+
 ## What is inside
 
 ```
