@@ -4,7 +4,7 @@ import { Suspense, lazy, useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import { ArrowRight, Check, FileText, Plus } from 'lucide-react';
+import { Check, FileText, Plus } from 'lucide-react';
 import Typography from '@mui/material/Typography';
 
 import { HeatmapChart, ParetoChart } from './components/Charts';
@@ -268,11 +268,11 @@ function App() {
         <KpiBand lang={lang} plan={plan} base={base} caption={`${planName}, ${scenarioName(scenarioId)}`} />
 
         <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
-          <ButtonBase onClick={saveAlt} disabled={alreadySaved} sx={{ ...actionSx, flex: 1, bgcolor: alreadySaved ? '#eef3f5' : '#0f1417', color: alreadySaved ? '#0f1417' : '#ffffff', borderColor: alreadySaved ? '#b4c2ca' : '#0f1417' }}>
+          <ButtonBase onClick={saveAlt} disabled={alreadySaved} className="flood flood-accent" sx={{ ...actionSx, flex: 1, bgcolor: alreadySaved ? '#eef3f5' : '#0f1417', color: alreadySaved ? '#0f1417' : '#ffffff', borderColor: alreadySaved ? '#b4c2ca' : '#0f1417' }}>
             {alreadySaved ? <Check size={16} /> : <Plus size={16} />}
             {t(lang, alreadySaved ? 'savedAlt' : 'saveAlt')}
           </ButtonBase>
-          <ButtonBase onClick={() => setPage('report')} sx={{ ...actionSx, flex: 1, bgcolor: '#ffffff', color: 'text.primary' }}>
+          <ButtonBase onClick={() => setPage('report')} className="flood" sx={{ ...actionSx, flex: 1, bgcolor: '#ffffff', color: 'text.primary' }}>
             <FileText size={16} />
             {t(lang, 'makeReport')}
           </ButtonBase>
@@ -285,9 +285,10 @@ function App() {
               <ButtonBase
                 key={x.id}
                 role="tab"
+                className="draw-line"
                 aria-selected={on}
                 onClick={() => setTab(x.id)}
-                sx={{ height: 36, px: 0.25, mr: 2, fontFamily: 'inherit', fontSize: '0.84rem', fontWeight: on ? 500 : 400, whiteSpace: 'nowrap', color: on ? UI.ink : UI.muted, boxShadow: on ? `inset 0 -1.5px 0 ${UI.ink}` : 'none', transition: 'color 120ms', '&:hover': { color: UI.ink }, '&.Mui-focusVisible': { outline: `2px solid ${UI.accent}`, outlineOffset: 2 } }}
+                sx={{ height: 36, px: 0.25, mr: 2, fontFamily: 'inherit', fontSize: '0.84rem', fontWeight: on ? 500 : 400, whiteSpace: 'nowrap', color: on ? UI.ink : UI.muted, transition: 'color 120ms', '&:hover': { color: UI.ink }, '&.Mui-focusVisible': { outline: `2px solid ${UI.accent}`, outlineOffset: 2 } }}
               >
                 {x.label}
               </ButtonBase>
@@ -299,7 +300,7 @@ function App() {
           {shownTab === 'fleet' ? (
             <Box sx={{ display: 'grid', gap: 2 }}>
               <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} />
-              <Box sx={{ p: 2.5, borderRadius: '4px', bgcolor: '#ffffff', border: '1px solid #d6dee3' }}>
+              <Box sx={{ pt: 1.5, borderTop: `3px solid ${UI.ink}` }}>
                 <Typography sx={{ fontSize: '1rem', fontWeight: 500, mb: 1 }}>{t(lang, 'specShort')}</Typography>
                 {specRows.length === 0 ? (
                   <Typography sx={{ fontSize: '0.88rem', color: 'text.secondary' }}>{t(lang, 'specNone')}</Typography>
@@ -314,9 +315,8 @@ function App() {
                     ))}
                   </Box>
                 )}
-                <ButtonBase onClick={() => setPage('coop')} sx={{ mt: 1.5, gap: 0.5, fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 500, color: '#0f1417', borderRadius: '3px', '&.Mui-focusVisible': { outline: '2px solid #b5157a', outlineOffset: 2 } }}>
+                <ButtonBase onClick={() => setPage('coop')} sx={{ mt: 1.5, fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 500, color: '#0f1417', borderRadius: '2px', textDecoration: 'underline', textUnderlineOffset: '3px', textDecorationThickness: '1px', transition: 'text-underline-offset 160ms', '&:hover': { textUnderlineOffset: '5px', textDecorationColor: '#b5157a' }, '&.Mui-focusVisible': { outline: '2px solid #b5157a', outlineOffset: 2 } }}>
                   {t(lang, 'specOpen')}
-                  <ArrowRight size={14} />
                 </ButtonBase>
               </Box>
             </Box>

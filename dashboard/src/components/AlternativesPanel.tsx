@@ -5,7 +5,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Eye, Lightbulb, Trash2 } from 'lucide-react';
+import { Eye, Trash2 } from 'lucide-react';
 
 import { num, rpBn, t } from '../i18n';
 import { tripsAvoided } from '../recommend';
@@ -38,7 +38,7 @@ function Numbers({ lang, plan, base }: { lang: Lang; plan: ParetoPoint; base: Kp
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', justifyContent: 'space-between', columnGap: 1, mt: 1 }}>
       {items.map(([value, label]) => (
         <Box key={label}>
-          <Typography sx={{ fontSize: '0.95rem', fontWeight: 500, fontVariantNumeric: 'tabular-nums', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{value}</Typography>
+          <Typography sx={{ fontSize: '1.35rem', fontWeight: 500, fontStretch: '75%', fontVariantNumeric: 'tabular-nums', lineHeight: 1.1, whiteSpace: 'nowrap' }}>{value}</Typography>
           <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary', lineHeight: 1.2 }}>{label}</Typography>
         </Box>
       ))}
@@ -54,27 +54,24 @@ export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation
 
   return (
     <Box sx={{ display: 'grid', gap: 2 }}>
-      <Box sx={{ p: 2.5, borderRadius: '4px', bgcolor: '#eef3f5', border: '1px solid #b4c2ca' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#0f1417' }}>
-          <Lightbulb size={18} />
-          <Typography sx={{ fontSize: '0.8rem', fontWeight: 500 }}>
-            {t(lang, 'recTitle')}, {scenarioName}
-          </Typography>
-        </Box>
-        <Typography sx={{ mt: 0.75, fontSize: '0.9rem', lineHeight: 1.4 }}>{t(lang, recommendation.rule === 'noRegret' ? 'recRuleNoRegret' : 'recRuleCheapest')}</Typography>
+      <Box component="section" sx={{ pt: 1.5, borderTop: '3px solid #b5157a' }}>
+        <Typography sx={{ fontSize: '0.8rem', color: '#b5157a', fontWeight: 600 }}>
+          {t(lang, 'recTitle')}, {scenarioName}
+        </Typography>
+        <Typography sx={{ mt: 0.5, fontSize: '1.15rem', fontWeight: 500, lineHeight: 1.3, letterSpacing: '-0.005em' }}>{t(lang, recommendation.rule === 'noRegret' ? 'recRuleNoRegret' : 'recRuleCheapest')}</Typography>
         <Numbers lang={lang} plan={recommendation.point} base={recommendationBase} />
         <Typography sx={{ mt: 1, fontSize: '0.75rem', color: 'text.secondary' }}>
           {t(lang, 'totalCost')} {rpBn(lang, recommendation.point.cost_rp)}, {t(lang, 'kpiCapex').toLowerCase()} {rpBn(lang, recommendation.point.capex_rp, 0)}
         </Typography>
-        <ButtonBase onClick={onShowRecommendation} sx={{ ...action, mt: 1.5, bgcolor: '#0f1417', color: '#ffffff', borderColor: '#0f1417' }}>
+        <ButtonBase onClick={onShowRecommendation} className="flood flood-accent" sx={{ ...action, mt: 1.5, bgcolor: '#0f1417', color: '#ffffff', borderColor: '#0f1417' }}>
           <Eye size={14} />
           {t(lang, 'showOnMap')}
         </ButtonBase>
       </Box>
 
       <Card>
-        <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
-          <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5 }}>
+        <CardContent sx={{ px: 0, pt: 1.5, '&:last-child': { pb: 1 } }}>
+          <Typography component="h3" sx={{ fontSize: '1.3rem', fontWeight: 600, fontStretch: '80%', mb: 0.5 }}>
             {t(lang, 'altTitle')}
           </Typography>
           {alts.length === 0 ? (
@@ -92,11 +89,11 @@ export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation
                   </Box>
                   <Numbers lang={lang} plan={alt.plan} base={alt.base} />
                   <Box sx={{ display: 'flex', gap: 1, mt: 1.25 }}>
-                    <ButtonBase onClick={() => onShow(alt)} sx={action}>
+                    <ButtonBase onClick={() => onShow(alt)} className="flood" sx={action}>
                       <Eye size={14} />
                       {t(lang, 'showOnMap')}
                     </ButtonBase>
-                    <ButtonBase onClick={() => onRemove(alt.id)} aria-label={`${t(lang, 'remove')} ${alt.name}`} sx={{ ...action, color: 'text.secondary' }}>
+                    <ButtonBase onClick={() => onRemove(alt.id)} aria-label={`${t(lang, 'remove')} ${alt.name}`} className="flood" sx={{ ...action, color: 'text.secondary' }}>
                       <Trash2 size={14} />
                       {t(lang, 'remove')}
                     </ButtonBase>

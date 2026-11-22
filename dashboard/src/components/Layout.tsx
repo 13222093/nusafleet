@@ -42,7 +42,7 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
       <Box component="header" className="no-print" sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: 'rgba(244,247,248,0.92)', backdropFilter: 'saturate(1.2) blur(8px)', borderBottom: `1px solid ${UI.line}` }}>
-        <Box sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, height: 56, display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 3 } }}>
+        <Box sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, minHeight: 56, display: 'flex', flexWrap: { xs: 'wrap', md: 'nowrap' }, alignItems: 'center', columnGap: { xs: 1.5, md: 3 } }}>
           <ButtonBase onClick={() => onPage('plan')} sx={{ display: 'flex', alignItems: 'center', gap: 1, ...focus }} aria-label="NusaFleet">
             <Mark />
             <Typography component="span" sx={{ fontSize: '1.05rem', fontWeight: 600, letterSpacing: '-0.02em', color: UI.ink }}>
@@ -55,7 +55,7 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
 
           <Box sx={{ flexGrow: 1 }} />
 
-          <Box component="nav" sx={{ display: 'flex', alignSelf: 'stretch', gap: { xs: 1.5, md: 3 }, overflowX: 'auto', scrollbarWidth: 'none' }}>
+          <Box component="nav" sx={{ order: { xs: 3, md: 0 }, width: { xs: '100%', md: 'auto' }, height: { xs: 40, md: 56 }, display: 'flex', alignSelf: 'stretch', gap: { xs: 2, md: 3 }, overflowX: 'auto', scrollbarWidth: 'none', borderTop: { xs: `1px solid ${UI.line}`, md: 'none' } }}>
             {tabs.map((tab) => {
               const active = page === tab.id;
               return (
@@ -63,7 +63,8 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
                   key={tab.id}
                   onClick={() => onPage(tab.id)}
                   aria-current={active ? 'page' : undefined}
-                  sx={{ fontSize: '0.86rem', fontWeight: active ? 500 : 400, fontFamily: 'inherit', whiteSpace: 'nowrap', color: active ? UI.ink : UI.muted, boxShadow: active ? `inset 0 -1px 0 ${UI.ink}` : 'none', transition: 'color 120ms', '&:hover': { color: UI.ink }, ...focus }}
+                  className="draw-line"
+                  sx={{ fontSize: '0.86rem', fontWeight: active ? 500 : 400, fontFamily: 'inherit', whiteSpace: 'nowrap', color: active ? UI.ink : UI.muted, transition: 'color 120ms', '&:hover': { color: UI.ink }, ...focus }}
                 >
                   {tab.text}
                 </ButtonBase>
@@ -71,7 +72,7 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
             })}
           </Box>
 
-          <Box role="group" aria-label="Language" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontSize: '0.8rem', color: UI.faint }}>
+          <Box role="group" aria-label="Language" sx={{ display: 'flex', alignItems: 'center', gap: 0.75, fontSize: '0.8rem', color: UI.faint, ml: { xs: 'auto', md: 0 }, height: 56 }}>
             {(['id', 'en'] as Lang[]).map((code, i) => (
               <React.Fragment key={code}>
                 {i > 0 ? <span aria-hidden="true">/</span> : null}

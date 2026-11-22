@@ -37,7 +37,7 @@ export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
 
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+      <CardContent sx={{ px: 0, pt: 1.5, '&:last-child': { pb: 1 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 500 }}>
             {t(lang, 'tableTitle')}

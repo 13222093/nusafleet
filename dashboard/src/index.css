@@ -27,6 +27,84 @@ body {
     font-family: var(--font);
 }
 
+/* ---------- Interaction treatments: one per role ---------- */
+/* Buttons: a fill is drawn across from the left, like a line laid on the chart */
+.flood {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transition: color 260ms var(--ease-out), border-color 260ms var(--ease-out) !important;
+}
+
+.flood::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--flood, var(--ink));
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 340ms var(--ease-out);
+}
+
+.flood:hover::before,
+.flood.Mui-focusVisible::before {
+    transform: scaleX(1);
+}
+
+.flood:hover,
+.flood.Mui-focusVisible {
+    color: #ffffff !important;
+    border-color: var(--flood, var(--ink)) !important;
+}
+
+.flood:active::before {
+    transform: scaleX(1) scaleY(0.92);
+}
+
+.flood.Mui-disabled::before {
+    display: none;
+}
+
+.flood-accent {
+    --flood: var(--accent);
+}
+
+/* Tabs and nav: the underline is drawn from the left; the current one stays drawn */
+.draw-line {
+    position: relative;
+}
+
+.draw-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.5px;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 300ms var(--ease-out);
+}
+
+.draw-line:hover::after,
+.draw-line[aria-selected="true"]::after,
+.draw-line[aria-current="page"]::after {
+    transform: scaleX(1);
+}
+
+.draw-line:hover:not([aria-selected="true"]):not([aria-current="page"])::after {
+    background: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flood::before,
+    .draw-line::after {
+        transition: none;
+    }
+}
+
 /* ---------- Map stage (3D model or 2D chart) ---------- */
 .map-stage {
     position: relative;

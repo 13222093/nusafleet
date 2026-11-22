@@ -15,7 +15,7 @@ import { vesselShort } from '../components/MapView';
 import { FRAME_SIZE, arcLatLon, toScene } from './geo';
 
 const MODEL_URL = './twin/twin.v2.glb';
-const SEA_URL = './twin/sea.v2.webp';
+const SEA_URL = './twin/sea.v3.webp';
 const KM_PER_MW = 2.4; // charger column height
 const PLUG_IN = new Set(['hybrid', 'electric']);
 const LOCAL_ROUTES = new Set(['TTE_TID', 'TTE_SOF']);
@@ -389,11 +389,11 @@ function Charger({ port, row, lang }: { port: Port; row: ChargerRow | undefined;
   return (
     <group position={[x + 1.6, 0, z - 1.6]}>
       <mesh ref={ghost} scale={[1, 0.0001, 1]} renderOrder={6}>
-        <cylinderGeometry args={[0.95, 0.95, 1, 32, 1, true]} />
+        <cylinderGeometry args={[1.7, 1.7, 1, 40, 1, true]} />
         <meshStandardMaterial color={UI.accent} transparent opacity={0.16} side={THREE.DoubleSide} depthWrite={false} />
       </mesh>
       <mesh ref={fill} scale={[1, 0.0001, 1]} castShadow renderOrder={5}>
-        <cylinderGeometry args={[0.7, 0.7, 1, 32]} />
+        <cylinderGeometry args={[1.25, 1.25, 1, 40]} />
         <meshStandardMaterial color={UI.accent} roughness={0.55} />
       </mesh>
       <Html position={[0, Math.max(cap, used) + 1.4, 0]} center zIndexRange={[40, 30]}>
@@ -427,7 +427,17 @@ function LabelDensity() {
   return null;
 }
 
+/** Home view, pulled back on portrait screens so the whole archipelago fits. */
+function homeFor(aspect: number): [number, number, number, number, number, number] {
+  const k = aspect < 1 ? Math.min(2.1, 1.25 / aspect) : 1;
+  const [px, py, pz] = HOME.pos;
+  const [tx, ty, tz] = HOME.target;
+  return [tx + (px - tx) * k, ty + (py - ty) * k, tz + (pz - tz) * k, tx, ty, tz];
+}
+
 function Rig({ controls, focus, resetKey }: { controls: React.RefObject<ElementRef<typeof CameraControls> | null>; focus: Lane | null; resetKey: number }) {
+  const { size } = useThree();
+  const aspect = size.width / Math.max(1, size.height);
   useEffect(() => {
     const c = controls.current;
     if (!c) return;
@@ -439,13 +449,26 @@ function Rig({ controls, focus, resetKey }: { controls: React.RefObject<ElementR
     }
   }, [controls, focus]);
   useEffect(() => {
-    void controls.current?.setLookAt(...HOME.pos, ...HOME.target, false);
+    void controls.current?.setLookAt(...homeFor(aspect), false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [controls]);
   useEffect(() => {
     const c = controls.current;
     if (!c || resetKey === 0) return;
-    void c.setLookAt(...HOME.pos, ...HOME.target, true);
+    void c.setLookAt(...homeFor(aspect), true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [controls, resetKey]);
+  return null;
+}
+
+/** Mounts only after every suspended asset has loaded; the first rendered frame ends the loader. */
+function Ready({ onReady }: { onReady: () => void }) {
+  const done = useRef(false);
+  useFrame(() => {
+    if (done.current) return;
+    done.current = true;
+    onReady();
+  });
   return null;
 }
 
@@ -486,8 +509,9 @@ export default function TwinView(props: TwinProps) {
   const [resetKey, setResetKey] = useState(0);
   const north = useRef<HTMLDivElement>(null);
   // Real download progress of the relief model and textures, shown until the scene is ready
-  const { progress, active } = useProgress();
-  const loading = active || progress < 100;
+  const { progress } = useProgress();
+  const [ready, setReady] = useState(false);
+  const loading = !ready;
   const still = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, []);
   const usedTypes = VESSEL_ORDER.filter((type) => fleet.some((row) => row.vessel_type === type));
 
@@ -506,12 +530,13 @@ export default function TwinView(props: TwinProps) {
       >
         <Suspense fallback={null}>
           <Scene {...props} resetKey={resetKey} still={still} north={north} />
+          <Ready onReady={() => setReady(true)} />
         </Suspense>
       </Canvas>
 
       {loading ? (
         <div className="twin-loading" role="status">
-          {t(lang, 'loadingModel')} <span>{Math.round(progress)}%</span>
+          {t(lang, 'loadingModel')} <span>{Math.round(Math.min(progress, 99))}%</span>
         </div>
       ) : null}
 

@@ -56,7 +56,7 @@ export function DataPage({ lang, summary }: { lang: Lang; summary: Summary }) {
   const basis = (x: { source: string | null; rationale: string | null }) => [x.source, x.rationale].filter(Boolean).join(' ');
 
   return (
-    <Stack spacing={3}>
+    <Stack spacing={3} sx={{ maxWidth: 1100, mx: 'auto' }}>
       <Box>
         <Typography component="h1" sx={{ fontSize: { xs: '2.6rem', md: '4.2rem' }, fontWeight: 600, fontStretch: '72%', lineHeight: 0.95 }}>{t(lang, 'navData')}</Typography>
         <Typography sx={{ mt: 1.5, maxWidth: 760, color: 'text.secondary' }}>{t(lang, 'dataIntro')}</Typography>

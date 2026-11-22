@@ -10,12 +10,12 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
-import { VESSEL_COLOR, VESSEL_ORDER } from '../colors';
+import { SEQ_BLUE, VESSEL_COLOR, VESSEL_ORDER } from '../colors';
 import { num, rpBn, t } from '../i18n';
 import type { FleetRow, Lang, ScenarioResult, VesselType } from '../types';
 import { vesselLabel } from './MapView';
 
-const TEAL = '#b5157a';
+const TEAL = '#0f1417';
 const MUTED = '#8d9aa3';
 const tooltipStyle = { borderRadius: '3px', border: 'none', boxShadow: '0px 2px 8px rgba(0,0,0,0.18)' };
 const titleProps = { variant: 'h6' as const, fontWeight: 'bold' };
@@ -173,14 +173,14 @@ export function HeatmapChart({ lang, result }: { lang: Lang; result: ScenarioRes
   const minCost = Math.min(...costs);
   const maxCost = Math.max(...costs);
 
-  // One hue (teal), light to dark, so darker always means higher cost
+  // The chart's depth tints: higher cost reads as deeper water
   const getColor = (cost: number) => {
     const ratio = maxCost === minCost ? 0 : (cost - minCost) / (maxCost - minCost);
-    return `hsl(174, 55%, ${92 - ratio * 44}%)`;
+    return SEQ_BLUE[Math.round(ratio * (SEQ_BLUE.length - 1))];
   };
   const getInk = (cost: number) => {
     const ratio = maxCost === minCost ? 0 : (cost - minCost) / (maxCost - minCost);
-    return ratio > 0.72 ? '#ffffff' : '#0f1417';
+    return ratio > 0.6 ? '#ffffff' : '#0f1417';
   };
 
   return (

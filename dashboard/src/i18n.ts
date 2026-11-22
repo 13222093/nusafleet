@@ -2,8 +2,8 @@ import type { Lang } from "./types";
 
 const STRINGS = {
   tagline: {
-    id: "Kapal yang tepat di rute yang tepat, untuk Maluku Utara",
-    en: "The right ship on the right route, for North Maluku",
+    id: "Rencana feri dan stasiun pengisian untuk lima rute Maluku Utara, 2026 sampai 2031",
+    en: "Ferry and charging plan for five North Maluku routes, 2026 to 2031",
   },
   navPlan: { id: "Rencana", en: "Plan" },
   navData: {
@@ -88,8 +88,8 @@ const STRINGS = {
     en: "Prototype: most inputs are still documented assumptions, and the wave climate is placeholder data. All results are scenario estimates.",
   },
   neutral: {
-    id: "Tiga skenario pasokan listrik, satu set angka.",
-    en: "Three power-supply scenarios, one set of numbers.",
+    id: "Ketiga skenario pasokan dihitung dengan model dan data yang sama.",
+    en: "All three supply scenarios run on the same model and data.",
   },
   dataIntro: {
     id: "Semua masukan model, dengan sumber atau dasar perhitungannya.",

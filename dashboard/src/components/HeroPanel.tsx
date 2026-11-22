@@ -35,11 +35,16 @@ function useCountUp(target: number, ms = 700): number {
   return shown;
 }
 
-/** A true minus sign for a drop, "+" for a rise. */
-function sign(value: number): string {
-  if (Math.abs(value) < 1e-9) return '';
-  return value < 0 ? '−' : '+';
-}
+// The direction of each change is said in words, so the number never needs a sign
+const SAY = {
+  cheaper: { id: 'lebih hemat per tahun', en: 'cheaper per year' },
+  dearer: { id: 'lebih mahal per tahun', en: 'more expensive per year' },
+  lessCo2: { id: 'lebih sedikit per tahun', en: 'less per year' },
+  moreCo2: { id: 'lebih banyak per tahun', en: 'more per year' },
+  fewerCancel: { id: 'lebih sedikit yang batal per tahun', en: 'fewer cancelled per year' },
+  moreCancel: { id: 'lebih banyak yang batal per tahun', en: 'more cancelled per year' },
+} as const;
+const say = (lang: Lang, key: keyof typeof SAY) => SAY[key][lang];
 
 interface Props {
   lang: Lang;
@@ -93,9 +98,9 @@ export function KpiBand({ lang, plan, base, caption }: Props) {
       </Box>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: '1fr' }}>
-        <Figure value={`${sign(costDelta)}${rpBn(lang, Math.abs(costShown))}`} label={t(lang, 'kpiCostLabel')} better={costDelta <= 0} />
-        <Figure value={`${sign(co2Delta)}${num(lang, Math.abs(co2Shown))}`} unit="t CO₂" label={`${t(lang, 'kpiCo2Label')} (${sign(co2Pct)}${num(lang, Math.abs(co2Pct))}%)`} better={co2Delta <= 0} />
-        <Figure value={`${tripsAvoided >= 0 ? '+' : '−'}${num(lang, Math.abs(tripsShown))}`} label={t(lang, tripsAvoided >= 0 ? 'kpiTripsLabel' : 'heroTripsMore')} better={tripsAvoided >= 0} />
+        <Figure value={rpBn(lang, Math.abs(costShown))} label={say(lang, costDelta <= 0 ? 'cheaper' : 'dearer')} better={costDelta <= 0} />
+        <Figure value={num(lang, Math.abs(co2Shown))} unit="t CO₂" label={`${say(lang, co2Delta <= 0 ? 'lessCo2' : 'moreCo2')} (${num(lang, Math.abs(co2Pct))}%)`} better={co2Delta <= 0} />
+        <Figure value={num(lang, Math.abs(tripsShown))} unit={lang === 'id' ? 'trip' : 'trips'} label={say(lang, tripsAvoided >= 0 ? 'fewerCancel' : 'moreCancel')} better={tripsAvoided >= 0} />
       </Box>
 
       <Box sx={{ pt: 1.5, borderTop: `1px solid ${UI.line}`, display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 2, rowGap: 1.25 }}>

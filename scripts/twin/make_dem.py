@@ -100,7 +100,9 @@ def land_texture(z: np.ndarray, size: tuple[int, int]) -> Image.Image:
 
 
 def sea_texture(z: np.ndarray, size: tuple[int, int]) -> Image.Image:
-    land = np.array(Image.fromarray((z > 0.5).astype(np.uint8) * 255).resize(size, Image.BILINEAR)) > 127
+    # Smooth coast: upsample the elevation itself, blur lightly, then threshold
+    zi = np.array(Image.fromarray(z).resize(size, Image.BICUBIC))
+    land = ndimage.gaussian_filter(zi, sigma=size[0] / 1400) > 2.0
     cell_km = (FRAME["lon_max"] - FRAME["lon_min"]) * 111.32 / size[0]
     dist_km = ndimage.distance_transform_edt(~land) * cell_km
     deep = np.array([250, 252, 252], np.float32)  # chart deep water: white
@@ -132,7 +134,7 @@ def main() -> None:
     z[z < 0.5] = 0.0
     np.save(build_dir / "heights.npy", z.astype(np.float32))
     land_texture(z, (2048, 1707)).save(build_dir / "land_color.png")
-    sea_texture(z, (2048, 1707)).save(build_dir / "sea_color.png")
+    sea_texture(z, (4096, 3414)).save(build_dir / "sea_color.png")
     (build_dir / "frame.json").write_text(json.dumps({**FRAME, "grid": list(z.shape)}, indent=2))
     print("grid", z.shape, "max m", float(z.max()), "land share", float((z > 0).mean()))
 

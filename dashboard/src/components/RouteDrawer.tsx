@@ -1,13 +1,11 @@
 // Side panel opened by clicking a route on the map: today against the plan,
 // for that one route.
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import BoltIcon from '@mui/icons-material/Bolt';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { VESSEL_COLOR } from '../colors';
@@ -95,26 +93,25 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
             <Box>
-              <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>{t(lang, 'colRoute')}</Typography>
-              <Typography variant="h5" component="h2" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{route.name}</Typography>
+              <Typography variant="h5" component="h2" sx={{ fontSize: '2.1rem', lineHeight: 0.98 }}>{route.name}</Typography>
             </Box>
             <IconButton onClick={onClose} aria-label={t(lang, 'close')}><CloseIcon /></IconButton>
           </Stack>
 
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            <Chip size="small" label={`${num(lang, route.distance_nm, 1)} nm`} />
-            <Chip size="small" label={`${num(lang, route.daily_pax)} ${t(lang, 'paxPerDay')}`} />
+          <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap alignItems="baseline" sx={{ fontSize: '0.88rem', color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
+            <span>{num(lang, route.distance_nm, 1)} nm</span>
+            <span>{num(lang, route.daily_pax)} {t(lang, 'paxPerDay')}</span>
             <EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} />
           </Stack>
 
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            <Box sx={{ p: 2, borderRadius: '3px', bgcolor: '#f4f7f8' }}>
+          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: '3px solid #0f1417' }}>
+            <Box sx={{ pt: 1.5, pr: 2, borderRight: '1px solid #d6dee3' }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>{t(lang, 'today')}</Typography>
               <Box sx={{ mt: 1 }}><Fleet lang={lang} rows={fToday} vesselTypes={vesselTypes} /></Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{trips(fToday)} {t(lang, 'colTrips').toLowerCase()}</Typography>
             </Box>
-            <Box sx={{ p: 2, borderRadius: '3px', bgcolor: '#eef3f5', border: '2px solid #b4c2ca' }}>
-              <Typography variant="caption" sx={{ fontWeight: 500, color: 'primary.dark' }}>{t(lang, 'planShort')}</Typography>
+            <Box sx={{ pt: 1.5, pl: 2 }}>
+              <Typography variant="caption" sx={{ fontWeight: 600, color: '#b5157a' }}>{t(lang, 'planShort')}</Typography>
               <Box sx={{ mt: 1 }}><Fleet lang={lang} rows={fPlan} vesselTypes={vesselTypes} /></Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{trips(fPlan)} {t(lang, 'colTrips').toLowerCase()}</Typography>
             </Box>
@@ -140,7 +137,10 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
             ) : (
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                 {endChargers.map((c) => (
-                  <Chip key={c.port_id} size="small" color="success" variant="outlined" icon={<BoltIcon />} label={`${c.port_name}: ${num(lang, c.kw_used)} / ${num(lang, c.kw_available)} kW`} />
+                  <Box key={c.port_id} component="span" sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, fontSize: '0.85rem', fontVariantNumeric: 'tabular-nums' }}>
+                    <Box component="span" aria-hidden="true" sx={{ width: 7, height: 12, borderRadius: '1px', bgcolor: '#b5157a' }} />
+                    {c.port_name.split(' (')[0]} {num(lang, c.kw_used)} / {num(lang, c.kw_available)} kW
+                  </Box>
                 ))}
               </Stack>
             )}

@@ -41,7 +41,7 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
 
   return (
     <Card>
-      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+      <CardContent sx={{ px: 0, pt: 1.5, '&:last-child': { pb: 1 } }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ mb: 2.5, minHeight: 32 }}>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{t(lang, 'whatIfTitle')}</Typography>

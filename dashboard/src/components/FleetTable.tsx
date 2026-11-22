@@ -54,7 +54,7 @@ export function FleetStrip({ lang, routes, today, plan, safetyToday, safetyPlan 
 
   return (
     <Card sx={{ height: '100%' }}>
-      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+      <CardContent sx={{ px: 0, pt: 1.5, '&:last-child': { pb: 1 } }}>
         <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
           {t(lang, 'fleetTitle')}
         </Typography>

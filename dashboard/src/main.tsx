@@ -22,8 +22,8 @@ const theme = createTheme({
     fontFamily: FONT,
     allVariants: { fontFamily: FONT, letterSpacing: '-0.005em' },
     h4: { fontWeight: 300, letterSpacing: '-0.02em', color: UI.ink },
-    h5: { fontWeight: 400, letterSpacing: '-0.015em' },
-    h6: { fontWeight: 500, color: UI.ink },
+    h5: { fontWeight: 600, fontStretch: '78%', fontSize: '1.7rem', lineHeight: 1.05 },
+    h6: { fontWeight: 600, fontStretch: '80%', fontSize: '1.3rem', lineHeight: 1.1, color: UI.ink },
     subtitle2: { fontWeight: 500 },
   },
   shape: { borderRadius: 8 },
@@ -35,7 +35,18 @@ const theme = createTheme({
     },
     MuiCard: {
       styleOverrides: {
-        root: { backgroundImage: 'none', boxShadow: 'none', backgroundColor: UI.surface, border: `1px solid ${UI.line}`, borderRadius: 10 },
+        // A chart note, not an app card: a heavy ink rule on top, no box
+        root: { backgroundImage: 'none', boxShadow: 'none', backgroundColor: 'transparent', border: 0, borderTop: `3px solid ${UI.ink}`, borderRadius: 0, overflow: 'visible' },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: { root: { paddingLeft: 0, paddingRight: 0, paddingTop: 12 } },
+    },
+    MuiCardHeader: {
+      styleOverrides: {
+        root: { paddingLeft: 0, paddingRight: 0, paddingTop: 12, paddingBottom: 4 },
+        title: { fontSize: '1.3rem', fontWeight: 600, fontStretch: '80%', lineHeight: 1.1 },
+        subheader: { fontSize: '0.82rem', color: UI.muted, marginTop: 4 },
       },
     },
     MuiPaper: {

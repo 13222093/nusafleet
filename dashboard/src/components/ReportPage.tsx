@@ -80,7 +80,7 @@ const COPY = {
     s7intro: "Dua jalur kerja sama bertemu di Maluku Utara: perkapalan hijau dan pasokan listrik baru. NusaFleet mengubah rute menjadi kebutuhan kapal dan daya yang bisa langsung dikerjakan kedua pihak.",
     s7spec: "Kapal baru yang dibutuhkan",
     s7prop: 'Usulan',
-    footer: "Tiga skenario pasokan listrik, satu set angka. Mesin optimasi diadaptasi dari tim Kopibara (NUS Maritime Hackathon 2026), lisensi MIT.",
+    footer: "Ketiga skenario pasokan dihitung dengan model dan data yang sama. Mesin optimasi diadaptasi dari tim Kopibara (NUS Maritime Hackathon 2026), lisensi MIT.",
   },
   en: {
     title: 'North Maluku ferry fleet plan: report',
@@ -135,7 +135,7 @@ const COPY = {
     s7intro: "Two cooperation tracks meet in North Maluku: green shipbuilding and a new power supply. NusaFleet turns routes into vessel and power requirements both sides can act on.",
     s7spec: "The new vessels needed",
     s7prop: 'Proposals',
-    footer: "Three power-supply scenarios, one set of numbers. Optimization engine adapted from team Kopibara (NUS Maritime Hackathon 2026), MIT license.",
+    footer: "All three supply scenarios run on the same model and data. Optimization engine adapted from team Kopibara (NUS Maritime Hackathon 2026), MIT license.",
   },
 } as const;
 
@@ -149,7 +149,7 @@ const thNum = { ...th, textAlign: 'right' } as const;
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Box component="section" sx={{ mt: 4, breakInside: 'avoid-page' }}>
-      <Typography component="h2" sx={{ fontSize: '1.15rem', fontWeight: 500, mb: 1.25 }}>
+      <Typography component="h2" sx={{ fontSize: '1.45rem', fontWeight: 600, fontStretch: '80%', mb: 1.25, pt: 1, borderTop: '1px solid #0f1417' }}>
         {title}
       </Typography>
       {children}
@@ -198,19 +198,19 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
   return (
     <Box>
       <Box className="no-print" sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, mb: 2, maxWidth: 860, mx: 'auto' }}>
-        <ButtonBase onClick={onBack} sx={{ ...button, border: '1px solid #d6dee3', bgcolor: '#ffffff' }}>
+        <ButtonBase onClick={onBack} className="flood" sx={{ ...button, border: '1px solid #d6dee3', bgcolor: '#ffffff' }}>
           <ArrowLeft size={16} />
           {c.back}
         </ButtonBase>
-        <ButtonBase onClick={() => window.print()} sx={{ ...button, bgcolor: '#0f1417', color: '#ffffff' }}>
+        <ButtonBase onClick={() => window.print()} className="flood flood-accent" sx={{ ...button, bgcolor: '#0f1417', color: '#ffffff' }}>
           <Printer size={16} />
           {c.print}
         </ButtonBase>
       </Box>
 
-      <Box className="report" sx={{ maxWidth: 860, mx: 'auto', bgcolor: '#ffffff', border: '1px solid #d6dee3', borderRadius: '3px', p: { xs: 3, md: 6 }, color: '#0f1417' }}>
-        <Typography sx={{ fontSize: '0.8rem', fontWeight: 500, color: '#0f1417' }}>NusaFleet</Typography>
-        <Typography component="h1" sx={{ fontSize: '1.8rem', fontWeight: 500, lineHeight: 1.2, mt: 0.5 }}>
+      <Box className="report" sx={{ maxWidth: 860, mx: 'auto', my: 1, bgcolor: '#ffffff', border: '1px solid #0f1417', outline: '3px solid #0f1417', outlineOffset: '5px', borderRadius: 0, p: { xs: 3, md: 6 }, color: '#0f1417' }}>
+        <Typography sx={{ fontSize: '0.8rem', fontWeight: 600, color: '#b5157a' }}>NusaFleet</Typography>
+        <Typography component="h1" sx={{ fontSize: { xs: '2.3rem', md: '3.2rem' }, fontWeight: 600, fontStretch: '72%', lineHeight: 0.98, mt: 0.75, maxWidth: 640 }}>
           {c.title}
         </Typography>
         <Typography sx={{ fontSize: '0.85rem', color: '#52606a', mt: 1 }}>

@@ -107,6 +107,61 @@ export function coopProposals(lang: Lang, rows: SpecRow[]): string[] {
   return [c.p1, pilot ? c.p2pilot(pilot.routeName, vesselShort(pilot.vesselType, lang)) : c.p2none, c.p3];
 }
 
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+const AXIS_FROM = 2025;
+const AXIS_TO = 2032;
+const TODAY = 2026 + 10.7 / 12; // 22 Nov 2026
+
+/** "Nov 2025" -> 2025.83; a bare year sits at its start. */
+function decimalDate(when: string, year: number): number {
+  const m = MONTHS.indexOf(when.slice(0, 3).toLowerCase());
+  return m >= 0 ? year + m / 12 : year;
+}
+
+/** Cooperation on a true time scale: the gap between the agreement and the supply is the story. */
+function CoopTimeline({ lang }: { lang: Lang }) {
+  const pos = (v: number) => `${((v - AXIS_FROM) / (AXIS_TO - AXIS_FROM)) * 100}%`;
+  const years = Array.from({ length: AXIS_TO - AXIS_FROM + 1 }, (_u, i) => AXIS_FROM + i);
+  const events = COOP_EVENTS.map((e) => ({ ...e, at: decimalDate(e.when.en, e.year) }));
+  return (
+    <Box>
+      <Box role="img" aria-label={events.map((e) => `${e.when[lang]}: ${e.short[lang]}`).join('; ')} sx={{ position: 'relative', height: 108, mx: { xs: 1, md: 2 } }}>
+        {/* Past solid, future dashed: what has happened and what is planned */}
+        <Box sx={{ position: 'absolute', left: 0, width: pos(TODAY), top: 56, borderTop: '2px solid #0f1417' }} />
+        <Box sx={{ position: 'absolute', left: pos(TODAY), right: 0, top: 56, borderTop: '2px dashed #0f1417' }} />
+        {years.map((y) => (
+          <Box key={y} sx={{ position: 'absolute', left: pos(y), top: 56, transform: 'translateX(-50%)' }}>
+            <Box sx={{ width: '1px', height: 8, bgcolor: '#0f1417', mx: 'auto' }} />
+            <Typography sx={{ mt: 0.5, fontSize: '0.72rem', color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{y}</Typography>
+          </Box>
+        ))}
+        <Box sx={{ position: 'absolute', left: pos(TODAY), top: 46, height: 46, borderLeft: '1px solid #52606a' }}>
+          <Typography sx={{ position: 'absolute', bottom: -4, left: 5, fontSize: '0.7rem', fontStyle: 'italic', color: 'text.secondary', whiteSpace: 'nowrap' }}>{lang === 'id' ? 'hari ini' : 'today'}</Typography>
+        </Box>
+        {events.map((e, i) => (
+          <Box key={e.when.en} title={e.short[lang]} sx={{ position: 'absolute', left: pos(e.at), top: 51, transform: 'translateX(-50%)' }}>
+            <Box sx={{ width: 11, height: 11, transform: 'rotate(45deg)', bgcolor: e.at > TODAY ? '#ffffff' : '#b5157a', border: '2px solid #b5157a' }} />
+            <Typography sx={{ display: { xs: 'none', md: 'block' }, position: 'absolute', bottom: 18, left: '50%', transform: 'translateX(-50%)', fontSize: '0.78rem', fontWeight: 600, fontStretch: '85%', whiteSpace: 'nowrap', fontVariantNumeric: 'tabular-nums', mb: i % 2 ? 2.25 : 0 }}>{e.when[lang]}</Typography>
+          </Box>
+        ))}
+      </Box>
+
+      <Box component="ol" sx={{ m: 0, mt: 2, p: 0, listStyle: 'none', borderTop: '3px solid #0f1417' }}>
+        {events.map((e) => {
+          const planned = e.at > TODAY;
+          return (
+            <Box component="li" key={e.when.en} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '160px 220px 1fr' }, columnGap: 3, rowGap: 0.5, py: 2, borderBottom: '1px solid #d6dee3', alignItems: 'baseline' }}>
+              <Typography sx={{ fontSize: { xs: '1.6rem', md: '2rem' }, fontWeight: 500, fontStretch: '72%', lineHeight: 1, fontVariantNumeric: 'tabular-nums', color: planned ? 'text.secondary' : 'text.primary' }}>{e.when[lang]}</Typography>
+              <Typography sx={{ fontSize: '1rem', fontWeight: 600, fontStyle: planned ? 'italic' : 'normal' }}>{e.short[lang]}</Typography>
+              <Typography sx={{ fontSize: '0.95rem', lineHeight: 1.55, maxWidth: 680, color: planned ? 'text.secondary' : 'text.primary' }}>{e.text[lang]}</Typography>
+            </Box>
+          );
+        })}
+      </Box>
+    </Box>
+  );
+}
+
 function Shore({ title, items, align = 'left' }: { title: string; items: readonly string[]; align?: 'left' | 'right' }) {
   return (
     <Box sx={{ textAlign: { xs: 'left', md: align } }}>
@@ -163,7 +218,7 @@ export function CoopPage({ lang, summary, plan, planName }: Props) {
           <Box component="ol" sx={{ m: 0, mt: 2.5, p: 0, listStyle: 'none', display: 'grid', gap: 1.25 }}>
             {c.toolItems.map((item) => (
               <Box component="li" key={item} sx={{ display: 'grid', gridTemplateColumns: '14px 1fr', gap: 1.25, fontSize: '0.95rem', lineHeight: 1.45 }}>
-                <Box aria-hidden="true" sx={{ mt: '6px', width: 8, height: 8, bgcolor: '#b5157a', transform: 'rotate(45deg)' }} />
+                <Box aria-hidden="true" sx={{ mt: '10px', width: 14, height: 0, borderTop: '2px dashed #b5157a' }} />
                 {item}
               </Box>
             ))}
@@ -173,16 +228,8 @@ export function CoopPage({ lang, summary, plan, planName }: Props) {
       </Box>
 
       <Block title={c.timeline}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: `repeat(${COOP_EVENTS.length}, 1fr)` }, gap: 2, position: 'relative' }}>
-          {COOP_EVENTS.map((e) => (
-            <Box key={e.when.en} sx={{ pt: 2, borderTop: '3px solid #b5157a' }}>
-              <Typography sx={{ fontSize: '1.1rem', fontWeight: 500, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>{e.when[lang]}</Typography>
-              <Typography sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#0f1417', mt: 0.25 }}>{e.short[lang]}</Typography>
-              <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.5, mt: 0.75 }}>{e.text[lang]}</Typography>
-            </Box>
-          ))}
-        </Box>
-        <Typography sx={{ mt: 2, fontSize: '0.78rem', color: '#52606a', fontWeight: 600 }}>{COOP_SOURCE[lang]}</Typography>
+        <CoopTimeline lang={lang} />
+        <Typography sx={{ mt: 1.5, fontSize: '0.78rem', color: '#52606a', fontStyle: 'italic' }}>{COOP_SOURCE[lang]}</Typography>
       </Block>
 
       <Block title={c.spec} sub={`${c.specFor}: ${planName}`}>
@@ -196,7 +243,7 @@ export function CoopPage({ lang, summary, plan, planName }: Props) {
         <Box component="ol" sx={{ m: 0, p: 0, listStyle: 'none', borderTop: '3px solid #0f1417' }}>
           {coopProposals(lang, rows).map((text, i) => (
             <Box component="li" key={text} sx={{ display: 'grid', gridTemplateColumns: { xs: '40px 1fr', md: '72px 1fr' }, alignItems: 'baseline', py: 2, borderBottom: '1px solid #d6dee3' }}>
-              <Typography component="span" sx={{ fontSize: { xs: '1.6rem', md: '2.4rem' }, fontWeight: 500, fontStretch: '72%', color: '#b5157a', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{i + 1}</Typography>
+              <Typography component="span" sx={{ fontSize: { xs: '1.1rem', md: '1.3rem' }, fontWeight: 500, fontStretch: '80%', color: '#52606a', lineHeight: 1.4, fontVariantNumeric: 'tabular-nums' }}>{i + 1}</Typography>
               <Typography sx={{ fontSize: '1.02rem', lineHeight: 1.5, maxWidth: 760 }}>{text}</Typography>
             </Box>
           ))}

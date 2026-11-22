@@ -36,3 +36,16 @@ npx @gltf-transform/cli@4.5.1 optimize <build>/twin_raw.glb dashboard/public/twi
 ```
 
 Bump the file version (`twin.vN.glb`, `sea.vN.webp`) and the constants in `dashboard/src/twin/TwinView.tsx` on every rebuild.
+
+## Interaction
+
+- **Buttons:** a fill is drawn across from the left (`.flood`), ink by default, magenta for the action that saves or prints.
+- **Tabs and nav:** the underline is drawn from the left (`.draw-line`); the current one stays drawn, hover draws it in magenta.
+- **Inline links:** underlined at rest; the underline drops and turns magenta on hover.
+- **At rest:** hulls keep sailing their routes at their own speed, so the model is never still. Reduced motion freezes them and cuts the camera.
+- **Numbers:** the number is a magnitude; the direction is said in words ("lebih hemat per tahun"), so no figure carries a plus or minus sign.
+
+## QA log
+
+- 22 Nov 2026, pass 1, separate critic from screenshots only: Design 7, Usability 6, Creativity 7, Content 7 (6.7). Read the idea as "a sea chart that works as a decision tool". Fixed after: phone nav in two rows, signs moved into words, the two control axes labelled, tagline and footer copy made specific, ferry-route glyphs for bullets, Data page width, loader held until the first frame.
+- Open: Data page sources are still in English (they come from `data/assumptions.yaml`); the fleet table sits below the numbers on short screens.
