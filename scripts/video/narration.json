@@ -2,9 +2,9 @@
   "voice": "af_heart",
   "speed": 0.96,
   "team": {
-    "name": "[TEAM NAME]",
-    "institution": "[INSTITUTION]",
-    "members": "[MEMBER NAMES]"
+    "name": "NusaFleet",
+    "institution": "Institut Teknologi Bandung",
+    "members": "Poggy, Ari, Heart, Syauqi, Fayadh"
   },
   "scenes": [
     {
@@ -13,7 +13,7 @@
     },
     {
       "id": "s2_intro",
-      "text": "We are a team of Indonesian students. We believe the most important challenge in maritime affairs today is keeping island communities connected by sea, safely and cleanly."
+      "text": "We are team NusaFleet, from Institut Teknologi Bandung. Poggy, Ari, Heart, Syauqi and Fayadh. We believe the most important challenge in maritime affairs today is keeping island communities connected by sea, safely and cleanly."
     },
     {
       "id": "s3_challenge",

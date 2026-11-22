@@ -109,12 +109,15 @@ const SCENES = {
   // Introduction: who we are, and the answer to the question
   s2_intro(t) {
     const team = window.TEAM ?? {};
-    const c1 = cue('s2_intro', 1);
+    const all = CUES.s2_intro ?? [];
+    const c1 = all.length ? all[all.length - 1].start : 0;
+    const names = (team.members ?? '').split(',').map((m) => m.trim()).filter(Boolean);
     let h = '';
-    h += rise('NusaFleet', 150, 210, 210, t, 0.1, { out: c1 - 0.25 });
-    h += rise(team.name ?? '', 158, 450, 60, t, 0.6, { out: c1 - 0.25, cls: 'display', color: 'var(--accent)' });
-    h += rise(team.institution ?? '', 158, 530, 40, t, 0.9, { out: c1 - 0.25, cls: 'label' });
-    h += rise(team.members ?? '', 158, 590, 32, t, 1.1, { out: c1 - 0.25, cls: 'label' });
+    h += rise('Team', 158, 170, 44, t, 0.05, { out: c1 - 0.25, cls: 'label' });
+    h += rise(team.name || 'NusaFleet', 150, 220, 210, t, 0.1, { out: c1 - 0.25 });
+    h += rise(team.institution ?? '', 158, 450, 56, t, 1.2, { out: c1 - 0.25, cls: 'display', color: 'var(--accent)' });
+    names.forEach((m, i) => { h += rise(m, 158 + i * 300, 600, 64, t, (all[1]?.start ?? 3) + 0.15 + i * 0.42, { out: c1 - 0.25 }); });
+    h += `<div class="abs" style="left:158px;top:580px;width:${names.length * 300 - 60}px;height:4px;background:var(--ink);transform-origin:left;transform:scaleX(${prog(t, (all[1]?.start ?? 3) - 0.1, 1.2)});opacity:${1 - clamp((t - c1 + 0.25) / 0.45)}"></div>`;
     h += rise('The most important challenge in maritime affairs today', 150, 220, 44, t, c1 + 0.1, { cls: 'label' });
     h += rise('Keeping island communities', 150, 300, 150, t, c1 + 0.5);
     h += rise('connected by sea,', 150, 440, 150, t, c1 + 1.3, { color: 'var(--accent)' });
@@ -211,9 +214,8 @@ const SCENES = {
     let h = '';
     h += rise('NusaFleet', 150, 240, 220, t, 0.1);
     h += rise('nusafleet.vercel.app', 158, 490, 52, t, 0.5, { cls: 'display', color: 'var(--accent)' });
-    h += rise([team.name, team.institution].filter(Boolean).join(', '), 158, 580, 40, t, 0.8, { cls: 'label' });
-    h += rise('Optimisation engine adapted from team Kopibara (MIT licence). Relief: Copernicus DEM GLO-90. Narration: Kokoro TTS.', 158, 820, 26, t, 1.1, { cls: 'label' });
-    h += rise('LAUTARA 2026, Russia-Indonesia Maritime Hackathon', 158, 870, 26, t, 1.2, { cls: 'label italic' });
+    h += rise(team.institution ?? '', 158, 580, 44, t, 0.8, { cls: 'display' });
+    h += rise(team.members ?? '', 158, 640, 36, t, 1.0, { cls: 'label' });
     return h;
   },
 };
