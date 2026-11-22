@@ -2,8 +2,8 @@ import type { Lang } from "./types";
 
 const STRINGS = {
   tagline: {
-    id: "Perencana armada feri dan lokasi pengisian daya untuk Maluku Utara",
-    en: "Ferry fleet and charging-site planner for North Maluku",
+    id: "Kapal yang tepat di rute yang tepat, untuk Maluku Utara",
+    en: "The right ship on the right route, for North Maluku",
   },
   navPlan: { id: "Rencana", en: "Plan" },
   navData: {
@@ -18,8 +18,8 @@ const STRINGS = {
   today: { id: "Armada saat ini", en: "Today's fleet" },
   estimate: { id: "estimasi", en: "estimate" },
   estimateHint: {
-    id: "Angka ini bergantung pada asumsi. Lihat halaman Data & Asumsi.",
-    en: "This number depends on assumptions. See the Data & Assumptions page.",
+    id: "Estimasi model. Asumsinya ada di halaman Data & asumsi.",
+    en: "Model estimate. Assumptions are on the Data & assumptions page.",
   },
   kpiCost: { id: "Biaya tahunan", en: "Annual cost" },
   kpiCo2: { id: "Emisi CO2 per tahun", en: "CO2 per year" },
@@ -56,8 +56,8 @@ const STRINGS = {
     en: "Cost vs emissions",
   },
   paretoNote: {
-    id: "Tiap titik: rencana termurah untuk satu batas CO2. Klik titik untuk menampilkannya di peta.",
-    en: "Each point: the cheapest plan under one CO2 cap. Click a point to show it on the map.",
+    id: "Tiap titik adalah rencana termurah untuk satu batas CO2. Klik titik untuk melihatnya di peta.",
+    en: "Each point is the cheapest plan under one CO2 cap. Click one to see it on the map.",
   },
   axisCo2: { id: "CO2 (ribu ton per tahun)", en: "CO2 (thousand tonnes per year)" },
   axisCost: { id: "Biaya tahunan (Rp miliar)", en: "Annual cost (Rp bn)" },
@@ -66,8 +66,8 @@ const STRINGS = {
     en: "When do electric vessels pay off?",
   },
   heatNote: {
-    id: "Biaya tahunan rencana termurah (Rp miliar) pada tiap harga solar dan tarif listrik.",
-    en: "Annual cost of the cheapest plan (Rp bn) at each diesel price and electricity tariff.",
+    id: "Biaya tahunan rencana termurah (Rp miliar) di tiap kombinasi harga.",
+    en: "Annual cost of the cheapest plan (Rp bn) at each price pair.",
   },
   heatDiesel: { id: "Harga solar (Rp/L)", en: "Diesel price (Rp/L)" },
   heatElec: { id: "Tarif listrik (Rp/kWh)", en: "Electricity tariff (Rp/kWh)" },
@@ -88,12 +88,12 @@ const STRINGS = {
     en: "Prototype: most inputs are still documented assumptions, and the wave climate is placeholder data. All results are scenario estimates.",
   },
   neutral: {
-    id: "Model ini netral terhadap pemasok energi: PLN, surya, dan unit pembangkit terapung diuji dengan angka yang sama.",
-    en: "The model is supply-neutral: PLN grid, solar and floating power units are tested with the same numbers.",
+    id: "Tiga skenario pasokan listrik, satu set angka.",
+    en: "Three power-supply scenarios, one set of numbers.",
   },
   dataIntro: {
-    id: "Setiap angka di aplikasi ini berasal dari sumber yang tercantum atau dari asumsi di bawah ini.",
-    en: "Every number in this app comes from a listed source or from an assumption below.",
+    id: "Semua masukan model, dengan sumber atau dasar perhitungannya.",
+    en: "Every model input, with its source or basis.",
   },
   assumptions: { id: "Asumsi model", en: "Model assumptions" },
   datasets: { id: "Tabel data", en: "Data tables" },
@@ -166,7 +166,10 @@ const STRINGS = {
   coopStrip: { id: "Jejak kerja sama Indonesia dan Rusia", en: "Indonesia and Russia cooperation so far" },
   specShort: { id: "Kebutuhan kapal baru", en: "New vessel requirements" },
   specOpen: { id: "Lihat spesifikasi lengkap", en: "Open the full sheet" },
-  specNone: { id: "Rencana ini tidak membangun kapal baru.", en: "This plan builds no new vessels." },
+  specNone: {
+    id: "Pilih Seimbang atau Terbersih untuk melihat kapal baru yang dibutuhkan.",
+    en: "Choose Balanced or Cleanest to see the new vessels needed.",
+  },
   navReport: { id: "Laporan", en: "Report" },
   tabAnalysis: { id: "Analisis", en: "Analysis" },
   tabAlts: { id: "Alternatif", en: "Alternatives" },
@@ -175,23 +178,26 @@ const STRINGS = {
   makeReport: { id: "Buat laporan", en: "Create report" },
   altTitle: { id: "Alternatif tersimpan", en: "Saved alternatives" },
   altEmpty: {
-    id: "Belum ada. Atur skenario, prioritas, atau simulasi harga, lalu tekan Simpan alternatif untuk membandingkannya di sini dan di laporan.",
-    en: "None yet. Set a scenario, a priority or a price simulation, then press Save alternative to compare it here and in the report.",
+    id: "Atur skenario, prioritas, atau harga, lalu tekan Simpan alternatif. Semua yang tersimpan dibandingkan di sini dan masuk ke laporan.",
+    en: "Set a scenario, a priority or a price, then press Save alternative. Saved plans are compared here and go into the report.",
   },
   altCost: { id: "Rp miliar/thn", en: "Rp bn/yr" },
   altTrips: { id: "trip tidak batal", en: "trips kept" },
   recTitle: { id: "Rekomendasi", en: "Recommendation" },
   recRuleNoRegret: {
-    id: "Rencana terbersih yang tidak lebih mahal dari armada saat ini.",
-    en: "The cleanest plan that costs no more than the fleet today.",
+    id: "Rencana terbersih dengan biaya tidak melebihi armada saat ini.",
+    en: "The cleanest plan that costs no more than the fleet does today.",
   },
   recRuleCheapest: {
-    id: "Tidak ada rencana yang lebih murah dari armada saat ini, jadi ini rencana termurah.",
-    en: "No plan is cheaper than the fleet today, so this is the cheapest plan.",
+    id: "Rencana dengan biaya tahunan terendah.",
+    en: "The plan with the lowest annual cost.",
   },
   remove: { id: "Hapus", en: "Remove" },
   resetView: { id: "Kembali ke tampilan awal", en: "Reset the view" },
-  zoomHint: { id: "Scroll untuk zoom, klik rute untuk rincian", en: "Scroll to zoom, click a route for details" },
+  zoomHint: {
+    id: "Scroll untuk zoom. Klik rute untuk rinciannya.",
+    en: "Scroll to zoom. Click a route for details.",
+  },
   rowCost: { id: "Biaya per tahun (Rp miliar)", en: "Cost per year (Rp bn)" },
   rowCo2: { id: "CO2 per tahun (ton)", en: "CO2 per year (tonnes)" },
   tabFleet: { id: "Armada", en: "Fleet" },
@@ -214,13 +220,19 @@ const STRINGS = {
   fleetTitle: { id: "Armada: saat ini ke rencana", en: "Fleet: today to plan" },
   tripsPerDay: { id: "trip/hari", en: "trips/day" },
   safetyAvg: { id: "Skor keselamatan rata-rata", en: "Average safety score" },
-  unchanged: { id: "Tidak berubah dari armada saat ini.", en: "No change from today's fleet." },
+  unchanged: {
+    id: "Rute ini tetap memakai armada saat ini.",
+    en: "This route keeps its current vessels.",
+  },
   notUsed: { id: "Tidak dipakai rute ini", en: "Not used by this route" },
   heatFlat: {
-    id: "Pada skenario ini tarif listrik tidak mengubah rencana termurah, jadi hanya harga solar yang ditampilkan.",
-    en: "In this scenario the electricity tariff does not change the cheapest plan, so only the diesel price is shown.",
+    id: "Di skenario ini rencana termurah hanya bergantung pada harga solar.",
+    en: "In this scenario the cheapest plan depends on diesel price alone.",
   },
-  whatIfShort: { id: "Geser harga, rencana dan peta ikut berubah.", en: "Move a price, the plan and map follow." },
+  whatIfShort: {
+    id: "Geser harganya. Rencana dan peta langsung menyesuaikan.",
+    en: "Move a price. The plan and the map update at once.",
+  },
   rowTrips: { id: "Trip batal dihindari per tahun", en: "Cancelled trips avoided per year" },
   vOld: { id: "diesel lama", en: "old diesel" },
   vNew: { id: "diesel baru", en: "new diesel" },
@@ -278,8 +290,8 @@ const STRINGS = {
   },
   loading: { id: "Memuat data...", en: "Loading data..." },
   loadError: {
-    id: "Data tidak ditemukan. Jalankan `uv run python main.py` terlebih dahulu.",
-    en: "Data not found. Run `uv run python main.py` first.",
+    id: "Data belum ada. Jalankan `uv run python main.py`.",
+    en: "No data yet. Run `uv run python main.py`.",
   },
 } as const;
 

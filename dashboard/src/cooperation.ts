@@ -49,15 +49,15 @@ export const COOP_EVENTS: CoopEvent[] = [
     when: { id: '2031', en: '2031' },
     short: { id: 'Pasokan baru', en: 'New supply' },
     text: {
-      id: 'Perkiraan tahun pasokan baru tersedia di Halmahera Utara. Di NusaFleet ini adalah satu dari tiga skenario pasokan, diuji dengan angka yang sama dengan dua lainnya.',
-      en: 'The year the new supply is expected in Halmahera Utara. In NusaFleet this is one of three supply scenarios, tested with the same numbers as the other two.',
+      id: "Pasokan listrik baru diperkirakan mulai mengalir di Halmahera Utara. Di NusaFleet inilah skenario 2031.",
+      en: "The new supply is expected to start flowing in Halmahera Utara. In NusaFleet this is the 2031 scenario.",
     },
   },
 ];
 
 export const COOP_SOURCE: Text = {
-  id: 'Sumber: catatan riset tim dari pemberitaan dan pernyataan resmi (November 2026). Perlu diverifikasi ulang sebelum dipublikasikan.',
-  en: 'Source: the team\'s research notes from news and official statements (November 2026). To be re-verified before publication.',
+  id: "Sumber: Interfax, TASS, RRI, World Nuclear News.",
+  en: "Sources: Interfax, TASS, RRI, World Nuclear News.",
 };
 
 /** One line of the requirement sheet: what a new vessel on this route has to do. */

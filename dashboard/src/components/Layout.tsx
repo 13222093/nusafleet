@@ -82,7 +82,7 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
 
       <Box component="footer" className="no-print" sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, pb: 3, width: '100%' }}>
         <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'grid', gap: 0.5 }}>
-          {(['neutral', 'placeholderWarn', 'attribution'] as const).map((key) => (
+          {(['neutral', 'attribution'] as const).map((key) => (
             <Typography key={key} sx={{ fontSize: '0.75rem', color: 'text.secondary', lineHeight: 1.5 }}>
               {t(lang, key)}
             </Typography>
