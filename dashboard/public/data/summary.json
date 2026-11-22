@@ -1,0 +1,499 @@
+{
+  "scenario_ids": [
+    "A_grid",
+    "B_grid_solar",
+    "C_floating_nuclear"
+  ],
+  "scenario_table": [
+    {
+      "scenario_id": "A_grid",
+      "label_en": "PLN grid as-is",
+      "label_id": "Jaringan PLN saat ini",
+      "available_from_year": 2026,
+      "status": "Optimal",
+      "annual_cost_rp": 70205886368.9444,
+      "capex_rp": 180000000000.0,
+      "co2_t": 7241.455341893334,
+      "reliability_pct": 98.45406929895245,
+      "plug_in_trip_share_pct": 0.0,
+      "charger_count": 0,
+      "co2_saving_t": 2271.032990706666,
+      "energy_cost_saving_rp": 11016204805.666656,
+      "cancelled_trips_avoided": 22.146705882353775,
+      "lowest_co2_t": 5894.416887016001,
+      "lowest_co2_cost_rp": 80558340994.72926
+    },
+    {
+      "scenario_id": "B_grid_solar",
+      "label_en": "Grid + port solar",
+      "label_id": "Jaringan + surya di pelabuhan",
+      "available_from_year": 2027,
+      "status": "Optimal",
+      "annual_cost_rp": 70205886368.9444,
+      "capex_rp": 180000000000.0,
+      "co2_t": 7241.455341893334,
+      "reliability_pct": 98.45406929895245,
+      "plug_in_trip_share_pct": 0.0,
+      "charger_count": 0,
+      "co2_saving_t": 2271.032990706666,
+      "energy_cost_saving_rp": 11016204805.666656,
+      "cancelled_trips_avoided": 22.146705882353775,
+      "lowest_co2_t": 5849.72198869,
+      "lowest_co2_cost_rp": 77739477378.1254
+    },
+    {
+      "scenario_id": "C_floating_nuclear",
+      "label_en": "Floating power unit supply (Halmahera Utara)",
+      "label_id": "Pasokan unit pembangkit terapung (Halmahera Utara)",
+      "available_from_year": 2031,
+      "status": "Optimal",
+      "annual_cost_rp": 70205886368.9444,
+      "capex_rp": 180000000000.0,
+      "co2_t": 7241.455341893334,
+      "reliability_pct": 98.45406929895245,
+      "plug_in_trip_share_pct": 0.0,
+      "charger_count": 0,
+      "co2_saving_t": 2271.032990706666,
+      "energy_cost_saving_rp": 11016204805.666656,
+      "cancelled_trips_avoided": 22.146705882353775,
+      "lowest_co2_t": 4602.085060623333,
+      "lowest_co2_cost_rp": 79076219969.35875
+    }
+  ],
+  "routes": [
+    {
+      "route_id": "TTE_TID",
+      "name": "Ternate (Bastiong) - Tidore (Rum)",
+      "port_a": "TTE",
+      "port_b": "TID",
+      "distance_nm": 2.5,
+      "daily_pax": 2500.0,
+      "daily_vehicles": 150.0,
+      "current_vessels": 2,
+      "exposure": 0.4,
+      "confidence": "low",
+      "notes": "Short sheltered strait crossing. Distance is great-circle between approximate port coordinates times a 1.15 routing factor. Demand is an order-of-magnitude estimate for the ferry share of traffic.",
+      "source": null
+    },
+    {
+      "route_id": "TTE_SOF",
+      "name": "Ternate - Sofifi",
+      "port_a": "TTE",
+      "port_b": "SOF",
+      "distance_nm": 13.0,
+      "daily_pax": 1800.0,
+      "daily_vehicles": 60.0,
+      "current_vessels": 2,
+      "exposure": 0.5,
+      "confidence": "low",
+      "notes": "Link to the provincial capital, today served mostly by speedboats. Distance and demand are estimates.",
+      "source": null
+    },
+    {
+      "route_id": "TTE_JAI",
+      "name": "Ternate - Jailolo",
+      "port_a": "TTE",
+      "port_b": "JAI",
+      "distance_nm": 22.0,
+      "daily_pax": 600.0,
+      "daily_vehicles": 40.0,
+      "current_vessels": 1,
+      "exposure": 0.7,
+      "confidence": "low",
+      "notes": "West Halmahera link. Distance and demand are estimates.",
+      "source": null
+    },
+    {
+      "route_id": "TOB_DAR",
+      "name": "Tobelo - Daruba (Morotai)",
+      "port_a": "TOB",
+      "port_b": "DAR",
+      "distance_nm": 29.0,
+      "daily_pax": 420.0,
+      "daily_vehicles": 35.0,
+      "current_vessels": 1,
+      "exposure": 1.0,
+      "confidence": "low",
+      "notes": "Halmahera Utara to Morotai, exposed to Pacific swell. Distance and demand are estimates.",
+      "source": null
+    },
+    {
+      "route_id": "TTE_BTD",
+      "name": "Ternate - Batang Dua (Mayau)",
+      "port_a": "TTE",
+      "port_b": "BTD",
+      "distance_nm": 70.0,
+      "daily_pax": 70.0,
+      "daily_vehicles": 5.0,
+      "current_vessels": 1,
+      "exposure": 1.3,
+      "confidence": "low",
+      "notes": "Long open-sea route across the Molucca Sea, included to test range limits. Distance and demand are estimates.",
+      "source": null
+    }
+  ],
+  "ports": [
+    {
+      "port_id": "TTE",
+      "name": "Ternate (Bastiong)",
+      "lat": 0.767,
+      "lon": 127.378,
+      "grid_kw_available_A": 1500.0,
+      "grid_kw_available_B": 2500.0,
+      "grid_kw_available_C": 2500.0,
+      "connected_to_halut_supply": false,
+      "notes": "Largest load centre in the province. Coordinates approximate, verify against OpenStreetMap. Spare grid capacity is an assumption per scenario.",
+      "source": null
+    },
+    {
+      "port_id": "TID",
+      "name": "Tidore (Rum)",
+      "lat": 0.734,
+      "lon": 127.392,
+      "grid_kw_available_A": 600.0,
+      "grid_kw_available_B": 1200.0,
+      "grid_kw_available_C": 1200.0,
+      "connected_to_halut_supply": false,
+      "notes": "Small island grid. Coordinates approximate. Spare grid capacity is an assumption.",
+      "source": null
+    },
+    {
+      "port_id": "SOF",
+      "name": "Sofifi",
+      "lat": 0.737,
+      "lon": 127.56,
+      "grid_kw_available_A": 800.0,
+      "grid_kw_available_B": 1500.0,
+      "grid_kw_available_C": 4000.0,
+      "connected_to_halut_supply": true,
+      "notes": "Halmahera mainland. Scenario C assumes a transmission link to the Halmahera Utara supply.",
+      "source": null
+    },
+    {
+      "port_id": "JAI",
+      "name": "Jailolo",
+      "lat": 1.058,
+      "lon": 127.47,
+      "grid_kw_available_A": 400.0,
+      "grid_kw_available_B": 900.0,
+      "grid_kw_available_C": 3000.0,
+      "connected_to_halut_supply": true,
+      "notes": "Halmahera mainland. Scenario C assumes a transmission link to the Halmahera Utara supply.",
+      "source": null
+    },
+    {
+      "port_id": "TOB",
+      "name": "Tobelo",
+      "lat": 1.728,
+      "lon": 128.008,
+      "grid_kw_available_A": 700.0,
+      "grid_kw_available_B": 1400.0,
+      "grid_kw_available_C": 6000.0,
+      "connected_to_halut_supply": true,
+      "notes": "Capital of Halmahera Utara, closest port to the planned floating power units.",
+      "source": null
+    },
+    {
+      "port_id": "DAR",
+      "name": "Daruba (Morotai)",
+      "lat": 2.05,
+      "lon": 128.283,
+      "grid_kw_available_A": 300.0,
+      "grid_kw_available_B": 800.0,
+      "grid_kw_available_C": 800.0,
+      "connected_to_halut_supply": false,
+      "notes": "Separate island grid, not assumed connected in scenario C.",
+      "source": null
+    },
+    {
+      "port_id": "BTD",
+      "name": "Mayau (Batang Dua)",
+      "lat": 1.3,
+      "lon": 126.38,
+      "grid_kw_available_A": 0.0,
+      "grid_kw_available_B": 150.0,
+      "grid_kw_available_C": 150.0,
+      "connected_to_halut_supply": false,
+      "notes": "Very small island grid, no spare capacity for vessel charging in scenario A.",
+      "source": null
+    }
+  ],
+  "vessel_types": [
+    {
+      "type": "diesel_old",
+      "label_id": "Feri diesel lama",
+      "label_en": "Existing diesel ferry",
+      "cap_pax": 250,
+      "speed_kn": 10.0,
+      "fuel_lph": 220.0,
+      "kwh_per_nm": 0.0,
+      "battery_range_nm": null,
+      "hs_max_m": 1.5,
+      "capex_rp": 0.0,
+      "life_years": 10,
+      "maint_rp_per_year": 4000000000.0,
+      "safety_score": 2.0,
+      "charge_kw": 0.0,
+      "turnaround_h": 0.5,
+      "notes": "Already owned, so no new capex. Old hull and machinery: higher fuel burn, higher maintenance, lowest safety score. All values are archetype assumptions.",
+      "source": null
+    },
+    {
+      "type": "diesel_new",
+      "label_id": "Feri diesel baru",
+      "label_en": "New efficient diesel ferry",
+      "cap_pax": 300,
+      "speed_kn": 12.0,
+      "fuel_lph": 170.0,
+      "kwh_per_nm": 0.0,
+      "battery_range_nm": null,
+      "hs_max_m": 2.0,
+      "capex_rp": 60000000000.0,
+      "life_years": 25,
+      "maint_rp_per_year": 2000000000.0,
+      "safety_score": 4.0,
+      "charge_kw": 0.0,
+      "turnaround_h": 0.5,
+      "notes": "New-build small ro-ro passenger ferry. Capex and fuel burn are archetype assumptions.",
+      "source": null
+    },
+    {
+      "type": "hybrid",
+      "label_id": "Feri hibrida",
+      "label_en": "Plug-in hybrid ferry",
+      "cap_pax": 300,
+      "speed_kn": 12.0,
+      "fuel_lph": 110.0,
+      "kwh_per_nm": 20.0,
+      "battery_range_nm": null,
+      "hs_max_m": 2.0,
+      "capex_rp": 85000000000.0,
+      "life_years": 25,
+      "maint_rp_per_year": 2200000000.0,
+      "safety_score": 4.0,
+      "charge_kw": 400.0,
+      "turnaround_h": 0.5,
+      "notes": "Diesel-electric with a shore-charged battery used near ports. Concept reference: Rosmorport workboat Anatoly Klimov (25.5 m, 56.7 kWh battery, electric mode up to 7 knots). Scaled to ferry size by assumption.",
+      "source": null
+    },
+    {
+      "type": "electric",
+      "label_id": "Feri listrik",
+      "label_en": "Battery-electric ferry",
+      "cap_pax": 250,
+      "speed_kn": 10.0,
+      "fuel_lph": 0.0,
+      "kwh_per_nm": 45.0,
+      "battery_range_nm": 25.0,
+      "hs_max_m": 1.5,
+      "capex_rp": 110000000000.0,
+      "life_years": 25,
+      "maint_rp_per_year": 1800000000.0,
+      "safety_score": 5.0,
+      "charge_kw": 1200.0,
+      "turnaround_h": 0.75,
+      "notes": "Battery-electric passenger ferry. Concept reference: Moskva 2.0 electric ferry (about 8 hours on battery). Energy use per nautical mile is derived for consistency with the diesel archetype (about 14 L per nm at 12 knots, about 40 percent engine efficiency, scaled to 10 knots), to be verified against published battery ferry data. Battery replacement is folded into maintenance.",
+      "source": null
+    },
+    {
+      "type": "fastcraft",
+      "label_id": "Kapal cepat",
+      "label_en": "Fast passenger craft",
+      "cap_pax": 100,
+      "speed_kn": 28.0,
+      "fuel_lph": 350.0,
+      "kwh_per_nm": 0.0,
+      "battery_range_nm": null,
+      "hs_max_m": 1.0,
+      "capex_rp": 35000000000.0,
+      "life_years": 20,
+      "maint_rp_per_year": 2500000000.0,
+      "safety_score": 3.0,
+      "charge_kw": 0.0,
+      "turnaround_h": 0.33,
+      "notes": "Hydrofoil-like fast passenger craft for short routes. Low wave tolerance. All values are archetype assumptions.",
+      "source": null
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "A_grid",
+      "label_en": "PLN grid as-is",
+      "label_id": "Jaringan PLN saat ini",
+      "grid_column": "A",
+      "elec_price_rp_per_kwh": 1445.0,
+      "grid_ef_kgco2_per_kwh": 0.75,
+      "available_from_year": 2026,
+      "source": null,
+      "rationale": "Tariff set close to the PLN non-subsidized tariff level (to verify against the current PLN tariff sheet). Emission factor assumes a diesel-heavy island grid.",
+      "confidence": "low",
+      "note": null
+    },
+    {
+      "id": "B_grid_solar",
+      "label_en": "Grid + port solar",
+      "label_id": "Jaringan + surya di pelabuhan",
+      "grid_column": "B",
+      "elec_price_rp_per_kwh": 1300.0,
+      "grid_ef_kgco2_per_kwh": 0.5,
+      "available_from_year": 2027,
+      "source": null,
+      "rationale": "Port solar with storage lowers the blended energy cost and emission factor, and adds charging capacity at ports. All three values are assumptions.",
+      "confidence": "low",
+      "note": null
+    },
+    {
+      "id": "C_floating_nuclear",
+      "label_en": "Floating power unit supply (Halmahera Utara)",
+      "label_id": "Pasokan unit pembangkit terapung (Halmahera Utara)",
+      "grid_column": "C",
+      "elec_price_rp_per_kwh": 1200.0,
+      "grid_ef_kgco2_per_kwh": 0.02,
+      "available_from_year": 2031,
+      "source": null,
+      "rationale": "Tariff is unknown, so it is an assumption and is swept in the sensitivity analysis. Operational emission factor is near zero. Only ports assumed connected to the Halmahera Utara supply gain capacity; other ports keep scenario B values.",
+      "confidence": "low",
+      "note": "Rosatom-PT Pembangkit Listrik Nuklir agreement, 16 Oct 2026, 2 x 100 MW FPU, power to consumers expected within five years. Scenario only."
+    }
+  ],
+  "assumptions": {
+    "diesel_price_rp_per_l": {
+      "value": 13000.0,
+      "unit": "Rp/L",
+      "source": null,
+      "rationale": "Non-subsidized marine diesel, order of magnitude. Planning uses the economic cost because the subsidy is a transfer. Swept from the subsidized level to a high-price case.",
+      "confidence": "low"
+    },
+    "diesel_ef_kgco2_per_l": {
+      "value": 2.68,
+      "unit": "kgCO2/L",
+      "source": "IPCC 2006 Guidelines for National Greenhouse Gas Inventories, default factors for diesel oil (about 74.1 tCO2/TJ, about 2.68 kgCO2 per litre)",
+      "rationale": null,
+      "confidence": "high"
+    },
+    "carbon_price_rp_per_tco2": {
+      "value": 30000.0,
+      "unit": "Rp/tCO2",
+      "source": "Indonesian Law No. 7/2021 (UU HPP), minimum carbon tax rate of Rp 30 per kgCO2e",
+      "rationale": "Used as the base case. Swept up to Rp 2.5 million per tCO2.",
+      "confidence": "med"
+    },
+    "discount_rate": {
+      "value": 0.08,
+      "unit": "fraction per year",
+      "source": "Same value as the upstream Kopibara engine (constants.py)",
+      "rationale": "Used in the capital recovery factor to annualize capex.",
+      "confidence": "med"
+    },
+    "operating_hours_per_day": {
+      "value": 12.0,
+      "unit": "h/day",
+      "source": null,
+      "rationale": "Daylight operation, typical for small inter-island ferries.",
+      "confidence": "med"
+    },
+    "idle_fuel_fraction": {
+      "value": 0.15,
+      "unit": "fraction of underway fuel rate",
+      "source": null,
+      "rationale": "Fuel burned by auxiliaries during turnaround at the berth.",
+      "confidence": "low"
+    },
+    "load_factor": {
+      "value": 0.6,
+      "unit": "fraction of passenger capacity",
+      "source": null,
+      "rationale": "Average seats filled per trip over the year.",
+      "confidence": "low"
+    },
+    "service_level": {
+      "value": 0.95,
+      "unit": "fraction of annual demand",
+      "source": null,
+      "rationale": "Share of annual passenger demand the fleet must be able to carry.",
+      "confidence": "med"
+    },
+    "charging_efficiency": {
+      "value": 0.9,
+      "unit": "fraction",
+      "source": null,
+      "rationale": "Grid to battery efficiency, typical order of magnitude for shore charging.",
+      "confidence": "med"
+    },
+    "charger_capex_rp": {
+      "value": 15000000000.0,
+      "unit": "Rp per port",
+      "source": null,
+      "rationale": "Shore charging station with grid connection works, order of magnitude.",
+      "confidence": "low"
+    },
+    "charger_life_years": {
+      "value": 15.0,
+      "unit": "years",
+      "source": null,
+      "rationale": "Typical life of power electronics.",
+      "confidence": "med"
+    },
+    "budget_rp": {
+      "value": 400000000000.0,
+      "unit": "Rp",
+      "source": null,
+      "rationale": "Illustrative capital budget for new vessels and chargers.",
+      "confidence": "low"
+    },
+    "min_avg_safety": {
+      "value": 3.0,
+      "unit": "score 1 to 5",
+      "source": "Same threshold as the upstream Kopibara engine (average fleet safety score of at least 3.0)",
+      "rationale": "Safety scores per vessel type are assumptions (newer vessels score higher).",
+      "confidence": "low"
+    },
+    "min_daily_trips": {
+      "value": 1.0,
+      "unit": "one-way trips per day per route",
+      "source": null,
+      "rationale": "Every route keeps at least a minimum service.",
+      "confidence": "med"
+    },
+    "max_vessels_per_type_route": {
+      "value": 8.0,
+      "unit": "vessels",
+      "source": null,
+      "rationale": "Upper bound on the integer variables, well above any realistic answer for these routes.",
+      "confidence": "high"
+    }
+  },
+  "tables": {
+    "routes": {
+      "file": "routes.csv",
+      "source": null,
+      "rationale": "Route list from the project data plan. Distances are great-circle distances between approximate port coordinates times a routing factor. Demand and current fleet are order-of-magnitude estimates until BPS, BPTD or ASDP figures are obtained.",
+      "confidence": "low"
+    },
+    "ports": {
+      "file": "ports.csv",
+      "source": null,
+      "rationale": "Coordinates are approximate and must be checked against OpenStreetMap. Spare grid capacity per scenario is an assumption.",
+      "confidence": "low"
+    },
+    "vessel_types": {
+      "file": "vessel_types.csv",
+      "source": null,
+      "rationale": "Parameterized archetypes, not designs. Capex, fuel burn, energy use, wave limits and safety scores are assumptions. Russian hybrid and electric vessels are concept references only.",
+      "confidence": "low"
+    },
+    "wave_climate": {
+      "file": "wave_climate.csv",
+      "source": null,
+      "rationale": "Seasonal placeholder generated by scripts/fetch_waves.py (monsoon-shaped monthly mean wave height scaled by a route exposure factor, log-normal daily spread). To be replaced by Copernicus Marine or ERA5 reanalysis.",
+      "confidence": "low"
+    },
+    "scenarios": {
+      "file": "scenarios.yaml",
+      "source": null,
+      "rationale": "Electricity prices, emission factors and charging capacity per supply scenario are assumptions. Scenario C is one supply option among three and its tariff is swept.",
+      "confidence": "low"
+    }
+  },
+  "wave_climate_is_placeholder": true
+}

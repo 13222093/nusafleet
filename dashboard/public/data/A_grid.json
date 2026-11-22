@@ -1,0 +1,1000 @@
+{
+  "scenario": {
+    "id": "A_grid",
+    "label_en": "PLN grid as-is",
+    "label_id": "Jaringan PLN saat ini",
+    "grid_column": "A",
+    "elec_price_rp_per_kwh": 1445.0,
+    "grid_ef_kgco2_per_kwh": 0.75,
+    "available_from_year": 2026,
+    "source": null,
+    "rationale": "Tariff set close to the PLN non-subsidized tariff level (to verify against the current PLN tariff sheet). Emission factor assumes a diesel-heavy island grid.",
+    "confidence": "low",
+    "note": null
+  },
+  "status": "Optimal",
+  "message": "All route demand is met.",
+  "fleet_plan": [
+    {
+      "route_id": "TTE_TID",
+      "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+      "vessel_type": "diesel_old",
+      "count": 1,
+      "daily_trips": 16,
+      "operable_days": 364.8
+    },
+    {
+      "route_id": "TTE_SOF",
+      "route_name": "Ternate - Sofifi",
+      "vessel_type": "diesel_new",
+      "count": 2,
+      "daily_trips": 10,
+      "operable_days": 364.8
+    },
+    {
+      "route_id": "TTE_JAI",
+      "route_name": "Ternate - Jailolo",
+      "vessel_type": "diesel_new",
+      "count": 1,
+      "daily_trips": 4,
+      "operable_days": 363.6
+    },
+    {
+      "route_id": "TOB_DAR",
+      "route_name": "Tobelo - Daruba (Morotai)",
+      "vessel_type": "diesel_old",
+      "count": 1,
+      "daily_trips": 3,
+      "operable_days": 330.8
+    },
+    {
+      "route_id": "TTE_BTD",
+      "route_name": "Ternate - Batang Dua (Mayau)",
+      "vessel_type": "diesel_old",
+      "count": 1,
+      "daily_trips": 1,
+      "operable_days": 285.8
+    }
+  ],
+  "chargers": [],
+  "routes": [
+    {
+      "route_id": "TTE_TID",
+      "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+      "reliability_pct": 99.94986301369862,
+      "scheduled_trips_per_year": 5840.0,
+      "cancelled_trips_per_year": 2.928000000000793,
+      "unmet_demand_pct": 0.0,
+      "co2_t": 1118.4997366399998,
+      "cost_rp": 9459113416.0992
+    },
+    {
+      "route_id": "TTE_SOF",
+      "route_name": "Ternate - Sofifi",
+      "reliability_pct": 99.95835616438356,
+      "scheduled_trips_per_year": 3650.0,
+      "cancelled_trips_per_year": 1.5199999999998681,
+      "unmet_demand_pct": 0.0,
+      "co2_t": 1925.4366736000002,
+      "cost_rp": 24639021346.444176
+    },
+    {
+      "route_id": "TTE_JAI",
+      "route_name": "Ternate - Jailolo",
+      "reliability_pct": 99.60794520547948,
+      "scheduled_trips_per_year": 1460.0,
+      "cancelled_trips_per_year": 5.723999999999705,
+      "unmet_demand_pct": 0.0,
+      "co2_t": 1264.4008778533334,
+      "cost_rp": 13791946609.78702
+    },
+    {
+      "route_id": "TOB_DAR",
+      "route_name": "Tobelo - Daruba (Morotai)",
+      "reliability_pct": 90.64191780821916,
+      "scheduled_trips_per_year": 1095.0,
+      "cancelled_trips_per_year": 102.47100000000012,
+      "unmet_demand_pct": 0.0,
+      "co2_t": 1740.95541774,
+      "cost_rp": 12497161659.0322
+    },
+    {
+      "route_id": "TTE_BTD",
+      "route_name": "Ternate - Batang Dua (Mayau)",
+      "reliability_pct": 78.29945205479451,
+      "scheduled_trips_per_year": 365.0,
+      "cancelled_trips_per_year": 79.207,
+      "unmet_demand_pct": 0.0,
+      "co2_t": 1192.16263606,
+      "cost_rp": 9818643337.5818
+    }
+  ],
+  "kpis": {
+    "annual_cost_rp": 70205886368.9444,
+    "capex_rp": 180000000000.0,
+    "capex_annualized_rp": 16862180229.35426,
+    "opex_rp": 53126462479.333336,
+    "maintenance_rp": 18000000000.0,
+    "energy_cost_rp": 35126462479.333336,
+    "carbon_cost_rp": 217243660.25680003,
+    "co2_t": 7241.455341893334,
+    "diesel_litres": 2702035.5753333336,
+    "grid_kwh": 0.0,
+    "reliability_pct": 98.45406929895245,
+    "scheduled_trips_per_year": 12410.0,
+    "cancelled_trips_per_year": 191.85000000000048,
+    "avg_safety_score": 3.0,
+    "fleet_size": 6,
+    "plug_in_trip_share_pct": 0.0,
+    "unmet_demand_pct": 0.0
+  },
+  "baseline": {
+    "message": "All route demand is met.",
+    "fleet_plan": [
+      {
+        "route_id": "TTE_TID",
+        "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+        "vessel_type": "diesel_old",
+        "count": 2,
+        "daily_trips": 16,
+        "operable_days": 364.8
+      },
+      {
+        "route_id": "TTE_SOF",
+        "route_name": "Ternate - Sofifi",
+        "vessel_type": "diesel_old",
+        "count": 2,
+        "daily_trips": 12,
+        "operable_days": 364.0
+      },
+      {
+        "route_id": "TTE_JAI",
+        "route_name": "Ternate - Jailolo",
+        "vessel_type": "diesel_old",
+        "count": 1,
+        "daily_trips": 4,
+        "operable_days": 357.8
+      },
+      {
+        "route_id": "TOB_DAR",
+        "route_name": "Tobelo - Daruba (Morotai)",
+        "vessel_type": "diesel_old",
+        "count": 1,
+        "daily_trips": 3,
+        "operable_days": 330.8
+      },
+      {
+        "route_id": "TTE_BTD",
+        "route_name": "Ternate - Batang Dua (Mayau)",
+        "vessel_type": "diesel_old",
+        "count": 1,
+        "daily_trips": 1,
+        "operable_days": 285.8
+      }
+    ],
+    "routes": [
+      {
+        "route_id": "TTE_TID",
+        "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+        "reliability_pct": 99.94986301369862,
+        "scheduled_trips_per_year": 5840.0,
+        "cancelled_trips_per_year": 2.928000000000793,
+        "unmet_demand_pct": 0.0,
+        "co2_t": 1118.4997366399998,
+        "cost_rp": 13459113416.0992
+      },
+      {
+        "route_id": "TTE_SOF",
+        "route_name": "Ternate - Sofifi",
+        "reliability_pct": 99.73287671232876,
+        "scheduled_trips_per_year": 4380.0,
+        "cancelled_trips_per_year": 11.700000000000273,
+        "unmet_demand_pct": 0.0,
+        "co2_t": 3541.3808099999997,
+        "cost_rp": 25284581174.299995
+      },
+      {
+        "route_id": "TTE_JAI",
+        "route_name": "Ternate - Jailolo",
+        "reliability_pct": 98.01534246575342,
+        "scheduled_trips_per_year": 1460.0,
+        "cancelled_trips_per_year": 28.976000000000113,
+        "unmet_demand_pct": 0.0,
+        "co2_t": 1919.4897321600001,
+        "cost_rp": 13368542347.9648
+      },
+      {
+        "route_id": "TOB_DAR",
+        "route_name": "Tobelo - Daruba (Morotai)",
+        "reliability_pct": 90.64191780821916,
+        "scheduled_trips_per_year": 1095.0,
+        "cancelled_trips_per_year": 102.47100000000012,
+        "unmet_demand_pct": 0.0,
+        "co2_t": 1740.95541774,
+        "cost_rp": 12497161659.0322
+      },
+      {
+        "route_id": "TTE_BTD",
+        "route_name": "Ternate - Batang Dua (Mayau)",
+        "reliability_pct": 78.29945205479451,
+        "scheduled_trips_per_year": 365.0,
+        "cancelled_trips_per_year": 79.207,
+        "unmet_demand_pct": 0.0,
+        "co2_t": 1192.16263606,
+        "cost_rp": 9818643337.5818
+      }
+    ],
+    "kpis": {
+      "annual_cost_rp": 74428041934.978,
+      "capex_rp": 0.0,
+      "capex_annualized_rp": 0.0,
+      "opex_rp": 74142667285.0,
+      "maintenance_rp": 28000000000.0,
+      "energy_cost_rp": 46142667284.99999,
+      "carbon_cost_rp": 285374649.978,
+      "co2_t": 9512.4883326,
+      "diesel_litres": 3549435.945,
+      "grid_kwh": 0.0,
+      "reliability_pct": 98.28552511415523,
+      "scheduled_trips_per_year": 13140.0,
+      "cancelled_trips_per_year": 225.2820000000013,
+      "avg_safety_score": 2.0,
+      "fleet_size": 7,
+      "plug_in_trip_share_pct": 0.0,
+      "unmet_demand_pct": 0.0
+    }
+  },
+  "baseline_comparison": {
+    "baseline": {
+      "annual_cost_rp": 74428041934.978,
+      "capex_rp": 0.0,
+      "capex_annualized_rp": 0.0,
+      "opex_rp": 74142667285.0,
+      "maintenance_rp": 28000000000.0,
+      "energy_cost_rp": 46142667284.99999,
+      "carbon_cost_rp": 285374649.978,
+      "co2_t": 9512.4883326,
+      "diesel_litres": 3549435.945,
+      "grid_kwh": 0.0,
+      "reliability_pct": 98.28552511415523,
+      "scheduled_trips_per_year": 13140.0,
+      "cancelled_trips_per_year": 225.2820000000013,
+      "avg_safety_score": 2.0,
+      "fleet_size": 7,
+      "plug_in_trip_share_pct": 0.0,
+      "unmet_demand_pct": 0.0
+    },
+    "recommended": {
+      "annual_cost_rp": 70205886368.9444,
+      "capex_rp": 180000000000.0,
+      "capex_annualized_rp": 16862180229.35426,
+      "opex_rp": 53126462479.333336,
+      "maintenance_rp": 18000000000.0,
+      "energy_cost_rp": 35126462479.333336,
+      "carbon_cost_rp": 217243660.25680003,
+      "co2_t": 7241.455341893334,
+      "diesel_litres": 2702035.5753333336,
+      "grid_kwh": 0.0,
+      "reliability_pct": 98.45406929895245,
+      "scheduled_trips_per_year": 12410.0,
+      "cancelled_trips_per_year": 191.85000000000048,
+      "avg_safety_score": 3.0,
+      "fleet_size": 6,
+      "plug_in_trip_share_pct": 0.0,
+      "unmet_demand_pct": 0.0
+    },
+    "annual_cost_change_rp": -4222155566.0336,
+    "energy_cost_saving_rp": 11016204805.666656,
+    "co2_saving_t": 2271.032990706666,
+    "co2_saving_pct": 23.874226293909537,
+    "reliability_gain_pct_points": 0.1685441847972129,
+    "cancelled_trips_avoided": 22.146705882353775,
+    "cancelled_trips_reduction_pct": 9.830659299168843,
+    "charger_count": 0
+  },
+  "pareto": [
+    {
+      "co2_cap_t": null,
+      "label": "least_cost",
+      "cost_rp": 70205886368.9444,
+      "co2_t": 7241.455341893334,
+      "capex_rp": 180000000000.0,
+      "reliability_pct": 98.45406929895245,
+      "avg_safety_score": 3.0,
+      "plug_in_trip_share_pct": 0.0,
+      "fleet_plan": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "vessel_type": "diesel_old",
+          "count": 1,
+          "daily_trips": 16,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "vessel_type": "diesel_new",
+          "count": 2,
+          "daily_trips": 10,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 4,
+          "operable_days": 363.6
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "vessel_type": "diesel_old",
+          "count": 1,
+          "daily_trips": 3,
+          "operable_days": 330.8
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "vessel_type": "diesel_old",
+          "count": 1,
+          "daily_trips": 1,
+          "operable_days": 285.8
+        }
+      ],
+      "chargers": []
+    },
+    {
+      "co2_cap_t": 7073.075535033668,
+      "label": null,
+      "cost_rp": 71225993860.36378,
+      "co2_t": 6708.623043603333,
+      "capex_rp": 240000000000.0,
+      "reliability_pct": 99.03187751813054,
+      "avg_safety_score": 3.3333333333333335,
+      "plug_in_trip_share_pct": 0.0,
+      "fleet_plan": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "vessel_type": "diesel_old",
+          "count": 1,
+          "daily_trips": 16,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "vessel_type": "diesel_new",
+          "count": 2,
+          "daily_trips": 10,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 4,
+          "operable_days": 363.6
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 3,
+          "operable_days": 354.7
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "vessel_type": "diesel_old",
+          "count": 1,
+          "daily_trips": 1,
+          "operable_days": 285.8
+        }
+      ],
+      "chargers": []
+    },
+    {
+      "co2_cap_t": 6567.936114454667,
+      "label": "balanced",
+      "cost_rp": 72607107840.04933,
+      "co2_t": 6249.75617363,
+      "capex_rp": 300000000000.0,
+      "reliability_pct": 98.99643835616439,
+      "avg_safety_score": 3.6666666666666665,
+      "plug_in_trip_share_pct": 0.0,
+      "fleet_plan": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 14,
+          "operable_days": 365.0
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "vessel_type": "diesel_new",
+          "count": 2,
+          "daily_trips": 10,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 4,
+          "operable_days": 363.6
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 3,
+          "operable_days": 354.7
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "vessel_type": "diesel_old",
+          "count": 1,
+          "daily_trips": 1,
+          "operable_days": 285.8
+        }
+      ],
+      "chargers": []
+    },
+    {
+      "co2_cap_t": 6231.176500735334,
+      "label": null,
+      "cost_rp": 74796604878.03336,
+      "co2_t": 5956.516241383333,
+      "capex_rp": 360000000000.0,
+      "reliability_pct": 99.40869006849316,
+      "avg_safety_score": 4.0,
+      "plug_in_trip_share_pct": 0.0,
+      "fleet_plan": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 14,
+          "operable_days": 365.0
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "vessel_type": "diesel_new",
+          "count": 2,
+          "daily_trips": 10,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 4,
+          "operable_days": 363.6
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 3,
+          "operable_days": 354.7
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 1,
+          "operable_days": 333.9
+        }
+      ],
+      "chargers": []
+    },
+    {
+      "co2_cap_t": 5894.416887016001,
+      "label": "lowest_co2",
+      "cost_rp": 80558340994.72926,
+      "co2_t": 5894.416887016001,
+      "capex_rp": 395000000000.0,
+      "reliability_pct": 99.07176369863015,
+      "avg_safety_score": 3.857142857142857,
+      "plug_in_trip_share_pct": 0.0,
+      "fleet_plan": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 14,
+          "operable_days": 365.0
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "vessel_type": "diesel_new",
+          "count": 2,
+          "daily_trips": 10,
+          "operable_days": 364.8
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 3,
+          "operable_days": 363.6
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "vessel_type": "fastcraft",
+          "count": 1,
+          "daily_trips": 1,
+          "operable_days": 324.2
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 3,
+          "operable_days": 354.7
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "vessel_type": "diesel_new",
+          "count": 1,
+          "daily_trips": 1,
+          "operable_days": 333.9
+        }
+      ],
+      "chargers": []
+    }
+  ],
+  "pareto_safety": [
+    {
+      "safety_threshold": 2.0,
+      "feasible": true,
+      "cost_rp": 69104012064.04169,
+      "co2_t": 8499.37346412,
+      "avg_safety_score": 2.3333333333333335
+    },
+    {
+      "safety_threshold": 2.5,
+      "feasible": true,
+      "cost_rp": 69527416325.8639,
+      "co2_t": 7844.284609813334,
+      "avg_safety_score": 2.6666666666666665
+    },
+    {
+      "safety_threshold": 3.0,
+      "feasible": true,
+      "cost_rp": 70205886368.9444,
+      "co2_t": 7241.455341893334,
+      "avg_safety_score": 3.0
+    },
+    {
+      "safety_threshold": 3.5,
+      "feasible": true,
+      "cost_rp": 72607107840.04933,
+      "co2_t": 6249.75617363,
+      "avg_safety_score": 3.6666666666666665
+    },
+    {
+      "safety_threshold": 4.0,
+      "feasible": true,
+      "cost_rp": 74796604878.03336,
+      "co2_t": 5956.516241383333,
+      "avg_safety_score": 4.0
+    },
+    {
+      "safety_threshold": 4.5,
+      "feasible": false,
+      "cost_rp": null,
+      "co2_t": null,
+      "avg_safety_score": null
+    }
+  ],
+  "sensitivity": {
+    "diesel_prices": [
+      6800.0,
+      10000.0,
+      13000.0,
+      16000.0,
+      19000.0
+    ],
+    "elec_prices": [
+      600.0,
+      1000.0,
+      1445.0,
+      2000.0,
+      2800.0
+    ],
+    "cells": [
+      {
+        "diesel_price_rp_per_l": 6800.0,
+        "elec_price_rp_per_kwh": 600.0,
+        "feasible": true,
+        "cost_rp": 53453265801.87772,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 6800.0,
+        "elec_price_rp_per_kwh": 1000.0,
+        "feasible": true,
+        "cost_rp": 53453265801.87772,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 6800.0,
+        "elec_price_rp_per_kwh": 1445.0,
+        "feasible": true,
+        "cost_rp": 53453265801.87772,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 6800.0,
+        "elec_price_rp_per_kwh": 2000.0,
+        "feasible": true,
+        "cost_rp": 53453265801.87772,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 6800.0,
+        "elec_price_rp_per_kwh": 2800.0,
+        "feasible": true,
+        "cost_rp": 53453265801.87772,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 10000.0,
+        "elec_price_rp_per_kwh": 600.0,
+        "feasible": true,
+        "cost_rp": 62099779642.94439,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 10000.0,
+        "elec_price_rp_per_kwh": 1000.0,
+        "feasible": true,
+        "cost_rp": 62099779642.94439,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 10000.0,
+        "elec_price_rp_per_kwh": 1445.0,
+        "feasible": true,
+        "cost_rp": 62099779642.94439,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 10000.0,
+        "elec_price_rp_per_kwh": 2000.0,
+        "feasible": true,
+        "cost_rp": 62099779642.94439,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 10000.0,
+        "elec_price_rp_per_kwh": 2800.0,
+        "feasible": true,
+        "cost_rp": 62099779642.94439,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 13000.0,
+        "elec_price_rp_per_kwh": 600.0,
+        "feasible": true,
+        "cost_rp": 70205886368.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 13000.0,
+        "elec_price_rp_per_kwh": 1000.0,
+        "feasible": true,
+        "cost_rp": 70205886368.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 13000.0,
+        "elec_price_rp_per_kwh": 1445.0,
+        "feasible": true,
+        "cost_rp": 70205886368.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 13000.0,
+        "elec_price_rp_per_kwh": 2000.0,
+        "feasible": true,
+        "cost_rp": 70205886368.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 13000.0,
+        "elec_price_rp_per_kwh": 2800.0,
+        "feasible": true,
+        "cost_rp": 70205886368.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 16000.0,
+        "elec_price_rp_per_kwh": 600.0,
+        "feasible": true,
+        "cost_rp": 78311993094.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 16000.0,
+        "elec_price_rp_per_kwh": 1000.0,
+        "feasible": true,
+        "cost_rp": 78311993094.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 16000.0,
+        "elec_price_rp_per_kwh": 1445.0,
+        "feasible": true,
+        "cost_rp": 78311993094.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 16000.0,
+        "elec_price_rp_per_kwh": 2000.0,
+        "feasible": true,
+        "cost_rp": 78311993094.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 16000.0,
+        "elec_price_rp_per_kwh": 2800.0,
+        "feasible": true,
+        "cost_rp": 78311993094.9444,
+        "co2_t": 7241.455341893334,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 58.82352941176471,
+          "diesel_new": 41.17647058823529
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 19000.0,
+        "elec_price_rp_per_kwh": 600.0,
+        "feasible": true,
+        "cost_rp": 86245299181.86378,
+        "co2_t": 6708.623043603333,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 50.0,
+          "diesel_new": 50.0
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 19000.0,
+        "elec_price_rp_per_kwh": 1000.0,
+        "feasible": true,
+        "cost_rp": 86245299181.86378,
+        "co2_t": 6708.623043603333,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 50.0,
+          "diesel_new": 50.0
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 19000.0,
+        "elec_price_rp_per_kwh": 1445.0,
+        "feasible": true,
+        "cost_rp": 86245299181.86378,
+        "co2_t": 6708.623043603333,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 50.0,
+          "diesel_new": 50.0
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 19000.0,
+        "elec_price_rp_per_kwh": 2000.0,
+        "feasible": true,
+        "cost_rp": 86245299181.86378,
+        "co2_t": 6708.623043603333,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 50.0,
+          "diesel_new": 50.0
+        }
+      },
+      {
+        "diesel_price_rp_per_l": 19000.0,
+        "elec_price_rp_per_kwh": 2800.0,
+        "feasible": true,
+        "cost_rp": 86245299181.86378,
+        "co2_t": 6708.623043603333,
+        "plug_in_trip_share_pct": 0.0,
+        "mix_share_pct": {
+          "diesel_old": 50.0,
+          "diesel_new": 50.0
+        }
+      }
+    ]
+  },
+  "carbon_sweep": [
+    {
+      "carbon_price_rp_per_tco2": 0.0,
+      "feasible": true,
+      "cost_rp": 69988642708.68759,
+      "co2_t": 7241.455341893334,
+      "plug_in_trip_share_pct": 0.0,
+      "mix_share_pct": {
+        "diesel_old": 58.82352941176471,
+        "diesel_new": 41.17647058823529
+      }
+    },
+    {
+      "carbon_price_rp_per_tco2": 30000.0,
+      "feasible": true,
+      "cost_rp": 70205886368.9444,
+      "co2_t": 7241.455341893334,
+      "plug_in_trip_share_pct": 0.0,
+      "mix_share_pct": {
+        "diesel_old": 58.82352941176471,
+        "diesel_new": 41.17647058823529
+      }
+    },
+    {
+      "carbon_price_rp_per_tco2": 250000.0,
+      "feasible": true,
+      "cost_rp": 71799006544.16092,
+      "co2_t": 7241.455341893334,
+      "plug_in_trip_share_pct": 0.0,
+      "mix_share_pct": {
+        "diesel_old": 58.82352941176471,
+        "diesel_new": 41.17647058823529
+      }
+    },
+    {
+      "carbon_price_rp_per_tco2": 500000.0,
+      "feasible": true,
+      "cost_rp": 73609370379.63426,
+      "co2_t": 7241.455341893334,
+      "plug_in_trip_share_pct": 0.0,
+      "mix_share_pct": {
+        "diesel_old": 58.82352941176471,
+        "diesel_new": 41.17647058823529
+      }
+    },
+    {
+      "carbon_price_rp_per_tco2": 1000000.0,
+      "feasible": true,
+      "cost_rp": 77230098050.58093,
+      "co2_t": 7241.455341893334,
+      "plug_in_trip_share_pct": 0.0,
+      "mix_share_pct": {
+        "diesel_old": 58.82352941176471,
+        "diesel_new": 41.17647058823529
+      }
+    },
+    {
+      "carbon_price_rp_per_tco2": 2500000.0,
+      "feasible": true,
+      "cost_rp": 87796292778.06401,
+      "co2_t": 6708.623043603333,
+      "plug_in_trip_share_pct": 0.0,
+      "mix_share_pct": {
+        "diesel_old": 50.0,
+        "diesel_new": 50.0
+      }
+    }
+  ]
+}
