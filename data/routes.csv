@@ -1,0 +1,6 @@
+route_id,name,port_a,port_b,distance_nm,daily_pax,daily_vehicles,current_vessels,exposure,confidence,notes,source
+TTE_TID,Ternate (Bastiong) - Tidore (Rum),TTE,TID,2.5,2500,150,2,0.40,low,"Short sheltered strait crossing. Distance is great-circle between approximate port coordinates times a 1.15 routing factor. Demand is an order-of-magnitude estimate for the ferry share of traffic.",
+TTE_SOF,Ternate - Sofifi,TTE,SOF,13.0,1800,60,2,0.50,low,"Link to the provincial capital, today served mostly by speedboats. Distance and demand are estimates.",
+TTE_JAI,Ternate - Jailolo,TTE,JAI,22.0,600,40,1,0.70,low,"West Halmahera link. Distance and demand are estimates.",
+TOB_DAR,Tobelo - Daruba (Morotai),TOB,DAR,29.0,420,35,1,1.00,low,"Halmahera Utara to Morotai, exposed to Pacific swell. Distance and demand are estimates.",
+TTE_BTD,Ternate - Batang Dua (Mayau),TTE,BTD,70.0,70,5,1,1.30,low,"Long open-sea route across the Molucca Sea, included to test range limits. Distance and demand are estimates.",

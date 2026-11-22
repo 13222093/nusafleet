@@ -1,0 +1,8 @@
+port_id,name,lat,lon,grid_kw_available_A,grid_kw_available_B,grid_kw_available_C,connected_to_halut_supply,notes,source
+TTE,Ternate (Bastiong),0.7670,127.3780,1500,2500,2500,false,"Largest load centre in the province. Coordinates approximate, verify against OpenStreetMap. Spare grid capacity is an assumption per scenario.",
+TID,Tidore (Rum),0.7340,127.3920,600,1200,1200,false,"Small island grid. Coordinates approximate. Spare grid capacity is an assumption.",
+SOF,Sofifi,0.7370,127.5600,800,1500,4000,true,"Halmahera mainland. Scenario C assumes a transmission link to the Halmahera Utara supply.",
+JAI,Jailolo,1.0580,127.4700,400,900,3000,true,"Halmahera mainland. Scenario C assumes a transmission link to the Halmahera Utara supply.",
+TOB,Tobelo,1.7280,128.0080,700,1400,6000,true,"Capital of Halmahera Utara, closest port to the planned floating power units.",
+DAR,Daruba (Morotai),2.0500,128.2830,300,800,800,false,"Separate island grid, not assumed connected in scenario C.",
+BTD,Mayau (Batang Dua),1.3000,126.3800,0,150,150,false,"Very small island grid, no spare capacity for vessel charging in scenario A.",

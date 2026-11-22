@@ -1,0 +1,31 @@
+A_grid:
+  label_en: "PLN grid as-is"
+  label_id: "Jaringan PLN saat ini"
+  grid_column: A
+  elec_price_rp_per_kwh: 1445
+  grid_ef_kgco2_per_kwh: 0.75
+  available_from_year: 2026
+  source: null
+  rationale: "Tariff set close to the PLN non-subsidized tariff level (to verify against the current PLN tariff sheet). Emission factor assumes a diesel-heavy island grid."
+  confidence: low
+B_grid_solar:
+  label_en: "Grid + port solar"
+  label_id: "Jaringan + surya di pelabuhan"
+  grid_column: B
+  elec_price_rp_per_kwh: 1300
+  grid_ef_kgco2_per_kwh: 0.50
+  available_from_year: 2027
+  source: null
+  rationale: "Port solar with storage lowers the blended energy cost and emission factor, and adds charging capacity at ports. All three values are assumptions."
+  confidence: low
+C_floating_nuclear:
+  label_en: "Floating power unit supply (Halmahera Utara)"
+  label_id: "Pasokan unit pembangkit terapung (Halmahera Utara)"
+  grid_column: C
+  elec_price_rp_per_kwh: 1200
+  grid_ef_kgco2_per_kwh: 0.02
+  available_from_year: 2031
+  source: null
+  rationale: "Tariff is unknown, so it is an assumption and is swept in the sensitivity analysis. Operational emission factor is near zero. Only ports assumed connected to the Halmahera Utara supply gain capacity; other ports keep scenario B values."
+  confidence: low
+  note: "Rosatom-PT Pembangkit Listrik Nuklir agreement, 16 Oct 2026, 2 x 100 MW FPU, power to consumers expected within five years. Scenario only."
