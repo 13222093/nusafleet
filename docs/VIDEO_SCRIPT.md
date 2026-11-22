@@ -4,22 +4,27 @@ Target length 3:30. English throughout. Answers the set question: "What do you t
 
 Fill the three placeholders before recording: `[TEAM NAME]`, `[INSTITUTION]`, `[MEMBER NAMES]`.
 
+## The idea: the chart comes alive
+
+The dashboard looks like a sea chart at night: dark teal water, mint route lines. Every generated shot uses that same look, so the film reads as one piece. The opening ends on a top-down shot of a ferry drawing a glowing line between two islands, and that shot dissolves straight into the real map in the demo.
+
 Who makes what:
 
-| Part | Made with |
-| --- | --- |
-| Narration (scenes 1, 3, 4, 5) | ElevenLabs Text to Speech |
-| Music and sound effects | ElevenLabs Music and Sound Effects |
-| Opening clip and illustrations | ElevenLabs Image & Video |
-| Product demo | Screen recording of the dashboard in EN mode |
-| Introduction and closing (scenes 2, 6) | The team on camera |
-| Edit, captions, export | ElevenLabs Studio |
+| Part | Made with | Status |
+| --- | --- | --- |
+| Narration, scenes 1, 3, 4, 5 | ElevenLabs Text to Speech | to generate |
+| Five video clips | ElevenLabs Image & Video, Video tab | to generate |
+| Four illustrations | ElevenLabs Image & Video, Image tab | to generate |
+| Music | ElevenLabs Music | to generate |
+| Six sound effects | ElevenLabs Sound Effects | to generate |
+| Product demo, scenes 4 and 5 | Screen recording of the dashboard | done: `video/demo_scene4.mp4` (94 s), `video/demo_scene5.mp4` (54 s) |
+| Introduction and closing, scenes 2 and 6 | The team on camera | to film |
 
 ## Script
 
 ### Scene 1. Hook (0:00 to 0:18), narrator
 
-Visual: generated clip A, then clip B.
+Picture: V1, then V2, then V3. Sound: horn, rain, waves.
 
 > Indonesia is seventeen thousand islands. For millions of people, the road to school, to hospital and to market is a ferry. Many of those ferries are old, burn diesel, and stay in port when the waves rise. In July 2025 one of them, the Tunu Pratama Jaya, sank in the Bali Strait.
 
@@ -29,7 +34,7 @@ Visual: generated clip A, then clip B.
 
 ### Scene 3. The challenge (0:38 to 1:25), narrator
 
-Visual: illustration 1 (the islands), illustration 2 (three decisions), then the cooperation strip from the dashboard.
+Picture: I1 with the three numbers typed over it, then I2, then I3, then V4.
 
 > Take North Maluku. Ternate, Tidore, Halmahera and Morotai depend on five ferry routes that carry about five thousand passengers a day. By our estimate, the seven diesel ferries on those routes cost seventy-four billion rupiah a year to run and emit nine and a half thousand tonnes of CO2.
 >
@@ -37,7 +42,9 @@ Visual: illustration 1 (the islands), illustration 2 (three decisions), then the
 >
 > And the timing matters. In June 2026 Russia and Indonesia formed a shipbuilding working group that offers greener ship designs. In October 2026 Rosatom agreed to supply power from two floating units to North Halmahera. New ships and new electricity are heading for the same province. The plan for using them has to come first.
 
-### Scene 4. NusaFleet (1:25 to 2:35), narrator over the screen recording
+### Scene 4. NusaFleet (1:25 to 2:35), narrator over the demo
+
+Picture: V4 dissolves into `demo_scene4.mp4`.
 
 > So we built NusaFleet. It answers one question: which ship should sail which route, and where should it charge?
 >
@@ -51,70 +58,84 @@ Visual: illustration 1 (the islands), illustration 2 (three decisions), then the
 
 ### Scene 5. Russia and Indonesia (2:35 to 3:05), narrator
 
-Visual: the "Indonesia × Russia" page, then the requirement sheet.
+Picture: `demo_scene5.mp4`.
 
 > For Russia and Indonesia, NusaFleet produces something shipbuilders can use: a requirement sheet for every new vessel. Passengers, speed, range, wave limit and charging power, route by route. We propose handing that sheet to the shipbuilding working group, running one pilot route, and keeping the data together with students from both countries. The model is open source, built on the optimisation engine of team Kopibara.
 
-### Scene 6. Closing (3:05 to 3:30), team on camera
+### Scene 6. Closing (3:05 to 3:30), team on camera, then V5
 
 > Island communities need ferries that sail on time, in any season, without poisoning the sea they cross. We are the generation that will ride those ferries and build them. NusaFleet is where we start. Thank you.
 
-## Demo click path (scene 4, 70 seconds)
+## ElevenLabs asset list
 
-Record at 1920x1080, browser zoom 100%, language set to EN. Move the mouse slowly and pause one second after each click.
+Generate each asset, save it under the file name given, and send the files back. Twenty files in total.
 
-| Time | Action | What the viewer sees |
+### A. Voice. Tool: Text to Speech. Model: Eleven v3
+
+Create the voice first in **Voices, Voice Design** with this description, then use it for all four files:
+
+> A woman in her late twenties from Indonesia speaking fluent English with a light Indonesian accent. Warm, steady and unhurried, like a documentary narrator who grew up beside the sea. Close studio microphone, no background noise.
+
+| File | Text to paste | Aim for |
 | --- | --- | --- |
-| 1:25 | Page open on Plan, 2026, Balanced | Map, the three headline numbers |
-| 1:33 | Press the play button (left of the 2026 pill) | Scenario steps 2026, 2027, 2031 |
-| 1:45 | Click 2026, then Cheapest, Balanced | Fleet and numbers change |
-| 1:52 | Hold on the headline numbers | Cost, CO2, trips |
-| 2:02 | Click 2031, then Cleanest | Charging stations appear, electric and hybrid routes |
-| 2:12 | Click the Ternate to Jailolo route | Route panel: today against the plan |
-| 2:18 | Close the panel, open the What if tab, drag Diesel price right | Plan re-solves |
-| 2:26 | Press Save alternative, open the Alternatives tab | Saved plans side by side |
-| 2:31 | Open Report | Report page with Print / save as PDF |
+| `vo_s1.mp3` | Scene 1 | 18 s |
+| `vo_s3.mp3` | Scene 3 | 47 s |
+| `vo_s4.mp3` | Scene 4 | 70 s |
+| `vo_s5.mp3` | Scene 5 | 30 s |
 
-For scene 5: open Indonesia × Russia, hold on the three columns for four seconds, then scroll to "The new vessels needed".
+Settings: stability around 55, speed 0.95. If a file runs long, raise speed to 1.0 and regenerate that file only.
 
-## ElevenLabs prompts
+### B. Video clips. Tool: Image & Video, Video tab. Model: Veo 3.1 (or Kling 2.5)
 
-### Narration (Text to Speech)
+All clips: 16:9, 8 seconds, no on-screen text, no dialogue.
 
-Voice: a calm documentary narrator, mid-paced. Paste one scene at a time so each can be regenerated on its own. Stability a little above the midpoint, speed 0.95.
+| File | Scene | Prompt |
+| --- | --- | --- |
+| `v1_islands.mp4` | 1 | High aerial shot at blue hour over a dark teal sea scattered with small volcanic islands in eastern Indonesia. Tiny warm lights of ferries move between the islands and leave faint glowing trails, like a constellation being drawn on the water. Slow forward drift, cinematic, photorealistic. |
+| `v2_crossing.mp4` | 1 | Deck-level shot on an old steel passenger ferry in a tropical strait under heavy grey cloud. Passengers seen from behind as silhouettes at the railing, rain blowing sideways, a volcano island ahead in the mist. Handheld documentary feel, muted colours, photorealistic. |
+| `v3_port.mp4` | 1 | A small island ferry pier in rain. An ageing ferry is tied up and not sailing, waves slapping the concrete. In the foreground an empty waiting bench with a single school backpack on it. Static shot, shallow focus on the backpack, overcast light, photorealistic. |
+| `v4_matchcut.mp4` | 3 into 4 | Perfectly vertical top-down shot of a dark teal sea at night with two islands as darker shapes. One small ferry crosses between them and its wake glows soft mint green, drawing a single smooth curved line from one island to the other. Camera locked, no tilt, no rotation, minimal, graphic, like a living nautical chart. |
+| `v5_morning.mp4` | 6 | Sunrise at a clean island pier. A modern white and teal ferry arrives quietly on calm water. Children in school uniforms seen from behind walk down the ramp toward it. Warm golden light, slow rising camera, hopeful, photorealistic. |
 
-### Video clips (Image & Video)
+Tip for `v4_matchcut.mp4`: generate a still of the frame first in the Image tab, then use it as the start image for the video. It keeps the camera locked.
 
-No on-screen text in any clip. 16:9, 6 to 8 seconds each.
+### C. Illustrations. Tool: Image & Video, Image tab. Model: Nano Banana (or Seedream)
 
-- **Clip A, opening.** "Aerial drone shot at dawn over a chain of small green volcanic islands in eastern Indonesia, calm turquoise sea, a white passenger ferry crossing between two islands leaving a long wake, soft golden light, cinematic, slow forward camera move, photorealistic."
-- **Clip B, rough sea.** "An old steel roll-on roll-off passenger ferry pushing through grey choppy waves in a tropical strait under heavy cloud, spray over the bow, handheld documentary style from a nearby boat, muted colours, photorealistic, no people in close-up."
-- **Clip C, harbour.** "A small Indonesian island ferry port in the morning, passengers and motorbikes waiting on a concrete pier, an ageing ferry docked with its ramp down, volcano in the background, warm natural light, slow pan, documentary style."
-- **Clip D, closing.** "A modern white and teal passenger ferry gliding quietly across calm blue water between forested islands at sunset, seen from above, gentle camera rise, hopeful mood, photorealistic."
+All images: 16:9, no text, no labels, no flags. Shared style line to put at the end of every prompt:
 
-### Illustrations (Image)
+> Hand-inked nautical chart style, thin mint green lines on deep teal paper, faint half-degree grid, subtle paper grain, lots of empty space.
 
-Flat vector style, deep teal and mint palette on a dark navy background, no text, 16:9.
+| File | Scene | Prompt (add the style line) |
+| --- | --- | --- |
+| `i1_chart.png` | 3 | A cluster of tropical islands seen from above with five curved dotted ferry routes joining small glowing port dots, a small compass rose in one corner. Leave the right third of the frame empty for numbers. |
+| `i2_decisions.png` | 3 | Three simple hand-inked icons in a row joined by a thin line: a ferry, a curved route between two islands, a charging plug on a pier. Evenly spaced, centred. |
+| `i3_shipyards.png` | 3 | Two shipyards on opposite shores of a calm strait, each with a crane. Between them the outline of a ferry drawn as a blueprint in thin lines, as if both sides are sketching the same ship. |
+| `i4_endcard.png` | end | Open dark teal sea with one curved glowing mint route crossing the lower third and a small compass rose. The upper two thirds empty for the end card text. |
 
-- **Illustration 1, the islands.** "Minimal flat vector map of a cluster of tropical islands on a dark navy sea, five curved dotted ferry routes connecting small glowing port dots, teal and mint colour palette, clean infographic style, no labels, no text."
-- **Illustration 2, three decisions.** "Flat vector infographic showing three simple icons in a row connected by thin lines: a ferry, a curved route between two islands, and a charging plug at a pier, teal and mint on dark navy, generous spacing, no text."
-- **Illustration 3, two partners.** "Flat vector illustration of two shipyards on opposite shores facing each other across calm water, a ferry blueprint drawn as thin mint lines between them, dark navy background, teal accents, no flags, no text."
+### D. Music. Tool: Music
 
-### Music
+File: `music.mp3`, length 3:30, instrumental.
 
-"Calm, hopeful cinematic underscore, 100 BPM, soft piano and warm strings with a light pulse, gentle build from the one minute mark, no vocals, 3 minutes 30 seconds, fades out at the end." Keep it about 18 dB under the narration.
+> Cinematic documentary underscore, instrumental, 3 minutes 30 seconds. Opens sparse: low sustained strings and distant soft bronze metallophone notes inspired by Indonesian gamelan, like light on water. At 0:40 a slow felt piano joins. At 1:25 a light steady pulse and warm plucked strings enter, confident and forward-moving. At 2:35 the pulse eases and the strings warm up. From 3:05 it resolves on a hopeful major chord and fades out by 3:30. No drums, no vocals.
 
-### Sound effects
+### E. Sound effects. Tool: Sound Effects
 
-- "Gentle ocean waves against a hull, steady, 20 seconds" (scenes 1 and 6).
-- "Distant ferry horn, single long blast, harbour ambience" (start of scene 1).
-- "Soft interface click" (each click in the demo, low volume).
+| File | Scene | Prompt | Length |
+| --- | --- | --- | --- |
+| `sfx_horn.mp3` | 1 | One long distant ferry horn across open water, slight echo | 5 s |
+| `sfx_rain_deck.mp3` | 1 | Steady rain and wind on a steel ship deck, engine hum underneath | 10 s |
+| `sfx_waves_pier.mp3` | 1 | Waves slapping a concrete pier, a mooring rope creaking | 8 s |
+| `sfx_whoosh.mp3` | 3 into 4 | Soft low whoosh rising into a gentle shimmer, for a dissolve | 2 s |
+| `sfx_click.mp3` | 4 and 5 | Single soft interface click, short and dry | 1 s |
+| `sfx_harbour_morning.mp3` | 6 | Calm morning harbour, small waves, a few seabirds, distant voices | 12 s |
 
-## Assembly in Studio
+## Assembly
 
-1. Lay the narration clips on one track in scene order and trim the gaps to about half a second.
-2. Place clips A and B over scene 1, the team footage for scenes 2 and 6, illustrations for scene 3, the screen recording for scenes 4 and 5, and clip D under the last line.
-3. Add music under everything, sound effects where marked.
-4. Turn on English captions.
-5. End card, five seconds: "NusaFleet. [TEAM NAME], [INSTITUTION]. Optimisation engine adapted from team Kopibara (MIT license). Narration, music and illustrations generated with ElevenLabs."
-6. Export 1080p, upload, set the link to "Anyone with the link can view", and test it in a private window.
+1. Narration on one track in scene order.
+2. Picture as listed under each scene. The demo footage is longer than the narration on purpose; it is trimmed to the voice.
+3. Three numbers typed over `i1_chart.png` in scene 3: "5 routes", "74 bn rupiah a year", "9,500 t CO2 (estimate)".
+4. `v4_matchcut.mp4` dissolves into the demo over one second, with `sfx_whoosh.mp3`.
+5. Music under everything at about 18 dB below the voice. Sound effects where marked.
+6. English captions on.
+7. End card over `i4_endcard.png`, five seconds: "NusaFleet. [TEAM NAME], [INSTITUTION]. Optimisation engine adapted from team Kopibara (MIT license). Narration, music and illustrations generated with ElevenLabs."
+8. Export 1080p, upload, set the link to "Anyone with the link can view", and test it in a private window.
