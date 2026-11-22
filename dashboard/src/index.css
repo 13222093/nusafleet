@@ -145,3 +145,29 @@ body {
     border: 3px solid;
     background: #ffffff;
 }
+
+/* A ring that expands and fades around ports with a charging station */
+.charger-pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: charger-pulse 2.2s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes charger-pulse {
+    0% {
+        transform: scale(0.55);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1.9);
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .charger-pulse {
+        animation: none;
+        opacity: 0.5;
+    }
+}

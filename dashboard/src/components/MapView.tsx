@@ -1,4 +1,5 @@
 import 'leaflet/dist/leaflet.css';
+import { Fragment, useEffect, useState } from 'react';
 import { CircleMarker, MapContainer, Polyline, Rectangle, TileLayer, Tooltip } from 'react-leaflet';
 import type { LatLngBoundsExpression } from 'leaflet';
 
@@ -123,8 +124,11 @@ function Layers({ lang, routes, ports, vesselTypes, fleet, chargers, inset, sele
         if (inset && !local) return null;
         const side: Side = (inset ? INSET_LABEL_SIDE[port.port_id] : LABEL_SIDE[port.port_id]) ?? 'right';
         return (
+          <Fragment key={`${port.port_id}-${hasCharger}-${inset}`}>
+          {hasCharger ? (
+            <CircleMarker center={[port.lat, port.lon]} radius={16} pathOptions={{ color: CHARGER_COLOR, weight: 3, fill: false, className: 'charger-pulse' }} interactive={false} />
+          ) : null}
           <CircleMarker
-            key={`${port.port_id}-${hasCharger}-${inset}`}
             center={[port.lat, port.lon]}
             radius={hasCharger ? 9 : 5}
             pathOptions={{ color: hasCharger ? CHARGER_COLOR : '#ffffff', weight: hasCharger ? 4 : 2, fillColor: hasCharger ? '#ffffff' : '#0b2a30', fillOpacity: 1 }}
@@ -137,7 +141,70 @@ function Layers({ lang, routes, ports, vesselTypes, fleet, chargers, inset, sele
               </Tooltip>
             ) : null}
           </CircleMarker>
+          </Fragment>
         );
+      })}
+    </>
+  );
+}
+
+/** Seconds since mount, updated about 25 times a second. Stays 0 when the viewer prefers reduced motion. */
+function useClock(): number {
+  const [seconds, setSeconds] = useState(0);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let frame = 0;
+    let last = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      if (now - last > 40) {
+        last = now;
+        // A frame timestamp can be slightly earlier than `start`, so clamp at zero
+        setSeconds(Math.max(0, (now - start) / 1000));
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return seconds;
+}
+
+/** Small dots sailing back and forth on each route; faster vessel types cross sooner. */
+function Boats({ routes, ports, vesselTypes, fleet, inset }: Props & { inset: boolean }) {
+  const seconds = useClock();
+  const portById = new Map(ports.map((p) => [p.port_id, p]));
+
+  return (
+    <>
+      {routes.flatMap((route, i) => {
+        const a = portById.get(route.port_a);
+        const b = portById.get(route.port_b);
+        if (!a || !b) return [];
+        const path = arc([a.lat, a.lon], [b.lat, b.lon], i % 2 === 0 ? 0.16 : -0.16);
+        const rows = fleet.filter((row) => row.route_id === route.route_id);
+        return rows.flatMap((row, r) => {
+          const speed = vesselTypes.find((v) => v.type === row.vessel_type)?.speed_kn ?? 10;
+          // One-way crossing time on screen: a few seconds, longer for long or slow crossings
+          const period = 3 + 2.2 * (route.distance_nm / speed);
+          return Array.from({ length: Math.min(row.count, 2) }, (_unused, k) => {
+            const phase = (seconds / period + k * 0.5 + r * 0.31 + i * 0.13) % 2;
+            const along = (phase <= 1 ? phase : 2 - phase) * (path.length - 1);
+            const lo = Math.max(0, Math.min(Math.floor(along), path.length - 2));
+            const f = along - lo;
+            const lat = path[lo][0] + (path[lo + 1][0] - path[lo][0]) * f;
+            const lon = path[lo][1] + (path[lo + 1][1] - path[lo][1]) * f;
+            return (
+              <CircleMarker
+                key={`${route.route_id}-${row.vessel_type}-${k}`}
+                center={[lat, lon]}
+                radius={inset ? 5 : 4}
+                pathOptions={{ color: '#041418', weight: 2, fillColor: '#ffffff', fillOpacity: 1 }}
+                interactive={false}
+              />
+            );
+          });
+        });
       })}
     </>
   );
@@ -154,6 +221,7 @@ export function MapView(props: Props) {
           <TileLayer attribution={TILE_ATTRIBUTION} url={TILE_URL} />
           <Rectangle bounds={INSET_BOUNDS} pathOptions={{ color: '#9fe0d6', weight: 1.5, dashArray: '4 4', fill: false }} interactive={false} />
           <Layers {...props} inset={false} />
+          <Boats {...props} inset={false} />
         </MapContainer>
 
         <div className="map-inset">
@@ -173,6 +241,7 @@ export function MapView(props: Props) {
           >
             <TileLayer url={TILE_URL} />
             <Layers {...props} inset={true} />
+            <Boats {...props} inset={true} />
           </MapContainer>
         </div>
       </div>

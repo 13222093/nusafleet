@@ -1,5 +1,6 @@
 // The three numbers a viewer should remember, stated as one comparison with
 // today's fleet. Everything else on the page is secondary to this panel.
+import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -44,6 +45,32 @@ function Stat({ icon: Icon, value, unit, label, good }: { icon: LucideIcon; valu
   );
 }
 
+/** Eases a displayed number from its previous value to the new one. */
+function useCountUp(target: number, ms = 700): number {
+  const [shown, setShown] = useState(target);
+  const current = useRef(target);
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      current.current = target;
+      setShown(target);
+      return undefined;
+    }
+    const from = current.current;
+    const start = performance.now();
+    let frame = 0;
+    const step = (now: number) => {
+      const p = Math.min(1, (now - start) / ms);
+      const value = from + (target - from) * (1 - (1 - p) ** 3);
+      current.current = value;
+      setShown(value);
+      if (p < 1) frame = requestAnimationFrame(step);
+    };
+    frame = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frame);
+  }, [target, ms]);
+  return shown;
+}
+
 /** Two bars on one scale: today's fleet against the selected plan. */
 function Compare({ title, today, plan, todayText, planText, todayLabel, planLabel }: { title: string; today: number; plan: number; todayText: string; planText: string; todayLabel: string; planLabel: string }) {
   const max = Math.max(today, plan);
@@ -72,6 +99,9 @@ export function HeroPanel({ lang, plan, base, scenarioLabel }: Props) {
   const co2Delta = plan.co2_t - base.co2_t;
   const co2Pct = Math.abs((100 * co2Delta) / base.co2_t);
   const tripsAvoided = ((plan.reliability_pct - base.reliability_pct) / 100) * base.scheduled_trips_per_year;
+  const costShown = useCountUp(costDelta);
+  const co2Shown = useCountUp(co2Delta);
+  const tripsShown = useCountUp(tripsAvoided);
   const small = { fontVariantNumeric: 'tabular-nums', fontWeight: 600 } as const;
 
   return (
@@ -92,20 +122,20 @@ export function HeroPanel({ lang, plan, base, scenarioLabel }: Props) {
         <Stack spacing={2.5}>
           <Stat
             icon={Banknote}
-            value={rpBn(lang, Math.abs(costDelta))}
+            value={rpBn(lang, Math.abs(costShown))}
             label={t(lang, costDelta <= 0 ? 'heroCheaper' : 'heroCostlier')}
             good={costDelta <= 0}
           />
           <Stat
             icon={Leaf}
-            value={num(lang, Math.abs(co2Delta))}
+            value={num(lang, Math.abs(co2Shown))}
             unit="t CO2"
             label={`${t(lang, co2Delta <= 0 ? 'heroCo2Less' : 'heroCo2More')} (${num(lang, co2Pct)}%)`}
             good={co2Delta <= 0}
           />
           <Stat
             icon={CalendarCheck}
-            value={num(lang, Math.abs(tripsAvoided))}
+            value={num(lang, Math.abs(tripsShown))}
             unit={t(lang, 'trips')}
             label={t(lang, tripsAvoided >= 0 ? 'heroTripsAvoided' : 'heroTripsMore')}
             good={tripsAvoided >= 0}
