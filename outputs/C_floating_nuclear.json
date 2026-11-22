@@ -344,7 +344,59 @@
           "operable_days": 285.8
         }
       ],
-      "chargers": []
+      "chargers": [],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 99.94986301369862,
+          "scheduled_trips_per_year": 5840.0,
+          "cancelled_trips_per_year": 2.928000000000793,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1118.4997366399998,
+          "cost_rp": 9459113416.0992
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1925.4366736000002,
+          "cost_rp": 24639021346.444176
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 99.60794520547948,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 5.723999999999705,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1264.4008778533334,
+          "cost_rp": 13791946609.78702
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 90.64191780821916,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 102.47100000000012,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1740.95541774,
+          "cost_rp": 12497161659.0322
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
+        }
+      ]
     },
     {
       "co2_cap_t": 6911.534056734584,
@@ -397,7 +449,59 @@
           "operable_days": 285.8
         }
       ],
-      "chargers": []
+      "chargers": [],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 99.94986301369862,
+          "scheduled_trips_per_year": 5840.0,
+          "cancelled_trips_per_year": 2.928000000000793,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1118.4997366399998,
+          "cost_rp": 9459113416.0992
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1925.4366736000002,
+          "cost_rp": 24639021346.444176
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 99.60794520547948,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 5.723999999999705,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1264.4008778533334,
+          "cost_rp": 13791946609.78702
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 97.1904109589041,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 30.765000000000157,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1208.1231194499999,
+          "cost_rp": 13517269150.451586
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
+        }
+      ]
     },
     {
       "co2_cap_t": 6581.612771575834,
@@ -450,7 +554,59 @@
           "operable_days": 285.8
         }
       ],
-      "chargers": []
+      "chargers": [],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 100.0,
+          "scheduled_trips_per_year": 5110.0,
+          "cancelled_trips_per_year": 0.0,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 659.6328666666668,
+          "cost_rp": 10840227395.784754
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1925.4366736000002,
+          "cost_rp": 24639021346.444176
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 99.60794520547948,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 5.723999999999705,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1264.4008778533334,
+          "cost_rp": 13791946609.78702
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 97.1904109589041,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 30.765000000000157,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1208.1231194499999,
+          "cost_rp": 13517269150.451586
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
+        }
+      ]
     },
     {
       "co2_cap_t": 5921.770201258334,
@@ -515,6 +671,58 @@
           "port_name": "Jailolo",
           "kw_used": 1200.0,
           "kw_available": 3000.0
+        }
+      ],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 99.94986301369862,
+          "scheduled_trips_per_year": 5840.0,
+          "cancelled_trips_per_year": 2.928000000000793,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1118.4997366399998,
+          "cost_rp": 9459113416.0992
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1925.4366736000002,
+          "cost_rp": 24639021346.444176
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 98.01534246575342,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 28.976000000000113,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 31.482528,
+          "cost_rp": 13994561851.556492
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 97.1904109589041,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 30.765000000000157,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1208.1231194499999,
+          "cost_rp": 13517269150.451586
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
         }
       ]
     },
@@ -590,6 +798,58 @@
           "kw_used": 2400.0,
           "kw_available": 3000.0
         }
+      ],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 99.94986301369862,
+          "scheduled_trips_per_year": 5840.0,
+          "cancelled_trips_per_year": 2.928000000000793,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1118.4997366399998,
+          "cost_rp": 9459113416.0992
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1464.4966289066667,
+          "cost_rp": 25745045925.40258
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 98.01534246575342,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 28.976000000000113,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 31.482528,
+          "cost_rp": 13994561851.556492
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 97.1904109589041,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 30.765000000000157,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1208.1231194499999,
+          "cost_rp": 13517269150.451586
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
+        }
       ]
     },
     {
@@ -655,6 +915,58 @@
           "port_name": "Jailolo",
           "kw_used": 2400.0,
           "kw_available": 3000.0
+        }
+      ],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 99.94986301369862,
+          "scheduled_trips_per_year": 5840.0,
+          "cancelled_trips_per_year": 2.928000000000793,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1118.4997366399998,
+          "cost_rp": 9459113416.0992
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1266.9508954666667,
+          "cost_rp": 27671610445.698578
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 98.01534246575342,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 28.976000000000113,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 31.482528,
+          "cost_rp": 13994561851.556492
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 97.1904109589041,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 30.765000000000157,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1208.1231194499999,
+          "cost_rp": 13517269150.451586
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
         }
       ]
     },
@@ -735,6 +1047,58 @@
           "port_name": "Tobelo",
           "kw_used": 3200.0,
           "kw_available": 6000.0
+        }
+      ],
+      "routes": [
+        {
+          "route_id": "TTE_TID",
+          "route_name": "Ternate (Bastiong) - Tidore (Rum)",
+          "reliability_pct": 99.94986301369862,
+          "scheduled_trips_per_year": 5840.0,
+          "cancelled_trips_per_year": 2.928000000000793,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1118.4997366399998,
+          "cost_rp": 9459113416.0992
+        },
+        {
+          "route_id": "TTE_SOF",
+          "route_name": "Ternate - Sofifi",
+          "reliability_pct": 99.95835616438356,
+          "scheduled_trips_per_year": 3650.0,
+          "cancelled_trips_per_year": 1.5199999999998681,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1464.4966289066667,
+          "cost_rp": 25745045925.40258
+        },
+        {
+          "route_id": "TTE_JAI",
+          "route_name": "Ternate - Jailolo",
+          "reliability_pct": 98.01534246575342,
+          "scheduled_trips_per_year": 1460.0,
+          "cancelled_trips_per_year": 28.976000000000113,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 31.482528,
+          "cost_rp": 13994561851.556492
+        },
+        {
+          "route_id": "TOB_DAR",
+          "route_name": "Tobelo - Daruba (Morotai)",
+          "reliability_pct": 97.1904109589041,
+          "scheduled_trips_per_year": 1095.0,
+          "cancelled_trips_per_year": 30.765000000000157,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 795.4435310166665,
+          "cost_rp": 14801525916.59779
+        },
+        {
+          "route_id": "TTE_BTD",
+          "route_name": "Ternate - Batang Dua (Mayau)",
+          "reliability_pct": 78.29945205479451,
+          "scheduled_trips_per_year": 365.0,
+          "cancelled_trips_per_year": 79.207,
+          "unmet_demand_pct": 0.0,
+          "co2_t": 1192.16263606,
+          "cost_rp": 9818643337.5818
         }
       ]
     }

@@ -29,6 +29,17 @@ export interface Kpis {
   plug_in_trip_share_pct: number;
 }
 
+export interface RouteKpi {
+  route_id: string;
+  route_name: string;
+  reliability_pct: number;
+  scheduled_trips_per_year: number;
+  cancelled_trips_per_year: number;
+  unmet_demand_pct: number;
+  co2_t: number;
+  cost_rp: number;
+}
+
 export interface ParetoPoint {
   label: "least_cost" | "balanced" | "lowest_co2" | null;
   cost_rp: number;
@@ -39,6 +50,7 @@ export interface ParetoPoint {
   plug_in_trip_share_pct: number;
   fleet_plan: FleetRow[];
   chargers: ChargerRow[];
+  routes: RouteKpi[];
 }
 
 export interface HeatCell {
@@ -66,7 +78,7 @@ export interface ScenarioResult {
   status: string;
   message: string;
   kpis: Kpis;
-  baseline: { message: string; fleet_plan: FleetRow[]; kpis: Kpis };
+  baseline: { message: string; fleet_plan: FleetRow[]; routes: RouteKpi[]; kpis: Kpis };
   pareto: ParetoPoint[];
   sensitivity: {
     diesel_prices: number[];

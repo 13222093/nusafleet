@@ -13,6 +13,8 @@ interface Props {
   vesselTypes: VesselType[];
   fleet: FleetRow[];
   chargers: ChargerRow[];
+  selectedRouteId: string | null;
+  onRouteClick: (routeId: string) => void;
 }
 
 type LatLon = [number, number];
@@ -64,7 +66,7 @@ function arc(a: LatLon, b: LatLon, bend: number, steps = 36): LatLon[] {
   return points;
 }
 
-function Layers({ lang, routes, ports, vesselTypes, fleet, chargers, inset }: Props & { inset: boolean }) {
+function Layers({ lang, routes, ports, vesselTypes, fleet, chargers, inset, selectedRouteId, onRouteClick }: Props & { inset: boolean }) {
   const portById = new Map(ports.map((p) => [p.port_id, p]));
   const chargerIds = new Set(chargers.map((c) => c.port_id));
   const maxPax = Math.max(...routes.map((r) => r.daily_pax));
@@ -85,9 +87,15 @@ function Layers({ lang, routes, ports, vesselTypes, fleet, chargers, inset }: Pr
         // Short local routes are labelled in the inset only, long ones in the main map only
         const showLabel = inset ? local : !local;
         return (
-          <span key={`${route.route_id}-${mix}-${inset}`}>
-            <Polyline positions={path} pathOptions={{ color: '#041418', weight: weight + 5, opacity: 0.85, lineCap: 'round' }} interactive={false} />
-            <Polyline positions={path} pathOptions={{ color, weight, opacity: 1, lineCap: 'round' }}>
+          <span key={`${route.route_id}-${mix}-${inset}-${route.route_id === selectedRouteId}`}>
+            <Polyline
+              positions={path}
+              pathOptions={{ color: route.route_id === selectedRouteId ? '#ffffff' : '#041418', weight: weight + (route.route_id === selectedRouteId ? 8 : 5), opacity: 0.9, lineCap: 'round' }}
+              interactive={false}
+            />
+            {/* Wide invisible line so thin routes are still easy to click */}
+            <Polyline positions={path} pathOptions={{ color: '#ffffff', weight: 22, opacity: 0 }} eventHandlers={{ click: () => onRouteClick(route.route_id) }} />
+            <Polyline positions={path} pathOptions={{ color, weight, opacity: 1, lineCap: 'round', className: 'route-line' }} eventHandlers={{ click: () => onRouteClick(route.route_id) }}>
               <Tooltip sticky className="map-tip">
                 <strong>{route.name}</strong>
                 <br />

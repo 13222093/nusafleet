@@ -21,6 +21,7 @@ def _point(result: PlanResult, **extra: float | str | None) -> dict:
         "plug_in_trip_share_pct": result.kpis.plug_in_trip_share_pct,
         "fleet_plan": [row.model_dump() for row in result.fleet_plan],
         "chargers": [row.model_dump() for row in result.chargers],
+        "routes": [row.model_dump() for row in result.routes],
     }
 
 

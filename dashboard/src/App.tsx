@@ -16,12 +16,14 @@ import Typography from '@mui/material/Typography';
 
 import { CarbonSensitivityChart, HeatmapChart, ParetoChart, VesselMixChart } from './components/Charts';
 import { ComparisonTable } from './components/ComparisonTable';
+import { AmbitionSlider, ScenarioTimeline } from './components/Controls';
 import { DataPage } from './components/DataPage';
 import { FleetTable } from './components/FleetTable';
 import { HeroPanel } from './components/HeroPanel';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
 import { MapView } from './components/MapView';
+import { RouteDrawer } from './components/RouteDrawer';
 import { num, rpBn, t } from './i18n';
 import type { Lang, ScenarioResult, Summary } from './types';
 
@@ -46,6 +48,8 @@ function App() {
   const [scenarioId, setScenarioId] = useState('');
   const [planIndex, setPlanIndex] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [mapView, setMapView] = useState<'plan' | 'today'>('plan');
+  const [routeId, setRouteId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -80,7 +84,6 @@ function App() {
   const base = result.baseline.kpis;
   const scenarioLabel = (id: string) => (lang === 'id' ? results[id].scenario.label_id : results[id].scenario.label_en);
 
-  const namedPlans = result.pareto.map((p, i) => ({ p, i })).filter(({ p }) => p.label !== null);
 
   const selectScenario = (id: string) => {
     // Keep the same kind of plan when switching scenario, if it exists there
@@ -115,26 +118,10 @@ function App() {
               </Box>
             </Stack>
           </Paper>
-          <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} sx={{ mt: 3 }}>
-            <Box>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>{t(lang, 'scenario')}</Typography>
-              <ToggleButtonGroup exclusive size="small" value={scenarioId} onChange={(_e, v: string | null) => v && selectScenario(v)} sx={toggleSx}>
-                {summary.scenario_ids.map((id) => (
-                  <ToggleButton key={id} value={id}>
-                    {scenarioLabel(id)}&nbsp;<span style={{ fontWeight: 400, opacity: 0.85 }}>{results[id].scenario.available_from_year}</span>
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </Box>
-            <Box>
-              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 0.5 }}>{t(lang, 'plan')}</Typography>
-              <ToggleButtonGroup exclusive size="small" value={index} onChange={(_e, v: number | null) => v !== null && setPlanIndex(v)} sx={toggleSx}>
-                {namedPlans.map(({ p, i }) => (
-                  <ToggleButton key={i} value={i}>{t(lang, p.label as 'balanced')}</ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            </Box>
-          </Stack>
+          <Paper variant="outlined" sx={{ mt: 3, p: { xs: 2, md: 3 }, borderRadius: 6, display: 'flex', flexWrap: 'wrap', gap: { xs: 3, md: 6 }, alignItems: 'flex-start' }}>
+            <ScenarioTimeline lang={lang} ids={summary.scenario_ids} results={results} activeId={scenarioId} onSelect={selectScenario} />
+            <AmbitionSlider lang={lang} points={result.pareto} index={index} onSelect={setPlanIndex} />
+          </Paper>
         </>
       ) : null}
     </Box>
@@ -157,9 +144,20 @@ function App() {
       <Grid container spacing={3} sx={{ mb: 4, alignItems: 'stretch' }}>
         <Grid size={{ xs: 12, lg: 8 }}>
           <Card elevation={2} sx={{ height: '100%' }}>
-            <CardHeader title={t(lang, 'mapTitle')} subheader={t(lang, 'mapNote')} titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }} subheaderTypographyProps={{ variant: 'body2' }} />
+            <CardHeader
+              title={t(lang, 'mapTitle')}
+              subheader={t(lang, 'mapNote')}
+              titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
+              subheaderTypographyProps={{ variant: 'body2' }}
+              action={
+                <ToggleButtonGroup exclusive size="small" value={mapView} onChange={(_e, v: 'plan' | 'today' | null) => v && setMapView(v)} aria-label={t(lang, 'showOnMap')} sx={{ ...toggleSx, mt: 1, mr: 1 }}>
+                  <ToggleButton value="today">{t(lang, 'today')}</ToggleButton>
+                  <ToggleButton value="plan">{t(lang, 'planShort')}</ToggleButton>
+                </ToggleButtonGroup>
+              }
+            />
             <CardContent sx={{ pt: 0 }}>
-              <MapView lang={lang} routes={summary.routes} ports={summary.ports} vesselTypes={summary.vessel_types} fleet={plan.fleet_plan} chargers={plan.chargers} />
+              <MapView lang={lang} routes={summary.routes} ports={summary.ports} vesselTypes={summary.vessel_types} fleet={mapView === 'today' ? result.baseline.fleet_plan : plan.fleet_plan} chargers={mapView === 'today' ? [] : plan.chargers} selectedRouteId={routeId} onRouteClick={setRouteId} />
             </CardContent>
           </Card>
         </Grid>
@@ -199,6 +197,17 @@ function App() {
       </Grid>
 
       <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={plan.label} />
+
+      <RouteDrawer
+        lang={lang}
+        route={summary.routes.find((r) => r.route_id === routeId) ?? null}
+        onClose={() => setRouteId(null)}
+        today={{ fleet: result.baseline.fleet_plan, routes: result.baseline.routes }}
+        plan={{ fleet: plan.fleet_plan, routes: plan.routes }}
+        chargers={plan.chargers}
+        ports={summary.ports}
+        vesselTypes={summary.vessel_types}
+      />
 
       <Alert severity="info" variant="outlined" sx={{ mt: 4, borderRadius: 4, bgcolor: 'background.paper' }}>
         {t(lang, 'neutral')}
