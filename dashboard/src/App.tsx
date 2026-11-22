@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { HeatmapChart, ParetoChart } from './components/Charts';
 import { ComparisonTable } from './components/ComparisonTable';
-import { PrioritySlider, ScenarioTimeline, scenarioShort } from './components/Controls';
+import { PrioritySeg, ScenarioPills, scenarioShort } from './components/Controls';
 import { DataPage } from './components/DataPage';
 import { FleetStrip } from './components/FleetTable';
 import { KpiBand } from './components/HeroPanel';
@@ -163,23 +163,7 @@ function App() {
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 436px' }, gap: 2, height: { lg: 'calc(100vh - 56px - 48px)' }, minHeight: { lg: 640 } }}>
       {/* Left: one dark console, controls on top and the map filling the rest */}
       <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 0, borderRadius: '24px', overflow: 'hidden', bgcolor: '#06252b' }}>
-        <Box sx={{ px: { xs: 2, md: 3 }, pt: 2, pb: 3.5, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.3fr 1fr' }, columnGap: 5, rowGap: 4, flexShrink: 0 }}>
-          <ScenarioTimeline
-            lang={lang}
-            ids={summary.scenario_ids}
-            results={results}
-            activeId={scenarioId}
-            onSelect={(id) => {
-              setPlaying(false);
-              selectScenario(id);
-            }}
-            stationCount={(id) => results[id].pareto[indexOfLabel(results[id].pareto, currentLabel ?? 'balanced')].chargers.length}
-            playing={playing}
-            onPlay={play}
-          />
-          <PrioritySlider lang={lang} points={result.pareto} index={index} onSelect={pickPoint} />
-        </Box>
-        <Box sx={{ flex: 1, minHeight: { xs: 460, lg: 0 } }}>
+        <Box sx={{ flex: 1, minHeight: { xs: 520, lg: 0 } }}>
           <MapView
             lang={lang}
             routes={summary.routes}
@@ -191,6 +175,24 @@ function App() {
             onRouteClick={setRouteId}
             view={mapView}
             onView={setMapView}
+            top={
+              <>
+                <ScenarioPills
+                  lang={lang}
+                  ids={summary.scenario_ids}
+                  results={results}
+                  activeId={scenarioId}
+                  onSelect={(id) => {
+                    setPlaying(false);
+                    selectScenario(id);
+                  }}
+                  stationCount={(id) => results[id].pareto[indexOfLabel(results[id].pareto, currentLabel ?? 'balanced')].chargers.length}
+                  playing={playing}
+                  onPlay={play}
+                />
+                <PrioritySeg lang={lang} points={result.pareto} index={index} onSelect={pickPoint} />
+              </>
+            }
           />
         </Box>
       </Box>

@@ -162,6 +162,8 @@ const STRINGS = {
     en: "more trips cancelled per year",
   },
   trips: { id: "trip", en: "trips" },
+  resetView: { id: "Kembali ke tampilan awal", en: "Reset the view" },
+  zoomHint: { id: "Scroll untuk zoom, klik rute untuk rincian", en: "Scroll to zoom, click a route for details" },
   rowCost: { id: "Biaya per tahun (Rp miliar)", en: "Cost per year (Rp bn)" },
   rowCo2: { id: "CO2 per tahun (ton)", en: "CO2 per year (tonnes)" },
   tabFleet: { id: "Armada", en: "Fleet" },

@@ -2,9 +2,10 @@
 // arcs, vessels sailing along them, and an inset for the three ports around Ternate.
 import 'leaflet/dist/leaflet.css';
 import { Fragment, useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 import { divIcon } from 'leaflet';
 import type { LatLngBoundsExpression } from 'leaflet';
-import { AttributionControl, CircleMarker, MapContainer, Marker, Polyline, Rectangle, TileLayer, Tooltip } from 'react-leaflet';
+import { AttributionControl, CircleMarker, MapContainer, Marker, Polyline, Rectangle, TileLayer, Tooltip, ZoomControl, useMap } from 'react-leaflet';
 
 import { NO_SERVICE_COLOR, VESSEL_COLOR_MAP, VESSEL_ORDER } from '../colors';
 import { num, t } from '../i18n';
@@ -22,6 +23,8 @@ interface Props {
   onRouteClick: (routeId: string) => void;
   view: 'plan' | 'today';
   onView: (view: 'plan' | 'today') => void;
+  /** Controls shown as a bar floating over the top of the map. */
+  top: ReactNode;
 }
 
 type LatLon = [number, number];
@@ -34,8 +37,8 @@ const INSET_BOUNDS: [LatLon, LatLon] = [
   [0.85, 127.64],
 ];
 const MAIN_BOUNDS: LatLngBoundsExpression = [
-  [0.35, 126.2],
-  [2.3, 128.6],
+  [0.3, 126.25],
+  [2.2, 128.5],
 ];
 // Label-free dark basemap, tinted towards deep teal in index.css
 const TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
@@ -237,13 +240,33 @@ function Boats({ routes, ports, vesselTypes, fleet, inset }: LayerProps) {
   );
 }
 
+/** Keeps the map framed on the routes: refits when the container changes size or a reset is asked for. */
+function FitController({ resetKey }: { resetKey: number }) {
+  const map = useMap();
+  useEffect(() => {
+    const fit = () => {
+      map.invalidateSize();
+      // Leave room for the control bar on top and the legend at the bottom
+      map.fitBounds(MAIN_BOUNDS, { paddingTopLeft: [16, 64], paddingBottomRight: [16, 56], animate: false });
+    };
+    fit();
+    const observer = new ResizeObserver(fit);
+    observer.observe(map.getContainer());
+    return () => observer.disconnect();
+  }, [map, resetKey]);
+  return null;
+}
+
 export function MapView(props: Props) {
-  const { lang, fleet, view, onView } = props;
+  const { lang, fleet, view, onView, top } = props;
+  const [resetKey, setResetKey] = useState(0);
   const usedTypes = VESSEL_ORDER.filter((type) => fleet.some((row) => row.vessel_type === type));
 
   return (
     <div className="map-stage">
-      <MapContainer bounds={MAIN_BOUNDS} scrollWheelZoom={false} zoomSnap={0.25} zoomControl={false} attributionControl={false} className="map">
+      <MapContainer bounds={MAIN_BOUNDS} scrollWheelZoom={true} zoomSnap={0.25} zoomDelta={0.5} minZoom={6} maxZoom={13} zoomControl={false} attributionControl={false} className="map">
+        <FitController resetKey={resetKey} />
+        <ZoomControl position="topright" />
         <TileLayer attribution={TILE_ATTRIBUTION} url={TILE_URL} />
         <AttributionControl prefix={false} position="bottomleft" />
         <Graticule />
@@ -252,18 +275,22 @@ export function MapView(props: Props) {
         <Boats {...props} inset={false} />
       </MapContainer>
 
-      <div className="map-top">
-        <span className="map-hint">{t(lang, 'hintClick')}</span>
-        <div className="seg" role="group" aria-label={t(lang, 'showOnMap')}>
-          <button type="button" aria-pressed={view === 'today'} onClick={() => onView('today')}>
-            {t(lang, 'todayShort')}
-          </button>
-          <button type="button" aria-pressed={view === 'plan'} onClick={() => onView('plan')}>
-            {t(lang, 'planShort')}
+      <div className="map-top">{top}</div>
+
+      <div className="map-bottom">
+        <div className="map-row">
+          <div className="seg" role="group" aria-label={t(lang, 'showOnMap')}>
+            <button type="button" aria-pressed={view === 'today'} onClick={() => onView('today')}>
+              {t(lang, 'todayShort')}
+            </button>
+            <button type="button" aria-pressed={view === 'plan'} onClick={() => onView('plan')}>
+              {t(lang, 'planShort')}
+            </button>
+          </div>
+          <button type="button" className="map-reset" onClick={() => setResetKey((k) => k + 1)} title={t(lang, 'resetView')} aria-label={t(lang, 'resetView')}>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
           </button>
         </div>
-      </div>
-
       <div className="map-legend">
         {usedTypes.map((type) => (
           <span key={type} className="legend-item">
@@ -275,7 +302,8 @@ export function MapView(props: Props) {
           <span className="charger-icon legend-charger" dangerouslySetInnerHTML={{ __html: BOLT }} />
           {t(lang, 'legendCharger')}
         </span>
-        <span className="legend-item legend-note">{t(lang, 'legendWide')}</span>
+        <span className="legend-item legend-note">{t(lang, 'zoomHint')}</span>
+      </div>
       </div>
 
       <div className="map-inset">
