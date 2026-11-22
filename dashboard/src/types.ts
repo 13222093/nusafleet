@@ -73,6 +73,13 @@ export interface ScenarioResult {
     elec_prices: number[];
     cells: HeatCell[];
   };
+  carbon_sweep: {
+    carbon_price_rp_per_tco2: number;
+    feasible: boolean;
+    cost_rp: number;
+    co2_t: number;
+    plug_in_trip_share_pct: number;
+  }[];
 }
 
 export interface Route {

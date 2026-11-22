@@ -26,3 +26,11 @@ Picks a set of tankers (one binary variable per vessel) to move a monthly tonnag
 | `cli/console.py` | Rich console helpers | Reused as-is in `engine/cli/console.py`. |
 | `optimization/shapley.py`, `optimization/mcmc.py` | Per-vessel Shapley values, MCMC robustness | Not ported yet (optional in the PRD). Kept in `_legacy` for a later port. |
 | `aggregation/vessel.py` | Per-vessel aggregation of movements | Dropped. |
+
+## Dashboard
+
+Source: https://github.com/Spchdt/maritime-hackathon-2026 (the Kopibara results dashboard). The repository has no LICENSE file; the team states it is open source under MIT (LinkedIn post), which is the basis for reuse here. Keep a link or screenshot of that statement with the project records.
+
+Taken as the base of `dashboard/`: `package.json` stack (React 19, Material UI 7, Recharts 3, lucide-react, Vite 7), the theme in `src/main.tsx`, `Layout.tsx` (navigation rail), `KPICard.tsx`, and the card, chart, heatmap and table styling in `Charts.tsx`, `FleetTable.tsx` and `ComparisonTable.tsx`.
+
+Changed: every component now reads the NusaFleet JSON outputs; added the route map (Leaflet), scenario and plan toggles, Indonesian and English copy, "estimate" chips and the Data & Assumptions page. Dropped: their `src/data/*.json` and `Kopibara_submission.csv` (results from the NUS hackathon dataset), the Shapley and MCMC visuals (not ported in the engine yet), and the dual-axis carbon chart (now a single-axis cost line).

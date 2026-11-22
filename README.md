@@ -32,7 +32,7 @@ data/         routes, ports, vessel types, wave climate, scenarios, assumptions
 engine/       the optimization engine (see below)
   _legacy/    untouched upstream Kopibara source, for reference
 api/          FastAPI: GET /scenarios, GET /scenarios/{id}, POST /solve
-dashboard/    React + Vite + TypeScript dashboard
+dashboard/    React + Vite + TypeScript + Material UI dashboard (built on the Kopibara dashboard)
 scripts/      fetch_waves.py (wave climate from Copernicus, or a placeholder)
 tests/        model sanity tests and API tests
 ```
@@ -56,7 +56,9 @@ tests/        model sanity tests and API tests
 Optimization engine adapted from team Kopibara (NUS Maritime Hackathon 2026), MIT license.
 Upstream repository: https://github.com/oadultradeepfield/maritime-hackathon-2026
 
-We reuse the engine structure, the PuLP and CBC solver setup, the capital recovery factor, the average-safety constraint form and the epsilon-constraint and sensitivity patterns. Their dataset is not used. Details are in `docs/UPSTREAM_NOTES.md`.
+Dashboard built on the Kopibara results dashboard (https://github.com/Spchdt/maritime-hackathon-2026): its React, Material UI and Recharts stack, theme, navigation rail layout, KPI card and chart and table styling. Their result data files are not included.
+
+In the engine we reuse the structure, the PuLP and CBC solver setup, the capital recovery factor, the average-safety constraint form and the epsilon-constraint and sensitivity patterns. Their dataset is not used. Details are in `docs/UPSTREAM_NOTES.md`.
 
 ## License
 

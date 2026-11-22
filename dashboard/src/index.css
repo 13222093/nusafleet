@@ -1,0 +1,58 @@
+@import url('https://fonts.cdnfonts.com/css/google-sans');
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Route map (Leaflet) */
+.map {
+    height: 600px;
+    border-radius: 16px;
+    z-index: 0;
+}
+
+.route-label.leaflet-tooltip {
+    background: #ffffff;
+    border: 1px solid #b2dfdb;
+    border-radius: 10px;
+    color: #004d40;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    box-shadow: none;
+}
+
+.route-label.leaflet-tooltip::before {
+    display: none;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #00695c;
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.swatch-line {
+    width: 18px;
+    height: 4px;
+    border-radius: 2px;
+}
+
+.swatch-ring {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 3px solid;
+    background: #ffffff;
+}

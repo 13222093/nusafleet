@@ -105,6 +105,31 @@ const STRINGS = {
     id: "Mesin optimasi diadaptasi dari tim Kopibara (NUS Maritime Hackathon 2026), lisensi MIT.",
     en: "Optimization engine adapted from team Kopibara (NUS Maritime Hackathon 2026), MIT license.",
   },
+  mixTitle: { id: "Armada menurut jenis kapal", en: "Fleet by vessel type" },
+  fleetSub: {
+    id: "Jumlah kapal dan trip harian per rute untuk rencana yang dipilih.",
+    en: "Vessels and daily trips per route for the selected plan.",
+  },
+  heatCorner: { id: "Solar \\ Listrik", en: "Diesel \\ Electricity" },
+  heatAxes: {
+    id: "Sumbu X: tarif listrik (Rp/kWh) | Sumbu Y: harga solar (Rp/L)",
+    en: "X-axis: electricity tariff (Rp/kWh) | Y-axis: diesel price (Rp/L)",
+  },
+  carbonTitle: { id: "Sensitivitas harga karbon", en: "Carbon price sensitivity" },
+  carbonNote: {
+    id: "Biaya tahunan rencana termurah pada tiap harga karbon.",
+    en: "Annual cost of the cheapest plan at each carbon price.",
+  },
+  axisCarbon: {
+    id: "Harga karbon (Rp juta per ton CO2)",
+    en: "Carbon price (Rp million per tonne CO2)",
+  },
+  perTonne: { id: "juta per ton CO2", en: "million per tonne CO2" },
+  colCo2Delta: { id: "CO2 vs saat ini", en: "CO2 vs today" },
+  headline: {
+    id: "Kapal mana di rute mana, dan di mana mengisi dayanya",
+    en: "Which vessel on which route, and where to charge it",
+  },
   loading: { id: "Memuat data...", en: "Loading data..." },
   loadError: {
     id: "Data tidak ditemukan. Jalankan `uv run python main.py` terlebih dahulu.",
