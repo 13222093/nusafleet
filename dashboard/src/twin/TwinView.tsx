@@ -445,7 +445,8 @@ function Rig({ controls, focus, resetKey }: { controls: React.RefObject<ElementR
     if (focus) {
       const box = new THREE.Box3().setFromPoints(focus.points);
       const center = box.getCenter(new THREE.Vector3());
-      const dist = Math.max(28, focus.lengthKm * 1.25);
+      // Far enough that the 370 m relief grid never reads as blocks
+      const dist = Math.max(70, focus.lengthKm * 1.9);
       void c.setLookAt(center.x, dist * 0.82, center.z + dist * 0.78, center.x, 0, center.z, true);
     }
   }, [controls, focus]);
