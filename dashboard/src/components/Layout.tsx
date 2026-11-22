@@ -8,7 +8,7 @@ import { Ship } from 'lucide-react';
 import { t } from '../i18n';
 import type { Lang } from '../types';
 
-export type Page = 'plan' | 'report' | 'data';
+export type Page = 'plan' | 'coop' | 'report' | 'data';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,6 +24,7 @@ const MINT = '#7fe3d2';
 export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
   const tabs: { id: Page; text: string }[] = [
     { id: 'plan', text: t(lang, 'navPlan') },
+    { id: 'coop', text: t(lang, 'navCoop') },
     { id: 'report', text: t(lang, 'navReport') },
     { id: 'data', text: t(lang, 'navData') },
   ];

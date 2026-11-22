@@ -127,6 +127,8 @@ export interface VesselType {
   hs_max_m: number;
   capex_rp: number;
   safety_score: number;
+  charge_kw: number;
+  turnaround_h: number;
   notes: string | null;
   source: string | null;
 }

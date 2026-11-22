@@ -5,6 +5,7 @@ import ButtonBase from '@mui/material/ButtonBase';
 import { Atom, Pause, Play, Plug, Sun, Zap } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
+import { COOP_EVENTS } from '../cooperation';
 import { num, t } from '../i18n';
 import type { StringKey } from '../i18n';
 import type { Lang, ParetoPoint, ScenarioResult } from '../types';
@@ -122,6 +123,29 @@ export function PrioritySeg({ lang, points, index, onSelect }: PriorityProps) {
           >
             {t(lang, p.label === 'least_cost' ? 'cheapest' : p.label === 'lowest_co2' ? 'cleanest' : 'balanced')}
           </ButtonBase>
+        );
+      })}
+    </Box>
+  );
+}
+
+/** Dated cooperation milestones; those already reached by the selected scenario year are lit. */
+export function CoopStrip({ lang, year }: { lang: Lang; year: number }) {
+  return (
+    <Box
+      role="list"
+      aria-label={t(lang, 'coopStrip')}
+      sx={{ ...glass, borderRadius: '14px', px: 1.5, py: 0.75, gap: 0, flexBasis: '100%', maxWidth: 'max-content', flexWrap: 'wrap', rowGap: 0.5 }}
+    >
+      {COOP_EVENTS.map((e, i) => {
+        const reached = e.year <= year;
+        return (
+          <Box key={e.when.en} role="listitem" title={e.text[lang]} sx={{ display: 'inline-flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+            {i > 0 ? <Box sx={{ width: 22, height: 2, mx: 0.75, bgcolor: reached ? MINT : 'rgba(255,255,255,0.25)', transition: 'background-color 0.4s' }} /> : null}
+            <Box sx={{ width: 9, height: 9, borderRadius: '50%', mr: 0.75, bgcolor: reached ? MINT : 'transparent', border: `2px solid ${reached ? MINT : 'rgba(255,255,255,0.5)'}`, transition: 'background-color 0.4s' }} />
+            <Box component="span" sx={{ fontSize: '0.72rem', fontWeight: 700, color: reached ? '#ffffff' : 'rgba(255,255,255,0.6)', fontVariantNumeric: 'tabular-nums', mr: 0.5 }}>{e.when[lang]}</Box>
+            <Box component="span" sx={{ fontSize: '0.72rem', fontWeight: 500, color: reached ? SOFT : 'rgba(255,255,255,0.5)' }}>{e.short[lang]}</Box>
+          </Box>
         );
       })}
     </Box>

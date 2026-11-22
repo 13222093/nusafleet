@@ -4,24 +4,26 @@ import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
-import { Check, FileText, Plus } from 'lucide-react';
+import { ArrowRight, Check, FileText, Plus } from 'lucide-react';
 import Typography from '@mui/material/Typography';
 
 import { HeatmapChart, ParetoChart } from './components/Charts';
 import { AlternativesPanel } from './components/AlternativesPanel';
 import { ComparisonTable } from './components/ComparisonTable';
-import { PrioritySeg, ScenarioPills, scenarioShort } from './components/Controls';
+import { CoopPage } from './components/CoopPage';
+import { CoopStrip, PrioritySeg, ScenarioPills, scenarioShort } from './components/Controls';
 import { DataPage } from './components/DataPage';
 import { FleetStrip } from './components/FleetTable';
 import { KpiBand } from './components/HeroPanel';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
-import { MapView } from './components/MapView';
+import { MapView, vesselShort } from './components/MapView';
 import { ReportPage } from './components/ReportPage';
 import { RouteDrawer } from './components/RouteDrawer';
 import { WhatIfPanel } from './components/WhatIfPanel';
 import type { Knob } from './components/WhatIfPanel';
 import { num, t } from './i18n';
+import { vesselSpecs } from './cooperation';
 import { useLiveSolve } from './live';
 import type { Overrides } from './live';
 import { recommend } from './recommend';
@@ -114,7 +116,6 @@ function App() {
   if (failed) return shell(<Alert severity="error">{t(lang, 'loadError')}</Alert>);
   if (!summary || !results[scenarioId]) return shell(<Typography color="text.secondary">{t(lang, 'loading')}</Typography>);
   if (page === 'data') return shell(<DataPage lang={lang} summary={summary} />);
-  if (page === 'report') return shell(<ReportPage lang={lang} summary={summary} results={results} alts={alts} onBack={() => setPage('plan')} />);
 
   const result = results[scenarioId];
   const index = Math.min(planIndex, result.pareto.length - 1);
@@ -191,6 +192,11 @@ function App() {
   };
   const actionSx = { height: 38, gap: 0.75, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 700, border: '1px solid #dde6e4', '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } } as const;
 
+  const currentName = `${live.result ? altName : `${planName}, ${scenarioName(scenarioId)}`}`;
+  if (page === 'report') return shell(<ReportPage lang={lang} summary={summary} results={results} alts={alts} current={{ name: currentName, plan }} onBack={() => setPage('plan')} />);
+  if (page === 'coop') return shell(<CoopPage lang={lang} summary={summary} plan={plan} planName={currentName} />);
+  const specRows = vesselSpecs(summary.routes, plan, summary.vessel_types);
+
   return shell(
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 436px' }, gap: 2, height: { lg: 'calc(100vh - 56px - 48px)' }, minHeight: { lg: 640 } }}>
       {/* Left: one dark console, controls on top and the map filling the rest */}
@@ -223,6 +229,7 @@ function App() {
                   onPlay={play}
                 />
                 <PrioritySeg lang={lang} points={result.pareto} index={index} onSelect={pickPoint} />
+                <CoopStrip lang={lang} year={result.scenario.available_from_year} />
               </>
             }
           />
@@ -262,7 +269,31 @@ function App() {
         </Box>
 
         <Box role="tabpanel" sx={{ flexShrink: 0 }}>
-          {shownTab === 'fleet' ? <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} /> : null}
+          {shownTab === 'fleet' ? (
+            <Box sx={{ display: 'grid', gap: 2 }}>
+              <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} />
+              <Box sx={{ p: 2.5, borderRadius: '24px', bgcolor: '#ffffff', border: '1px solid #dde6e4' }}>
+                <Typography sx={{ fontSize: '1rem', fontWeight: 700, mb: 1 }}>{t(lang, 'specShort')}</Typography>
+                {specRows.length === 0 ? (
+                  <Typography sx={{ fontSize: '0.88rem', color: 'text.secondary' }}>{t(lang, 'specNone')}</Typography>
+                ) : (
+                  <Box component="ul" sx={{ m: 0, pl: 2.25, display: 'grid', gap: 0.5 }}>
+                    {specRows.map((r) => (
+                      <Box component="li" key={`${r.routeId}-${r.vesselType}`} sx={{ fontSize: '0.85rem', lineHeight: 1.45 }}>
+                        <strong>{r.routeName}</strong>: {r.count} {vesselShort(r.vesselType, lang)}, {num(lang, r.capacityPax)} pax, {num(lang, r.speedKn)} kn, Hs {num(lang, r.waveLimitM, 1)} m
+                        {r.minRangeNm !== null ? `, ${num(lang, r.minRangeNm, 1)} nm` : ''}
+                        {r.chargeKw !== null ? `, ${num(lang, r.chargeKw)} kW` : ''}
+                      </Box>
+                    ))}
+                  </Box>
+                )}
+                <ButtonBase onClick={() => setPage('coop')} sx={{ mt: 1.5, gap: 0.5, fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 700, color: '#00695c', borderRadius: '8px', '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } }}>
+                  {t(lang, 'specOpen')}
+                  <ArrowRight size={14} />
+                </ButtonBase>
+              </Box>
+            </Box>
+          ) : null}
           {shownTab === 'analysis' ? (
             <Box sx={{ display: 'grid', gap: 2 }}>
               <ParetoChart lang={lang} results={results} activeId={scenarioId} selectedIndex={index} onSelect={pickPoint} />

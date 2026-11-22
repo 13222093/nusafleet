@@ -11,7 +11,9 @@ import { num, rpBn, t } from '../i18n';
 import { recommend, routeChanges, tripsAvoided } from '../recommend';
 import type { Alternative } from '../recommend';
 import type { FleetRow, Kpis, Lang, ParetoPoint, ScenarioResult, Summary } from '../types';
+import { COOP_EVENTS, COOP_SOURCE, vesselSpecs } from '../cooperation';
 import { scenarioShort } from './Controls';
+import { SpecTable, coopProposals } from './CoopPage';
 import { vesselShort } from './MapView';
 
 interface Props {
@@ -19,6 +21,8 @@ interface Props {
   summary: Summary;
   results: Record<string, ScenarioResult>;
   alts: Alternative[];
+  /** The plan selected on the Plan page; the requirement sheet is derived from it. */
+  current: { name: string; plan: ParetoPoint };
   onBack: () => void;
 }
 
@@ -72,6 +76,10 @@ const COPY = {
       'Model satu periode: belum ada penjadwalan investasi bertahap dari tahun ke tahun.',
       'Ganti iklim gelombang sementara dengan data Copernicus Marine atau ERA5 sebelum hasil dipakai untuk keputusan.',
     ],
+    s7: '7. Peluang kerja sama Indonesia dan Rusia',
+    s7intro: 'Dua jalur kerja sama bertemu di Maluku Utara: perkapalan hijau dan pasokan listrik baru. Peran NusaFleet adalah menerjemahkan rute menjadi kebutuhan kapal dan daya yang bisa dijawab kedua pihak.',
+    s7spec: 'Spesifikasi kebutuhan kapal baru',
+    s7prop: 'Usulan',
     footer: 'Model ini netral terhadap pemasok energi: PLN, surya, dan unit pembangkit terapung diuji dengan angka yang sama. Mesin optimasi diadaptasi dari tim Kopibara (NUS Maritime Hackathon 2026), lisensi MIT.',
   },
   en: {
@@ -123,6 +131,10 @@ const COPY = {
       'Single-period model: no phased investment schedule over the years.',
       'Replace the placeholder wave climate with Copernicus Marine or ERA5 data before the results are used for decisions.',
     ],
+    s7: '7. Opportunities for Indonesia and Russia cooperation',
+    s7intro: 'Two cooperation tracks meet in North Maluku: green shipbuilding and a new power supply. NusaFleet turns routes into vessel and power requirements that both sides can respond to.',
+    s7spec: 'Requirement sheet for new vessels',
+    s7prop: 'Proposals',
     footer: 'The model is supply-neutral: PLN grid, solar and floating power units are tested with the same numbers. Optimization engine adapted from team Kopibara (NUS Maritime Hackathon 2026), MIT license.',
   },
 } as const;
@@ -147,7 +159,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 const P = ({ children }: { children: ReactNode }) => <Typography sx={{ fontSize: '0.92rem', lineHeight: 1.6, mb: 1 }}>{children}</Typography>;
 
-export function ReportPage({ lang, summary, results, alts, onBack }: Props) {
+export function ReportPage({ lang, summary, results, alts, current, onBack }: Props) {
+  const specRows = vesselSpecs(summary.routes, current.plan, summary.vessel_types);
   const c = COPY[lang];
   const ids = summary.scenario_ids;
   const first = results[ids[0]];
@@ -343,6 +356,32 @@ export function ReportPage({ lang, summary, results, alts, onBack }: Props) {
             {c.limits.map((item) => (
               <Box component="li" key={item} sx={{ fontSize: '0.92rem', lineHeight: 1.6, mb: 0.5 }}>
                 {item}
+              </Box>
+            ))}
+          </Box>
+        </Section>
+
+        <Section title={c.s7}>
+          <P>{c.s7intro}</P>
+          <Box component="ul" sx={{ m: 0, mb: 1.5, pl: 2.5 }}>
+            {COOP_EVENTS.map((e) => (
+              <Box component="li" key={e.when.en} sx={{ fontSize: '0.88rem', lineHeight: 1.55, mb: 0.4 }}>
+                <strong>{e.when[lang]}.</strong> {e.text[lang]}
+              </Box>
+            ))}
+          </Box>
+          <Typography sx={{ fontSize: '0.78rem', color: '#8a5a00', fontWeight: 600, mb: 2 }}>{COOP_SOURCE[lang]}</Typography>
+          <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 700, mb: 0.5 }}>
+            {c.s7spec}: {current.name}
+          </Typography>
+          <SpecTable lang={lang} rows={specRows} />
+          <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 700, mt: 2.5, mb: 0.5 }}>
+            {c.s7prop}
+          </Typography>
+          <Box component="ol" sx={{ m: 0, pl: 2.5 }}>
+            {coopProposals(lang, specRows).map((text) => (
+              <Box component="li" key={text} sx={{ fontSize: '0.92rem', lineHeight: 1.6, mb: 0.5 }}>
+                {text}
               </Box>
             ))}
           </Box>

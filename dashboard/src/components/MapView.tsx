@@ -247,7 +247,7 @@ function FitController({ resetKey }: { resetKey: number }) {
     const fit = () => {
       map.invalidateSize();
       // Leave room for the control bar on top and the legend at the bottom
-      map.fitBounds(MAIN_BOUNDS, { paddingTopLeft: [16, 64], paddingBottomRight: [16, 56], animate: false });
+      map.fitBounds(MAIN_BOUNDS, { paddingTopLeft: [16, 104], paddingBottomRight: [16, 56], animate: false });
     };
     fit();
     const observer = new ResizeObserver(fit);
