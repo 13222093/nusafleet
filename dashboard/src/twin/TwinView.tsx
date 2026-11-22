@@ -6,7 +6,7 @@ import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import type { ElementRef, ReactNode } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { CameraControls, Html, Line, useGLTF, useTexture } from '@react-three/drei';
+import { CameraControls, Html, Line, useGLTF, useProgress, useTexture } from '@react-three/drei';
 
 import { NO_SERVICE_COLOR, UI, VESSEL_COLOR_MAP, VESSEL_DASH, VESSEL_ORDER } from '../colors';
 import { num, t } from '../i18n';
@@ -485,6 +485,9 @@ export default function TwinView(props: TwinProps) {
   const { lang, fleet, view, onView, onMode, top } = props;
   const [resetKey, setResetKey] = useState(0);
   const north = useRef<HTMLDivElement>(null);
+  // Real download progress of the relief model and textures, shown until the scene is ready
+  const { progress, active } = useProgress();
+  const loading = active || progress < 100;
   const still = useMemo(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches, []);
   const usedTypes = VESSEL_ORDER.filter((type) => fleet.some((row) => row.vessel_type === type));
 
@@ -505,6 +508,12 @@ export default function TwinView(props: TwinProps) {
           <Scene {...props} resetKey={resetKey} still={still} north={north} />
         </Suspense>
       </Canvas>
+
+      {loading ? (
+        <div className="twin-loading" role="status">
+          {t(lang, 'loadingModel')} <span>{Math.round(progress)}%</span>
+        </div>
+      ) : null}
 
       <div className="map-top">{top}</div>
 

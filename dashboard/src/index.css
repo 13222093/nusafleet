@@ -454,6 +454,24 @@ body {
     opacity: 0;
 }
 
+.twin-loading {
+    position: absolute;
+    inset: 0;
+    z-index: 300;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.twin-loading span {
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+}
+
 .twin-north {
     position: absolute;
     top: 74px;
