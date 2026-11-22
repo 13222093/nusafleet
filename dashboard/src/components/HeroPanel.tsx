@@ -57,7 +57,7 @@ interface Props {
 function Tile({ value, unit, label, better }: { value: string; unit?: string; label: string; better: boolean }) {
   return (
     <Box sx={{ minWidth: 0 }}>
-      <Typography component="div" sx={{ fontFamily: MONO, fontSize: { xs: '2rem', md: '2.6rem', lg: '3rem' }, fontWeight: 700, lineHeight: 1, letterSpacing: '-0.03em', color: better ? MINT : AMBER, whiteSpace: 'nowrap' }}>
+      <Typography component="div" sx={{ fontFamily: MONO, fontSize: { xs: '1.9rem', xl: '2.2rem' }, fontWeight: 700, lineHeight: 1, letterSpacing: '-0.03em', color: better ? MINT : AMBER, whiteSpace: 'nowrap' }}>
         {value}
         {unit ? (
           <Typography component="span" sx={{ fontFamily: MONO, fontSize: '0.4em', fontWeight: 600, ml: 1, color: 'inherit', letterSpacing: 0 }}>
@@ -65,7 +65,7 @@ function Tile({ value, unit, label, better }: { value: string; unit?: string; la
           </Typography>
         ) : null}
       </Typography>
-      <Typography sx={{ mt: 1, fontSize: '0.9rem', color: SOFT, lineHeight: 1.3 }}>{label}</Typography>
+      <Typography sx={{ mt: 0.5, fontSize: '0.85rem', color: SOFT, lineHeight: 1.3 }}>{label}</Typography>
     </Box>
   );
 }
@@ -88,8 +88,8 @@ export function KpiBand({ lang, plan, base, caption }: Props) {
   ];
 
   return (
-    <Box sx={{ mb: 2, p: { xs: 2.5, md: 3.5 }, borderRadius: '24px', bgcolor: INK, color: '#ffffff' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, mb: { xs: 2, md: 2.5 } }}>
+    <Box sx={{ p: 2.5, borderRadius: '24px', bgcolor: INK, color: '#ffffff', flexShrink: 0 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2, mb: 2 }}>
         <Typography sx={{ fontSize: '0.9rem', color: SOFT }}>
           <Box component="span" sx={{ color: '#ffffff', fontWeight: 700, mr: 1 }}>{t(lang, 'kpiVs')}</Box>
           {caption}
@@ -97,17 +97,17 @@ export function KpiBand({ lang, plan, base, caption }: Props) {
         <EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} />
       </Box>
 
-      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: { xs: 2.5, md: 4 } }}>
+      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2 }}>
         <Tile value={`${sign(costDelta)}${rpBn(lang, Math.abs(costShown))}`} label={t(lang, 'kpiCostLabel')} better={costDelta <= 0} />
         <Tile value={`${sign(co2Delta)}${num(lang, Math.abs(co2Shown))}`} unit="t" label={`${t(lang, 'kpiCo2Label')} (${sign(co2Pct)}${num(lang, Math.abs(co2Pct))}%)`} better={co2Delta <= 0} />
         <Tile value={`${tripsAvoided >= 0 ? '+' : '−'}${num(lang, Math.abs(tripsShown))}`} label={t(lang, tripsAvoided >= 0 ? 'kpiTripsLabel' : 'heroTripsMore')} better={tripsAvoided >= 0} />
       </Box>
 
-      <Box sx={{ mt: { xs: 2.5, md: 3 }, pt: 2, borderTop: '1px solid rgba(255,255,255,0.14)', display: 'flex', flexWrap: 'wrap', columnGap: 4, rowGap: 1 }}>
+      <Box sx={{ mt: 2.5, pt: 2, borderTop: '1px solid rgba(255,255,255,0.14)', display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: 2, rowGap: 1 }}>
         {facts.map(([label, value]) => (
-          <Typography key={label} sx={{ fontSize: '0.85rem', color: SOFT }}>
-            {label}{' '}
-            <Box component="span" sx={{ color: '#ffffff', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{value}</Box>
+          <Typography key={label} sx={{ fontSize: '0.78rem', color: SOFT, lineHeight: 1.35 }}>
+            {label}
+            <Box component="span" sx={{ display: 'block', fontSize: '0.9rem', color: '#ffffff', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{value}</Box>
           </Typography>
         ))}
       </Box>

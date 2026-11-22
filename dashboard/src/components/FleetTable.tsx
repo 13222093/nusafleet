@@ -16,7 +16,7 @@ const LETTER: Record<string, string> = { diesel_old: 'D', diesel_new: 'D+', hybr
 
 function Hull({ type, title }: { type: string; title: string }) {
   return (
-    <Box component="svg" viewBox="0 0 48 26" role="img" aria-label={title} sx={{ width: 48, height: 26, flexShrink: 0 }}>
+    <Box component="svg" viewBox="0 0 48 26" role="img" aria-label={title} sx={{ width: 40, height: 22, flexShrink: 0 }}>
       <title>{title}</title>
       <path d="M15 2h16v7H15z" fill={VESSEL_COLOR[type]} opacity="0.55" />
       <path d="M2 9h44l-6 14H8z" fill={VESSEL_COLOR[type]} />
@@ -59,7 +59,7 @@ export function FleetStrip({ lang, routes, today, plan, safetyToday, safetyPlan 
           {t(lang, 'fleetTitle')}
         </Typography>
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(110px, 1.3fr) minmax(0, 1fr) 20px minmax(0, 1fr) auto', columnGap: 1.5, rowGap: 1.5, alignItems: 'center' }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(84px, 1.1fr) minmax(0, 1fr) 16px minmax(0, 1fr) auto', columnGap: 1, rowGap: 1.5, alignItems: 'center' }}>
           <Typography sx={head}>{t(lang, 'colRoute')}</Typography>
           <Typography sx={head}>{t(lang, 'todayShort')}</Typography>
           <span />

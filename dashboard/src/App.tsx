@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
+import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
 
 import { HeatmapChart, ParetoChart } from './components/Charts';
@@ -12,7 +12,6 @@ import { PrioritySlider, ScenarioTimeline, scenarioShort } from './components/Co
 import { DataPage } from './components/DataPage';
 import { FleetStrip } from './components/FleetTable';
 import { KpiBand } from './components/HeroPanel';
-import { EstimateChip } from './components/KPICard';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
 import { MapView } from './components/MapView';
@@ -38,6 +37,8 @@ function indexOfLabel(points: ParetoPoint[], label: ParetoPoint['label']): numbe
 
 const PLAY_STEP_MS = 3200;
 
+type Tab = 'fleet' | 'pareto' | 'heat' | 'compare' | 'whatif';
+
 function App() {
   const [lang, setLang] = useState<Lang>('id');
   const [page, setPage] = useState<Page>('plan');
@@ -50,6 +51,7 @@ function App() {
   const [routeId, setRouteId] = useState<string | null>(null);
   const [overrides, setOverrides] = useState<Overrides>({});
   const [playing, setPlaying] = useState(false);
+  const [tab, setTab] = useState<Tab>('fleet');
   const live = useLiveSolve(scenarioId, overrides);
 
   useEffect(() => {
@@ -143,13 +145,25 @@ function App() {
     setPlaying(true);
   };
 
-  return shell(
-    <Box>
-      <KpiBand lang={lang} plan={plan} base={base} caption={`${planName}, ${scenarioName(scenarioId)}`} />
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'fleet', label: t(lang, 'tabFleet') },
+    { id: 'pareto', label: t(lang, 'tabPareto') },
+    { id: 'heat', label: t(lang, 'tabHeat') },
+    { id: 'compare', label: t(lang, 'tabCompare') },
+    // The live sliders need the solver API; without it the tab is left out
+    ...(live.apiOnline === true ? [{ id: 'whatif' as Tab, label: t(lang, 'tabWhatIf') }] : []),
+  ];
+  const shownTab: Tab = tabs.some((x) => x.id === tab) ? tab : 'fleet';
+  const pickPoint = (i: number) => {
+    setOverrides({});
+    setPlanIndex(i);
+  };
 
-      {/* One dark console: controls on top, the map right under them */}
-      <Box sx={{ mb: 2, borderRadius: '24px', overflow: 'hidden', bgcolor: '#06252b' }}>
-        <Box sx={{ px: { xs: 2, md: 3.5 }, pt: { xs: 2, md: 2.5 }, pb: { xs: 3.5, md: 4 }, display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1.25fr 1fr' }, columnGap: 6, rowGap: 4 }}>
+  return shell(
+    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 436px' }, gap: 2, height: { lg: 'calc(100vh - 56px - 48px)' }, minHeight: { lg: 640 } }}>
+      {/* Left: one dark console, controls on top and the map filling the rest */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 0, borderRadius: '24px', overflow: 'hidden', bgcolor: '#06252b' }}>
+        <Box sx={{ px: { xs: 2, md: 3 }, pt: 2, pb: 3.5, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.3fr 1fr' }, columnGap: 5, rowGap: 4, flexShrink: 0 }}>
           <ScenarioTimeline
             lang={lang}
             ids={summary.scenario_ids}
@@ -163,66 +177,53 @@ function App() {
             playing={playing}
             onPlay={play}
           />
-          <PrioritySlider
+          <PrioritySlider lang={lang} points={result.pareto} index={index} onSelect={pickPoint} />
+        </Box>
+        <Box sx={{ flex: 1, minHeight: { xs: 460, lg: 0 } }}>
+          <MapView
             lang={lang}
-            points={result.pareto}
-            index={index}
-            onSelect={(i) => {
-              setOverrides({});
-              setPlanIndex(i);
-            }}
+            routes={summary.routes}
+            ports={summary.ports}
+            vesselTypes={summary.vessel_types}
+            fleet={mapView === 'today' ? todayFleet : plan.fleet_plan}
+            chargers={mapView === 'today' ? [] : plan.chargers}
+            selectedRouteId={routeId}
+            onRouteClick={setRouteId}
+            view={mapView}
+            onView={setMapView}
           />
         </Box>
-        <MapView
-          lang={lang}
-          routes={summary.routes}
-          ports={summary.ports}
-          vesselTypes={summary.vessel_types}
-          fleet={mapView === 'today' ? todayFleet : plan.fleet_plan}
-          chargers={mapView === 'today' ? [] : plan.chargers}
-          selectedRouteId={routeId}
-          onRouteClick={setRouteId}
-          view={mapView}
-          onView={setMapView}
-        />
       </Box>
 
-      {/* The live sliders need the solver API; without it they are left out */}
-      {live.apiOnline === true ? <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} /> : null}
+      {/* Right: headline numbers always visible, details one tab away */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minHeight: 0, overflowY: { lg: 'auto' }, pr: { lg: 0.5 } }}>
+        <KpiBand lang={lang} plan={plan} base={base} caption={`${planName}, ${scenarioName(scenarioId)}`} />
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 4, mb: 2 }}>
-        <Typography variant="h5" component="h2" sx={{ fontWeight: 700 }}>
-          {t(lang, 'exploreTitle')}
-        </Typography>
-        <EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} />
+        <Box role="tablist" aria-label={t(lang, 'detailTabs')} sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, flexShrink: 0 }}>
+          {tabs.map((x) => {
+            const on = x.id === shownTab;
+            return (
+              <ButtonBase
+                key={x.id}
+                role="tab"
+                aria-selected={on}
+                onClick={() => setTab(x.id)}
+                sx={{ height: 32, px: 1.2, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.78rem', fontWeight: 700, whiteSpace: 'nowrap', color: on ? '#ffffff' : 'text.secondary', bgcolor: on ? '#06252b' : '#ffffff', border: '1px solid', borderColor: on ? '#06252b' : '#dde6e4', '&:hover': { borderColor: '#06252b' }, '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } }}
+              >
+                {x.label}
+              </ButtonBase>
+            );
+          })}
+        </Box>
+
+        <Box role="tabpanel" sx={{ flexShrink: 0 }}>
+          {shownTab === 'fleet' ? <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} /> : null}
+          {shownTab === 'pareto' ? <ParetoChart lang={lang} results={results} activeId={scenarioId} selectedIndex={index} onSelect={pickPoint} /> : null}
+          {shownTab === 'heat' ? <HeatmapChart lang={lang} result={result} /> : null}
+          {shownTab === 'compare' ? <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={sliderPlan.label ?? 'balanced'} /> : null}
+          {shownTab === 'whatif' ? <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} /> : null}
+        </Box>
       </Box>
-
-      <Grid container spacing={2} sx={{ mb: 2, alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <ParetoChart
-            lang={lang}
-            results={results}
-            activeId={scenarioId}
-            selectedIndex={index}
-            onSelect={(i) => {
-              setOverrides({});
-              setPlanIndex(i);
-            }}
-          />
-        </Grid>
-      </Grid>
-
-      <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <HeatmapChart lang={lang} result={result} />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={sliderPlan.label ?? 'balanced'} />
-        </Grid>
-      </Grid>
 
       <RouteDrawer
         lang={lang}

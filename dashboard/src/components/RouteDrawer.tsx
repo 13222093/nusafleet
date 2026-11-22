@@ -90,7 +90,7 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
   const labels = { todayLabel: t(lang, 'todayShort'), planLabel: t(lang, 'planShort') };
 
   return (
-    <Drawer anchor="right" variant="persistent" open={route !== null} onClose={onClose} PaperProps={{ sx: { width: { xs: '100%', sm: 420 }, bgcolor: 'background.paper', borderRadius: { xs: 0, sm: '24px 0 0 24px' }, boxShadow: '-12px 0 40px rgba(6,37,43,0.25)', borderLeft: '1px solid #dde6e4' } }}>
+    <Drawer anchor="right" variant="persistent" open={route !== null} onClose={onClose} PaperProps={{ sx: { top: { sm: 56 }, height: { sm: 'calc(100% - 56px)' }, width: { xs: '100%', sm: 436 }, bgcolor: 'background.paper', borderRadius: { xs: 0, sm: '24px 0 0 24px' }, boxShadow: '-12px 0 40px rgba(6,37,43,0.25)', borderLeft: '1px solid #dde6e4' } }}>
       {route ? (
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>

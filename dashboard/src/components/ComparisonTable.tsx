@@ -5,7 +5,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 
-import { num, rpBn, t } from '../i18n';
+import { num, t } from '../i18n';
 import type { Lang, ParetoPoint, ScenarioResult } from '../types';
 import { scenarioShort } from './Controls';
 import { EstimateChip } from './KPICard';
@@ -25,14 +25,14 @@ export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
   const tripsAvoided = (p: ParetoPoint) => ((p.reliability_pct - base.reliability_pct) / 100) * base.scheduled_trips_per_year;
 
   const rows: { label: string; today: string; cell: (p: ParetoPoint) => string }[] = [
-    { label: t(lang, 'kpiCost'), today: rpBn(lang, base.annual_cost_rp), cell: (p) => rpBn(lang, p.cost_rp) },
-    { label: t(lang, 'kpiCo2'), today: `${num(lang, base.co2_t)} t`, cell: (p) => `${num(lang, p.co2_t)} t` },
+    { label: t(lang, 'rowCost'), today: num(lang, base.annual_cost_rp / 1e9, 1), cell: (p) => num(lang, p.cost_rp / 1e9, 1) },
+    { label: t(lang, 'rowCo2'), today: num(lang, base.co2_t), cell: (p) => num(lang, p.co2_t) },
     { label: t(lang, 'colCo2Delta'), today: '0%', cell: (p) => `${signed((100 * (p.co2_t - base.co2_t)) / base.co2_t)}%` },
     { label: t(lang, 'rowTrips'), today: '0', cell: (p) => signed(tripsAvoided(p)) },
     { label: t(lang, 'stationsShort'), today: '0', cell: (p) => String(p.chargers.length) },
   ];
 
-  const cellSx = { px: 1.5, py: 1.25, fontSize: '0.9rem', textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', borderTop: '1px solid', borderColor: 'divider' } as const;
+  const cellSx = { px: 0.75, py: 1.1, fontSize: '0.82rem', textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', borderTop: '1px solid', borderColor: 'divider' } as const;
   const planName = t(lang, planLabel === 'least_cost' ? 'cheapest' : planLabel === 'lowest_co2' ? 'cleanest' : 'balanced');
 
   return (
@@ -51,16 +51,16 @@ export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
             <thead>
               <tr>
                 <Box component="th" sx={{ textAlign: 'left' }} />
-                <Box component="th" scope="col" sx={{ px: 1.5, py: 1, textAlign: 'right', fontSize: '0.8rem', fontWeight: 700, color: 'text.secondary' }}>
+                <Box component="th" scope="col" sx={{ px: 0.75, py: 1, textAlign: 'right', fontSize: '0.75rem', fontWeight: 700, color: 'text.secondary', verticalAlign: 'bottom' }}>
                   {t(lang, 'todayShort')}
                 </Box>
                 {ids.map((id) => {
                   const active = id === activeId;
                   const s = results[id].scenario;
                   return (
-                    <Box component="th" scope="col" key={id} sx={{ px: 1.5, py: 1, textAlign: 'right', bgcolor: active ? '#e3f5f1' : 'transparent', borderRadius: active ? '12px 12px 0 0' : 0 }}>
+                    <Box component="th" scope="col" key={id} sx={{ px: 0.75, py: 1, textAlign: 'right', verticalAlign: 'bottom', bgcolor: active ? '#e3f5f1' : 'transparent', borderRadius: active ? '12px 12px 0 0' : 0 }}>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>{s.available_from_year}</Typography>
-                      <Typography sx={{ fontSize: '0.72rem', color: 'text.secondary', lineHeight: 1.2 }}>{scenarioShort(id, lang, lang === 'id' ? s.label_id : s.label_en)}</Typography>
+                      <Typography sx={{ fontSize: '0.68rem', color: 'text.secondary', lineHeight: 1.2 }}>{scenarioShort(id, lang, lang === 'id' ? s.label_id : s.label_en)}</Typography>
                     </Box>
                   );
                 })}

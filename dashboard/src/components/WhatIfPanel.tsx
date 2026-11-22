@@ -40,7 +40,7 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
   const active = Object.values(overrides).some((v) => v !== undefined);
 
   return (
-    <Card sx={{ mb: 2 }}>
+    <Card>
       <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ mb: 2.5, minHeight: 32 }}>
           <Box>
@@ -64,7 +64,7 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
           </Alert>
         ) : null}
 
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: { xs: 3, md: 5 } }}>
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr', gap: 2.5 }}>
           {knobs.map((knob) => {
             const value = overrides[knob.key] ?? knob.fallback;
             const changed = overrides[knob.key] !== undefined;

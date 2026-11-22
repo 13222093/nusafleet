@@ -55,7 +55,7 @@ export function ParetoChart({ lang, results, activeId, selectedIndex, onSelect }
     <Card>
       <Header lang={lang} title={t(lang, 'paretoTitle')} subheader={t(lang, 'paretoNote')} />
       <CardContent>
-        <div style={{ height: 300, width: '100%' }}>
+        <div style={{ height: 280, width: '100%' }}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart margin={{ top: 8, right: 24, bottom: 24, left: 8 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -188,7 +188,7 @@ export function HeatmapChart({ lang, result }: { lang: Lang; result: ScenarioRes
       <Header lang={lang} title={t(lang, 'heatTitle')} subheader={t(lang, 'heatNote')} />
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 0 }}>
         <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 300, overflowX: 'auto' }}>
-          <div style={{ flexGrow: 1, display: 'grid', gap: '8px', gridTemplateColumns: `auto repeat(${cols.length}, 1fr)`, gridTemplateRows: `auto repeat(${diesel.length}, 1fr)`, minWidth: flat ? 0 : 520, maxWidth: flat ? 360 : 'none', padding: '16px' }}>
+          <div style={{ flexGrow: 1, display: 'grid', gap: '5px', gridTemplateColumns: `auto repeat(${cols.length}, 1fr)`, gridTemplateRows: `auto repeat(${diesel.length}, 1fr)`, minWidth: flat ? 0 : 340, maxWidth: flat ? 360 : 'none', padding: '16px' }}>
             <div style={{ fontSize: '12px', fontWeight: 600, color: '#51676a', textAlign: 'right', paddingRight: '8px', alignSelf: 'center' }}>
               {flat ? t(lang, 'heatDiesel') : t(lang, 'heatCorner')}
             </div>

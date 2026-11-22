@@ -30,7 +30,7 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
       <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: INK, color: '#ffffff' }}>
-        <Box sx={{ maxWidth: 1320, mx: 'auto', px: { xs: 2, md: 3 }, height: 56, display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 3 } }}>
+        <Box sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, height: 56, display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 3 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: MINT }}>
             <Ship size={22} />
             <Typography component="span" sx={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.01em', color: '#ffffff' }}>
@@ -74,11 +74,11 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
         </Box>
       </Box>
 
-      <Box component="main" sx={{ flexGrow: 1, width: '100%', maxWidth: 1320, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 2, md: 3 } }}>
+      <Box component="main" sx={{ flexGrow: 1, width: '100%', maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 2, md: 3 } }}>
         {children}
       </Box>
 
-      <Box component="footer" sx={{ maxWidth: 1320, mx: 'auto', px: { xs: 2, md: 3 }, pb: 3, width: '100%' }}>
+      <Box component="footer" sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, pb: 3, width: '100%' }}>
         <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'grid', gap: 0.5 }}>
           {(['neutral', 'placeholderWarn', 'attribution'] as const).map((key) => (
             <Typography key={key} sx={{ fontSize: '0.75rem', color: 'text.secondary', lineHeight: 1.5 }}>
