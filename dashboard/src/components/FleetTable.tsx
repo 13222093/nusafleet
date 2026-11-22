@@ -1,95 +1,102 @@
-// Fleet table in the style of the Kopibara dashboard, showing the NusaFleet
-// plan per route instead of individual tankers.
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Chip from '@mui/material/Chip';
+// Fleet strip: per route, today's hulls on the left and the plan's hulls on the
+// right. Each hull carries a letter as well as a colour, so the vessel type
+// never depends on colour alone.
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import Paper from '@mui/material/Paper';
-import CircleIcon from '@mui/icons-material/Circle';
-import BoltIcon from '@mui/icons-material/Bolt';
+import Typography from '@mui/material/Typography';
+import { ArrowRight } from 'lucide-react';
 
-import { VESSEL_COLOR } from '../colors';
+import { VESSEL_COLOR, VESSEL_ORDER } from '../colors';
 import { num, t } from '../i18n';
-import type { ChargerRow, FleetRow, Lang, VesselType } from '../types';
-import { vesselLabel } from './MapView';
+import type { FleetRow, Lang, Route } from '../types';
+import { vesselShort } from './MapView';
+
+const LETTER: Record<string, string> = { diesel_old: 'D', diesel_new: 'D+', hybrid: 'H', electric: 'E', fastcraft: 'C' };
+
+function Hull({ type, title }: { type: string; title: string }) {
+  return (
+    <Box component="svg" viewBox="0 0 48 26" role="img" aria-label={title} sx={{ width: 48, height: 26, flexShrink: 0 }}>
+      <title>{title}</title>
+      <path d="M15 2h16v7H15z" fill={VESSEL_COLOR[type]} opacity="0.55" />
+      <path d="M2 9h44l-6 14H8z" fill={VESSEL_COLOR[type]} />
+      <text x="24" y="20" textAnchor="middle" fontSize="10" fontWeight="700" fill="#ffffff" fontFamily="inherit">
+        {LETTER[type] ?? '?'}
+      </text>
+    </Box>
+  );
+}
+
+function Hulls({ rows, lang }: { rows: FleetRow[]; lang: Lang }) {
+  const ordered = VESSEL_ORDER.flatMap((type) => rows.filter((r) => r.vessel_type === type));
+  return (
+    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, alignItems: 'center', minHeight: 26 }}>
+      {ordered.flatMap((row) =>
+        Array.from({ length: row.count }, (_unused, k) => <Hull key={`${row.vessel_type}-${k}`} type={row.vessel_type} title={vesselShort(row.vessel_type, lang)} />),
+      )}
+    </Box>
+  );
+}
 
 interface Props {
   lang: Lang;
-  fleet: FleetRow[];
-  chargers: ChargerRow[];
-  vesselTypes: VesselType[];
+  routes: Route[];
+  today: FleetRow[];
+  plan: FleetRow[];
+  safetyToday: number;
+  safetyPlan: number;
 }
 
-export function FleetTable({ lang, fleet, chargers, vesselTypes }: Props) {
-  const safety = (type: string) => vesselTypes.find((v) => v.type === type)?.safety_score ?? 0;
+export function FleetStrip({ lang, routes, today, plan, safetyToday, safetyPlan }: Props) {
+  const used = VESSEL_ORDER.filter((type) => [...today, ...plan].some((r) => r.vessel_type === type));
+  const trips = (rows: FleetRow[]) => rows.reduce((s, r) => s + r.daily_trips, 0);
+  const head = { fontSize: '0.75rem', fontWeight: 700, color: 'text.secondary' } as const;
 
   return (
-    <Card elevation={2} sx={{ bgcolor: '#e0f2f1' }}>
-      <CardHeader
-        title={t(lang, 'fleetTable')}
-        subheader={t(lang, 'fleetSub')}
-        titleTypographyProps={{ variant: 'h6', fontWeight: 'bold', color: '#00695c' }}
-        subheaderTypographyProps={{ color: '#004d40', variant: 'body2' }}
-      />
-      <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
-        <TableContainer component={Paper} elevation={0} sx={{ borderTopLeftRadius: 16, borderTopRightRadius: 16, overflowX: 'auto' }}>
-          <Table size="medium" aria-label={t(lang, 'fleetTable')}>
-            <TableHead>
-              <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>{t(lang, 'colRoute')}</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>{t(lang, 'colVessel')}</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t(lang, 'colCount')}</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t(lang, 'colTrips')}</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>{t(lang, 'colOpDays')}</TableCell>
-                <TableCell align="center" sx={{ fontWeight: 'bold' }}>{t(lang, 'colSafety')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {fleet.map((row) => {
-                const score = safety(row.vessel_type);
-                return (
-                  <TableRow key={`${row.route_id}-${row.vessel_type}`} hover>
-                    <TableCell component="th" scope="row" sx={{ fontWeight: 500 }}>{row.route_name}</TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <CircleIcon sx={{ width: 10, height: 10, color: VESSEL_COLOR[row.vessel_type] }} />
-                        <Typography variant="body2" color="text.secondary">{vesselLabel(vesselTypes, row.vessel_type, lang)}</Typography>
-                      </Box>
-                    </TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{row.count}</TableCell>
-                    <TableCell align="right" sx={{ color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{row.daily_trips}</TableCell>
-                    <TableCell align="right" sx={{ color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{num(lang, row.operable_days)}</TableCell>
-                    <TableCell align="center">
-                      <Chip
-                        label={score}
-                        size="small"
-                        sx={{ fontWeight: 'bold', minWidth: 30, height: 24, color: 'white', bgcolor: score >= 4 ? '#2e7d32' : score === 3 ? '#b85c00' : '#d32f2f' }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <Box sx={{ px: 2, py: 1.5, bgcolor: 'background.paper', borderTop: '1px solid', borderColor: 'divider', display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-          <BoltIcon sx={{ fontSize: 18, color: '#2e7d32' }} />
-          <Typography variant="body2" sx={{ fontWeight: 600 }}>{t(lang, 'kpiChargers')}:</Typography>
-          {chargers.length === 0 ? (
-            <Typography variant="body2" color="text.secondary">{t(lang, 'none')}</Typography>
-          ) : (
-            chargers.map((c) => (
-              <Chip key={c.port_id} size="small" variant="outlined" color="success" label={`${c.port_name} (${num(lang, c.kw_used)} / ${num(lang, c.kw_available)} kW)`} />
-            ))
-          )}
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+          {t(lang, 'fleetTitle')}
+        </Typography>
+
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(110px, 1.3fr) minmax(0, 1fr) 20px minmax(0, 1fr) auto', columnGap: 1.5, rowGap: 1.5, alignItems: 'center' }}>
+          <Typography sx={head}>{t(lang, 'colRoute')}</Typography>
+          <Typography sx={head}>{t(lang, 'todayShort')}</Typography>
+          <span />
+          <Typography sx={head}>{t(lang, 'planShort')}</Typography>
+          <Typography sx={{ ...head, textAlign: 'right' }}>{t(lang, 'tripsPerDay')}</Typography>
+
+          {routes.map((route) => {
+            const a = today.filter((r) => r.route_id === route.route_id);
+            const b = plan.filter((r) => r.route_id === route.route_id);
+            return (
+              <Box key={route.route_id} sx={{ display: 'contents' }}>
+                <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, lineHeight: 1.25 }}>{route.name.replace(/ \([^)]*\)/g, '')}</Typography>
+                <Hulls rows={a} lang={lang} />
+                <Box sx={{ color: 'text.secondary', display: 'flex' }}><ArrowRight size={16} /></Box>
+                <Hulls rows={b} lang={lang} />
+                <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>
+                  {trips(a)} <Box component="span" sx={{ color: 'text.secondary', fontWeight: 400 }}>{'→'}</Box> {trips(b)}
+                </Typography>
+              </Box>
+            );
+          })}
+        </Box>
+
+        <Box sx={{ mt: 2.5, pt: 2, borderTop: '1px solid', borderColor: 'divider', display: 'flex', flexWrap: 'wrap', columnGap: 2.5, rowGap: 1, alignItems: 'center' }}>
+          {used.map((type) => (
+            <Box key={type} sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75 }}>
+              <Hull type={type} title={vesselShort(type, lang)} />
+              <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>{vesselShort(type, lang)}</Typography>
+            </Box>
+          ))}
+          <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', ml: 'auto' }}>
+            {t(lang, 'safetyAvg')}{' '}
+            <Box component="span" sx={{ color: 'text.primary', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+              {num(lang, safetyToday, 1)} {'→'} {num(lang, safetyPlan, 1)}
+            </Box>{' '}
+            / 5
+          </Typography>
         </Box>
       </CardContent>
     </Card>

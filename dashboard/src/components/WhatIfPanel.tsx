@@ -5,20 +5,19 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import { RotateCcw } from 'lucide-react';
 
 import { num, t } from '../i18n';
 import type { StringKey } from '../i18n';
 import type { LiveState, Overrides } from '../live';
 import type { Lang } from '../types';
 
-interface Knob {
+export interface Knob {
   key: keyof Overrides;
   label: StringKey;
   unit: string;
@@ -35,46 +34,32 @@ interface Props {
   onChange: (next: Overrides) => void;
   state: LiveState;
   message: string | null;
-  apiOnline: boolean | null;
 }
 
-export type { Knob };
-
-export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message, apiOnline }: Props) {
+export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }: Props) {
   const active = Object.values(overrides).some((v) => v !== undefined);
-  const offline = apiOnline === false;
-
-  const status =
-    state === 'loading' ? (
-      <Chip size="small" icon={<CircularProgress size={12} />} label={t(lang, 'wiLoading')} />
-    ) : state === 'ready' ? (
-      <Chip size="small" color="primary" label={t(lang, 'wiLive')} />
-    ) : null;
 
   return (
-    <Card elevation={2} sx={{ mb: 4 }}>
-      <CardHeader
-        title={t(lang, 'whatIfTitle')}
-        subheader={t(lang, 'whatIfSub')}
-        titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
-        subheaderTypographyProps={{ variant: 'body2' }}
-        action={
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ pt: 1, pr: 1 }}>
-            {status}
-            <Button size="small" variant="outlined" startIcon={<RestartAltIcon />} disabled={!active} onClick={() => onChange({})}>
-              {t(lang, 'wiReset')}
-            </Button>
+    <Card sx={{ mb: 2 }}>
+      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ mb: 2.5, minHeight: 32 }}>
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{t(lang, 'whatIfTitle')}</Typography>
+            <Typography sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>{t(lang, 'whatIfShort')}</Typography>
+          </Box>
+          <Stack direction="row" spacing={1} alignItems="center">
+            {state === 'loading' ? <Chip size="small" icon={<CircularProgress size={12} />} label={t(lang, 'wiLoading')} /> : null}
+            {state === 'ready' ? <Chip size="small" color="primary" label={t(lang, 'wiLive')} /> : null}
+            {active ? (
+              <Button size="small" variant="outlined" startIcon={<RotateCcw size={14} />} onClick={() => onChange({})} sx={{ borderRadius: '999px' }}>
+                {t(lang, 'wiReset')}
+              </Button>
+            ) : null}
           </Stack>
-        }
-      />
-      <CardContent sx={{ pt: 0 }}>
-        {offline ? (
-          <Alert severity="warning" variant="outlined" sx={{ mb: 2, borderRadius: 3, bgcolor: 'background.paper' }}>
-            {t(lang, 'wiOffline')} <code>uv run uvicorn api.main:app --port 8000</code>
-          </Alert>
-        ) : null}
+        </Stack>
+
         {state === 'error' && message ? (
-          <Alert severity="error" variant="outlined" sx={{ mb: 2, borderRadius: 3, bgcolor: 'background.paper' }}>
+          <Alert severity="error" variant="outlined" sx={{ mb: 2, borderRadius: '12px' }}>
             {message}
           </Alert>
         ) : null}
@@ -86,10 +71,10 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message, 
             return (
               <Box key={knob.key}>
                 <Stack direction="row" justifyContent="space-between" alignItems="baseline" spacing={1}>
-                  <Typography variant="body2" sx={{ fontWeight: 700 }}>{t(lang, knob.label)}</Typography>
+                  <Typography sx={{ fontSize: '0.9rem', fontWeight: 700 }}>{t(lang, knob.label)}</Typography>
                   <Typography sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: changed ? 'primary.dark' : 'text.primary', whiteSpace: 'nowrap' }}>
                     Rp {num(lang, value)}
-                    <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 0.5 }}>{knob.unit}</Typography>
+                    <Typography component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary', ml: 0.5 }}>{knob.unit}</Typography>
                   </Typography>
                 </Stack>
                 <Slider
@@ -98,22 +83,18 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message, 
                   min={knob.min}
                   max={knob.max}
                   step={knob.step}
-                  disabled={offline}
                   marks={[{ value: knob.fallback }]}
                   onChange={(_e, v) => onChange({ ...overrides, [knob.key]: v as number })}
                   getAriaValueText={(v: number) => `Rp ${num(lang, v)} ${knob.unit}`}
                   sx={{
                     height: 6,
                     '& .MuiSlider-thumb': { width: 22, height: 22, bgcolor: '#ffffff', border: '4px solid #00695c' },
-                    '& .MuiSlider-mark': { width: 3, height: 14, bgcolor: '#004d40', opacity: 1 },
+                    '& .MuiSlider-mark': { width: 3, height: 14, bgcolor: '#0c2a2e', opacity: 1 },
                   }}
                 />
                 <Stack direction="row" justifyContent="space-between">
-                  <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>{num(lang, knob.min)}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {t(lang, 'wiDefault')}: {num(lang, knob.fallback)}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>{num(lang, knob.max)}</Typography>
+                  <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{num(lang, knob.min)}</Typography>
+                  <Typography sx={{ fontSize: '0.75rem', color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{num(lang, knob.max)}</Typography>
                 </Stack>
               </Box>
             );

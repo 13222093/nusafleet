@@ -1,35 +1,28 @@
-// Page composition follows the Kopibara dashboard (header, KPI grid, chart
-// rows, fleet table), re-targeted to the NusaFleet scenario outputs.
+// Page composition: headline band, then one dark console (controls + map),
+// then the supporting analysis. Built on the Kopibara dashboard stack.
 import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 
-import { CarbonSensitivityChart, HeatmapChart, ParetoChart, VesselMixChart } from './components/Charts';
+import { HeatmapChart, ParetoChart } from './components/Charts';
 import { ComparisonTable } from './components/ComparisonTable';
-import { AmbitionSlider, ScenarioTimeline } from './components/Controls';
+import { PrioritySlider, ScenarioTimeline, scenarioShort } from './components/Controls';
 import { DataPage } from './components/DataPage';
-import { FleetTable } from './components/FleetTable';
-import { HeroPanel } from './components/HeroPanel';
+import { FleetStrip } from './components/FleetTable';
+import { KpiBand } from './components/HeroPanel';
+import { EstimateChip } from './components/KPICard';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
 import { MapView } from './components/MapView';
+import { RouteDrawer } from './components/RouteDrawer';
 import { WhatIfPanel } from './components/WhatIfPanel';
 import type { Knob } from './components/WhatIfPanel';
+import { t } from './i18n';
 import { useLiveSolve } from './live';
 import type { Overrides } from './live';
-import { RouteDrawer } from './components/RouteDrawer';
-import { num, rpBn, t } from './i18n';
-import type { Lang, ScenarioResult, Summary } from './types';
+import type { Lang, ParetoPoint, ScenarioResult, Summary } from './types';
 
 async function loadJson<T>(name: string): Promise<T> {
   const response = await fetch(`./data/${name}.json`);
@@ -37,12 +30,13 @@ async function loadJson<T>(name: string): Promise<T> {
   return (await response.json()) as T;
 }
 
-const toggleSx = {
-  bgcolor: 'background.paper',
-  flexWrap: 'wrap',
-  '& .MuiToggleButton-root': { textTransform: 'none', px: 2, py: 0.75, fontWeight: 600, borderRadius: 5 },
-  '& .Mui-selected': { bgcolor: 'primary.main', color: '#ffffff', '&:hover': { bgcolor: 'primary.dark' } },
-} as const;
+/** Index of the frontier point with this label, or the first point. */
+function indexOfLabel(points: ParetoPoint[], label: ParetoPoint['label']): number {
+  const found = points.findIndex((p) => p.label === label);
+  return found >= 0 ? found : 0;
+}
+
+const PLAY_STEP_MS = 3200;
 
 function App() {
   const [lang, setLang] = useState<Lang>('id');
@@ -55,6 +49,7 @@ function App() {
   const [mapView, setMapView] = useState<'plan' | 'today'>('plan');
   const [routeId, setRouteId] = useState<string | null>(null);
   const [overrides, setOverrides] = useState<Overrides>({});
+  const [playing, setPlaying] = useState(false);
   const live = useLiveSolve(scenarioId, overrides);
 
   useEffect(() => {
@@ -62,9 +57,12 @@ function App() {
       try {
         const s = await loadJson<Summary>('summary');
         const loaded = await Promise.all(s.scenario_ids.map((id) => loadJson<ScenarioResult>(id)));
+        const first = s.scenario_ids[0];
         setSummary(s);
         setResults(Object.fromEntries(s.scenario_ids.map((id, i) => [id, loaded[i]])));
-        setScenarioId(s.scenario_ids[0]);
+        setScenarioId(first);
+        // Open on the balanced plan: it shows the trade-off instead of an all-diesel fleet
+        setPlanIndex(indexOfLabel(loaded[0].pareto, 'balanced'));
       } catch {
         setFailed(true);
       }
@@ -75,6 +73,30 @@ function App() {
     document.documentElement.lang = lang;
   }, [lang]);
 
+  const currentLabel: ParetoPoint['label'] = results[scenarioId]?.pareto[planIndex]?.label ?? null;
+
+  const selectScenario = (id: string) => {
+    // Keep the same kind of plan when switching scenario
+    setScenarioId(id);
+    setPlanIndex(indexOfLabel(results[id].pareto, currentLabel ?? 'balanced'));
+  };
+
+  // "Play the decade": step through the supply scenarios in order, then stop
+  useEffect(() => {
+    if (!playing || !summary) return undefined;
+    const ids = summary.scenario_ids;
+    const timer = window.setTimeout(() => {
+      const next = ids.indexOf(scenarioId) + 1;
+      if (next >= ids.length) {
+        setPlaying(false);
+        return;
+      }
+      setScenarioId(ids[next]);
+      setPlanIndex(indexOfLabel(results[ids[next]].pareto, currentLabel ?? 'balanced'));
+    }, PLAY_STEP_MS);
+    return () => window.clearTimeout(timer);
+  }, [playing, scenarioId, summary, results, currentLabel]);
+
   const shell = (children: React.ReactNode) => (
     <Layout lang={lang} onLang={setLang} page={page} onPage={setPage}>
       {children}
@@ -83,6 +105,7 @@ function App() {
 
   if (failed) return shell(<Alert severity="error">{t(lang, 'loadError')}</Alert>);
   if (!summary || !results[scenarioId]) return shell(<Typography color="text.secondary">{t(lang, 'loading')}</Typography>);
+  if (page === 'data') return shell(<DataPage lang={lang} summary={summary} />);
 
   const result = results[scenarioId];
   const index = Math.min(planIndex, result.pareto.length - 1);
@@ -92,131 +115,114 @@ function App() {
   const base = live.result?.base ?? result.baseline.kpis;
   const todayFleet = live.result?.baseFleet ?? result.baseline.fleet_plan;
   const todayRoutes = live.result?.baseRoutes ?? result.baseline.routes;
+
+  const scenarioName = (id: string) => {
+    const s = results[id].scenario;
+    return `${s.available_from_year} ${scenarioShort(id, lang, lang === 'id' ? s.label_id : s.label_en)}`;
+  };
+  const planName = live.result
+    ? t(lang, 'wiLive')
+    : t(lang, sliderPlan.label === 'least_cost' ? 'cheapest' : sliderPlan.label === 'lowest_co2' ? 'cleanest' : sliderPlan.label === 'balanced' ? 'balanced' : 'customPlan');
+
   const knobs: Knob[] = [
     { key: 'diesel', label: 'wiDiesel', unit: '/ L', min: Math.min(...result.sensitivity.diesel_prices), max: Math.max(...result.sensitivity.diesel_prices), step: 100, fallback: summary.assumptions.diesel_price_rp_per_l.value },
     { key: 'elec', label: 'wiElec', unit: '/ kWh', min: Math.min(...result.sensitivity.elec_prices), max: Math.max(...result.sensitivity.elec_prices), step: 25, fallback: result.scenario.elec_price_rp_per_kwh },
-    { key: 'carbon', label: 'wiCarbon', unit: '/ t CO2', min: 0, max: Math.max(...result.carbon_sweep.map((p) => p.carbon_price_rp_per_tco2)), step: 10000, fallback: summary.assumptions.carbon_price_rp_per_tco2.value },
+    // Capped well below the sweep maximum so the base value is not jammed against the left edge
+    { key: 'carbon', label: 'wiCarbon', unit: '/ t CO2', min: 0, max: 500000, step: 5000, fallback: summary.assumptions.carbon_price_rp_per_tco2.value },
   ];
-  const scenarioLabel = (id: string) => (lang === 'id' ? results[id].scenario.label_id : results[id].scenario.label_en);
 
-
-  const selectScenario = (id: string) => {
-    // Keep the same kind of plan when switching scenario, if it exists there
-    const next = results[id].pareto.findIndex((p) => p.label === sliderPlan.label);
-    setScenarioId(id);
-    setPlanIndex(next >= 0 ? next : 0);
+  const play = () => {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    setOverrides({});
+    setMapView('plan');
+    setScenarioId(summary.scenario_ids[0]);
+    setPlanIndex(indexOfLabel(results[summary.scenario_ids[0]].pareto, currentLabel ?? 'balanced'));
+    setPlaying(true);
   };
 
-  const header = (
-    <Box sx={{ mb: 4 }}>
-      <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', color: 'text.primary', mb: 1 }}>
-        NusaFleet
-      </Typography>
-      <Typography variant="body1" color="text.secondary">
-        {t(lang, 'tagline')}
-      </Typography>
-      {page === 'plan' ? (
-        <>
-          <Paper variant="outlined" sx={{ mt: 2, p: 2, display: 'inline-flex', borderRadius: 3, maxWidth: '100%' }}>
-            <Stack direction={{ xs: 'column', md: 'row' }} divider={<Divider orientation="vertical" flexItem />} spacing={2} alignItems={{ md: 'center' }}>
-              <Box>
-                <Typography component="span" fontWeight="bold">{t(lang, 'routes')}: </Typography>
-                {summary.routes.length}
-              </Box>
-              <Box>
-                <Typography component="span" fontWeight="bold">{t(lang, 'colDemand')}: </Typography>
-                {num(lang, summary.routes.reduce((s, r) => s + r.daily_pax, 0))}
-              </Box>
-              <Box>
-                <Typography component="span" fontWeight="bold">{t(lang, 'today')}: </Typography>
-                {base.fleet_size} {t(lang, 'colCount').toLowerCase()}, {rpBn(lang, base.annual_cost_rp)}, {num(lang, base.co2_t)} t CO2
-              </Box>
-            </Stack>
-          </Paper>
-          <Paper variant="outlined" sx={{ mt: 3, p: { xs: 2, md: 3 }, borderRadius: 6, display: 'flex', flexWrap: 'wrap', gap: { xs: 3, md: 6 }, alignItems: 'flex-start' }}>
-            <ScenarioTimeline lang={lang} ids={summary.scenario_ids} results={results} activeId={scenarioId} onSelect={selectScenario} />
-            <AmbitionSlider lang={lang} points={result.pareto} index={index} onSelect={(i) => { setOverrides({}); setPlanIndex(i); }} />
-          </Paper>
-        </>
-      ) : null}
-    </Box>
-  );
-
-  if (page === 'data') {
-    return shell(
-      <Box sx={{ flexGrow: 1 }}>
-        {header}
-        <DataPage lang={lang} summary={summary} />
-      </Box>,
-    );
-  }
-
   return shell(
-    <Box sx={{ flexGrow: 1 }}>
-      {header}
+    <Box>
+      <KpiBand lang={lang} plan={plan} base={base} caption={`${planName}, ${scenarioName(scenarioId)}`} />
 
-      {/* Hero: the map is the page, the three headline numbers sit beside it */}
-      <Grid container spacing={3} sx={{ mb: 4, alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, lg: 8 }}>
-          <Card elevation={2} sx={{ height: '100%' }}>
-            <CardHeader
-              title={t(lang, 'mapTitle')}
-              subheader={t(lang, 'mapNote')}
-              titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
-              subheaderTypographyProps={{ variant: 'body2' }}
-              action={
-                <ToggleButtonGroup exclusive size="small" value={mapView} onChange={(_e, v: 'plan' | 'today' | null) => v && setMapView(v)} aria-label={t(lang, 'showOnMap')} sx={{ ...toggleSx, mt: 1, mr: 1 }}>
-                  <ToggleButton value="today">{t(lang, 'today')}</ToggleButton>
-                  <ToggleButton value="plan">{t(lang, 'planShort')}</ToggleButton>
-                </ToggleButtonGroup>
-              }
-            />
-            <CardContent sx={{ pt: 0 }}>
-              <MapView lang={lang} routes={summary.routes} ports={summary.ports} vesselTypes={summary.vessel_types} fleet={mapView === 'today' ? todayFleet : plan.fleet_plan} chargers={mapView === 'today' ? [] : plan.chargers} selectedRouteId={routeId} onRouteClick={setRouteId} />
-            </CardContent>
-          </Card>
+      {/* One dark console: controls on top, the map right under them */}
+      <Box sx={{ mb: 2, borderRadius: '24px', overflow: 'hidden', bgcolor: '#06252b' }}>
+        <Box sx={{ px: { xs: 2, md: 3.5 }, pt: { xs: 2, md: 2.5 }, pb: { xs: 3.5, md: 4 }, display: 'grid', gridTemplateColumns: { xs: '1fr', lg: '1.25fr 1fr' }, columnGap: 6, rowGap: 4 }}>
+          <ScenarioTimeline
+            lang={lang}
+            ids={summary.scenario_ids}
+            results={results}
+            activeId={scenarioId}
+            onSelect={(id) => {
+              setPlaying(false);
+              selectScenario(id);
+            }}
+            stationCount={(id) => results[id].pareto[indexOfLabel(results[id].pareto, currentLabel ?? 'balanced')].chargers.length}
+            playing={playing}
+            onPlay={play}
+          />
+          <PrioritySlider
+            lang={lang}
+            points={result.pareto}
+            index={index}
+            onSelect={(i) => {
+              setOverrides({});
+              setPlanIndex(i);
+            }}
+          />
+        </Box>
+        <MapView
+          lang={lang}
+          routes={summary.routes}
+          ports={summary.ports}
+          vesselTypes={summary.vessel_types}
+          fleet={mapView === 'today' ? todayFleet : plan.fleet_plan}
+          chargers={mapView === 'today' ? [] : plan.chargers}
+          selectedRouteId={routeId}
+          onRouteClick={setRouteId}
+          view={mapView}
+          onView={setMapView}
+        />
+      </Box>
+
+      {/* The live sliders need the solver API; without it they are left out */}
+      {live.apiOnline === true ? <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} /> : null}
+
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 4, mb: 2 }}>
+        <Typography variant="h5" component="h2" sx={{ fontWeight: 700 }}>
+          {t(lang, 'exploreTitle')}
+        </Typography>
+        <EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} />
+      </Box>
+
+      <Grid container spacing={2} sx={{ mb: 2, alignItems: 'stretch' }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} />
         </Grid>
-        <Grid size={{ xs: 12, lg: 4 }}>
-          <HeroPanel lang={lang} plan={plan} base={base} scenarioLabel={scenarioLabel(scenarioId)} title={live.result ? t(lang, 'liveTitle') : t(lang, plan.label ?? 'customPlan')} />
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <ParetoChart
+            lang={lang}
+            results={results}
+            activeId={scenarioId}
+            selectedIndex={index}
+            onSelect={(i) => {
+              setOverrides({});
+              setPlanIndex(i);
+            }}
+          />
         </Grid>
       </Grid>
 
-      {/* On a static host there is no solver API, so the live sliders are left out there */}
-      {live.apiOnline === false && !['localhost', '127.0.0.1'].includes(window.location.hostname) ? null : (
-        <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} apiOnline={live.apiOnline} />
-      )}
-
-      {/* Fleet table */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12 }}>
-          <FleetTable lang={lang} fleet={plan.fleet_plan} chargers={plan.chargers} vesselTypes={summary.vessel_types} />
-        </Grid>
-      </Grid>
-
-      <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
-        {t(lang, 'exploreTitle')}
-      </Typography>
-
-      <Grid container spacing={4} sx={{ mb: 4, alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <VesselMixChart lang={lang} fleet={plan.fleet_plan} vesselTypes={summary.vessel_types} />
-        </Grid>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <CarbonSensitivityChart lang={lang} result={result} />
-        </Grid>
-      </Grid>
-
-      {/* Analysis row */}
-      <Grid container spacing={4} sx={{ mb: 4, alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <ParetoChart lang={lang} results={results} activeId={scenarioId} selectedIndex={index} onSelect={setPlanIndex} />
-        </Grid>
+      <Grid container spacing={2} sx={{ alignItems: 'stretch' }}>
         <Grid size={{ xs: 12, lg: 6 }}>
           <HeatmapChart lang={lang} result={result} />
         </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={sliderPlan.label ?? 'balanced'} />
+        </Grid>
       </Grid>
-
-      <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={sliderPlan.label} />
 
       <RouteDrawer
         lang={lang}
@@ -228,10 +234,6 @@ function App() {
         ports={summary.ports}
         vesselTypes={summary.vessel_types}
       />
-
-      <Alert severity="info" variant="outlined" sx={{ mt: 4, borderRadius: 4, bgcolor: 'background.paper' }}>
-        {t(lang, 'neutral')}
-      </Alert>
     </Box>,
   );
 }

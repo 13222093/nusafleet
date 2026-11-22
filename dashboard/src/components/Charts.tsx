@@ -13,7 +13,6 @@ import Stack from '@mui/material/Stack';
 import { VESSEL_COLOR, VESSEL_ORDER } from '../colors';
 import { num, rpBn, t } from '../i18n';
 import type { FleetRow, Lang, ScenarioResult, VesselType } from '../types';
-import { EstimateChip } from './KPICard';
 import { vesselLabel } from './MapView';
 
 const TEAL = '#009688';
@@ -21,14 +20,13 @@ const MUTED = '#9fb8b4';
 const tooltipStyle = { borderRadius: '12px', border: 'none', boxShadow: '0px 2px 8px rgba(0,0,0,0.18)' };
 const titleProps = { variant: 'h6' as const, fontWeight: 'bold' };
 
-function Header({ lang, title, subheader }: { lang: Lang; title: string; subheader?: string }) {
+function Header({ title, subheader }: { lang: Lang; title: string; subheader?: string }) {
   return (
     <CardHeader
       title={title}
       subheader={subheader}
       titleTypographyProps={titleProps}
       subheaderTypographyProps={{ variant: 'body2' }}
-      action={<Box sx={{ pt: 1, pr: 1 }}><EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} /></Box>}
     />
   );
 }
@@ -54,7 +52,7 @@ export function ParetoChart({ lang, results, activeId, selectedIndex, onSelect }
   const others = Object.keys(results).filter((id) => id !== activeId);
 
   return (
-    <Card elevation={2}>
+    <Card>
       <Header lang={lang} title={t(lang, 'paretoTitle')} subheader={t(lang, 'paretoNote')} />
       <CardContent>
         <div style={{ height: 300, width: '100%' }}>
@@ -139,7 +137,7 @@ export function VesselMixChart({ lang, fleet, vesselTypes }: { lang: Lang; fleet
   })).filter((d) => d.vessels > 0);
 
   return (
-    <Card elevation={2}>
+    <Card>
       <Header lang={lang} title={t(lang, 'mixTitle')} />
       <CardContent>
         <div style={{ height: 220, width: '100%' }}>
@@ -153,7 +151,7 @@ export function VesselMixChart({ lang, fleet, vesselTypes }: { lang: Lang; fleet
                 {data.map((entry) => (
                   <Cell key={entry.type} fill={VESSEL_COLOR[entry.type]} />
                 ))}
-                <LabelList dataKey="vessels" position="right" style={{ fontSize: '12px', fill: '#004D40', fontWeight: 600 }} />
+                <LabelList dataKey="vessels" position="right" style={{ fontSize: '12px', fill: '#0c2a2e', fontWeight: 600 }} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -166,6 +164,10 @@ export function VesselMixChart({ lang, fleet, vesselTypes }: { lang: Lang; fleet
 export function HeatmapChart({ lang, result }: { lang: Lang; result: ScenarioResult }) {
   const { cells, diesel_prices, elec_prices } = result.sensitivity;
   const diesel = [...diesel_prices].sort((a, b) => b - a);
+  const costAt = (d: number, e: number) => cells.find((c) => c.diesel_price_rp_per_l === d && c.elec_price_rp_per_kwh === e)?.cost_rp;
+  // If every row is the same across tariffs, the tariff axis carries no information
+  const flat = diesel.every((d) => new Set(elec_prices.map((e) => costAt(d, e))).size === 1);
+  const cols = flat ? elec_prices.slice(0, 1) : elec_prices;
 
   const costs = cells.filter((c) => c.feasible).map((c) => c.cost_rp);
   const minCost = Math.min(...costs);
@@ -182,25 +184,25 @@ export function HeatmapChart({ lang, result }: { lang: Lang; result: ScenarioRes
   };
 
   return (
-    <Card elevation={2} sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Header lang={lang} title={t(lang, 'heatTitle')} subheader={t(lang, 'heatNote')} />
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 0 }}>
         <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', minHeight: 300, overflowX: 'auto' }}>
-          <div style={{ flexGrow: 1, display: 'grid', gap: '8px', gridTemplateColumns: `auto repeat(${elec_prices.length}, 1fr)`, gridTemplateRows: `auto repeat(${diesel.length}, 1fr)`, minWidth: 520, padding: '16px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: '#00695C', textAlign: 'right', paddingRight: '8px', alignSelf: 'center' }}>
-              {t(lang, 'heatCorner')}
+          <div style={{ flexGrow: 1, display: 'grid', gap: '8px', gridTemplateColumns: `auto repeat(${cols.length}, 1fr)`, gridTemplateRows: `auto repeat(${diesel.length}, 1fr)`, minWidth: flat ? 0 : 520, maxWidth: flat ? 360 : 'none', padding: '16px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#51676a', textAlign: 'right', paddingRight: '8px', alignSelf: 'center' }}>
+              {flat ? t(lang, 'heatDiesel') : t(lang, 'heatCorner')}
             </div>
-            {elec_prices.map((price) => (
-              <div key={price} style={{ fontSize: '12px', fontWeight: 600, textAlign: 'center', color: '#00695C', alignSelf: 'center' }}>
-                {num(lang, price)}
+            {cols.map((price) => (
+              <div key={price} style={{ fontSize: '12px', fontWeight: 600, textAlign: 'center', color: '#51676a', alignSelf: 'center' }}>
+                {flat ? t(lang, 'kpiCost') : num(lang, price)}
               </div>
             ))}
             {diesel.map((d) => (
               <React.Fragment key={`row-${d}`}>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: '#00695C', textAlign: 'right', paddingRight: '8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: '#51676a', textAlign: 'right', paddingRight: '8px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                   {num(lang, d)}
                 </div>
-                {elec_prices.map((e) => {
+                {cols.map((e) => {
                   const point = cells.find((c) => c.diesel_price_rp_per_l === d && c.elec_price_rp_per_kwh === e);
                   if (!point || !point.feasible) return <div key={`${d}-${e}`} />;
                   return (
@@ -210,7 +212,7 @@ export function HeatmapChart({ lang, result }: { lang: Lang; result: ScenarioRes
                       style={{ minHeight: 48, borderRadius: '12px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: 600, cursor: 'default', fontVariantNumeric: 'tabular-nums', backgroundColor: getColor(point.cost_rp), color: getInk(point.cost_rp) }}
                     >
                       {num(lang, point.cost_rp / 1e9, 1)}
-                      {point.plug_in_trip_share_pct > 0 ? <span style={{ fontSize: '11px' }}>⚡ {num(lang, point.plug_in_trip_share_pct)}%</span> : null}
+                      {point.plug_in_trip_share_pct > 0 ? <span style={{ fontSize: '11px' }}>{num(lang, point.plug_in_trip_share_pct)}% {t(lang, 'vElectric')}</span> : null}
                     </div>
                   );
                 })}
@@ -218,8 +220,8 @@ export function HeatmapChart({ lang, result }: { lang: Lang; result: ScenarioRes
             ))}
           </div>
         </div>
-        <div style={{ margin: '4px 16px 16px', fontSize: '12px', textAlign: 'center', color: '#00695C' }}>
-          {t(lang, 'heatAxes')}
+        <div style={{ margin: '4px 16px 16px', fontSize: '12px', textAlign: 'center', color: '#51676a' }}>
+          {flat ? t(lang, 'heatFlat') : t(lang, 'heatAxes')}
         </div>
       </CardContent>
     </Card>
@@ -232,7 +234,7 @@ export function CarbonSensitivityChart({ lang, result }: { lang: Lang; result: S
     .map((p) => ({ price: p.carbon_price_rp_per_tco2 / 1e6, cost: p.cost_rp / 1e9, co2: p.co2_t }));
 
   return (
-    <Card elevation={2}>
+    <Card>
       <Header lang={lang} title={t(lang, 'carbonTitle')} subheader={t(lang, 'carbonNote')} />
       <CardContent>
         <div style={{ height: 260, width: '100%' }}>

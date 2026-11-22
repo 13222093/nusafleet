@@ -1,19 +1,13 @@
-// Scenario comparison in the style of the Kopibara dashboard: today's fleet
-// against the selected kind of plan in each power-supply scenario.
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Chip from '@mui/material/Chip';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
+// Scenario comparison, transposed: one column per moment (today, 2026, 2027,
+// 2031) and one row per result, so the three supply scenarios read side by side.
 import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 
-import { num, rpBn, signed, t } from '../i18n';
+import { num, rpBn, t } from '../i18n';
 import type { Lang, ParetoPoint, ScenarioResult } from '../types';
+import { scenarioShort } from './Controls';
 import { EstimateChip } from './KPICard';
 
 interface Props {
@@ -26,71 +20,70 @@ interface Props {
 export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
   const ids = Object.keys(results);
   const base = results[activeId].baseline.kpis;
-  const numeric = { fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } as const;
+  const pick = (id: string) => results[id].pareto.find((p) => p.label === planLabel) ?? results[id].pareto[0];
+  const signed = (v: number, digits = 0) => `${v < 0 ? '−' : v > 0 ? '+' : ''}${num(lang, Math.abs(v), digits)}`;
+  const tripsAvoided = (p: ParetoPoint) => ((p.reliability_pct - base.reliability_pct) / 100) * base.scheduled_trips_per_year;
+
+  const rows: { label: string; today: string; cell: (p: ParetoPoint) => string }[] = [
+    { label: t(lang, 'kpiCost'), today: rpBn(lang, base.annual_cost_rp), cell: (p) => rpBn(lang, p.cost_rp) },
+    { label: t(lang, 'kpiCo2'), today: `${num(lang, base.co2_t)} t`, cell: (p) => `${num(lang, p.co2_t)} t` },
+    { label: t(lang, 'colCo2Delta'), today: '0%', cell: (p) => `${signed((100 * (p.co2_t - base.co2_t)) / base.co2_t)}%` },
+    { label: t(lang, 'rowTrips'), today: '0', cell: (p) => signed(tripsAvoided(p)) },
+    { label: t(lang, 'stationsShort'), today: '0', cell: (p) => String(p.chargers.length) },
+  ];
+
+  const cellSx = { px: 1.5, py: 1.25, fontSize: '0.9rem', textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', borderTop: '1px solid', borderColor: 'divider' } as const;
+  const planName = t(lang, planLabel === 'least_cost' ? 'cheapest' : planLabel === 'lowest_co2' ? 'cleanest' : 'balanced');
 
   return (
-    <Card elevation={2}>
-      <CardHeader
-        title={t(lang, 'tableTitle')}
-        subheader={`${t(lang, 'plan')}: ${t(lang, planLabel ?? 'balanced')}`}
-        titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
-        subheaderTypographyProps={{ variant: 'body2' }}
-        action={<Box sx={{ pt: 1, pr: 1 }}><EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} /></Box>}
-      />
-      <CardContent>
-        <TableContainer sx={{ overflowX: 'auto' }}>
-          <Table size="small" aria-label={t(lang, 'tableTitle')}>
-            <TableHead>
-              <TableRow>
-                <TableCell>{t(lang, 'colScenario')}</TableCell>
-                <TableCell align="right">{t(lang, 'colFrom')}</TableCell>
-                <TableCell align="right">{t(lang, 'kpiCost')}</TableCell>
-                <TableCell align="right">{t(lang, 'kpiCapex')}</TableCell>
-                <TableCell align="right">CO2</TableCell>
-                <TableCell align="right">{t(lang, 'colCo2Delta')}</TableCell>
-                <TableCell align="right">{t(lang, 'kpiReliability')}</TableCell>
-                <TableCell align="right">{t(lang, 'colPlug')}</TableCell>
-                <TableCell align="right">{t(lang, 'kpiChargers')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>{t(lang, 'today')}</TableCell>
-                <TableCell align="right" sx={numeric}>2026</TableCell>
-                <TableCell align="right" sx={numeric}>{rpBn(lang, base.annual_cost_rp)}</TableCell>
-                <TableCell align="right" sx={numeric}>{rpBn(lang, 0, 0)}</TableCell>
-                <TableCell align="right" sx={numeric}>{num(lang, base.co2_t)} t</TableCell>
-                <TableCell align="right"><Chip label="0%" size="small" variant="outlined" /></TableCell>
-                <TableCell align="right" sx={numeric}>{num(lang, base.reliability_pct, 1)}%</TableCell>
-                <TableCell align="right" sx={numeric}>0%</TableCell>
-                <TableCell align="right" sx={numeric}>0</TableCell>
-              </TableRow>
-              {ids.map((id) => {
-                const points = results[id].pareto;
-                const p = points.find((x) => x.label === planLabel) ?? points[0];
-                const delta = (100 * (p.co2_t - base.co2_t)) / base.co2_t;
-                const active = id === activeId;
-                return (
-                  <TableRow key={id} selected={active} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
-                      {lang === 'id' ? results[id].scenario.label_id : results[id].scenario.label_en}
-                    </TableCell>
-                    <TableCell align="right" sx={numeric}>{results[id].scenario.available_from_year}</TableCell>
-                    <TableCell align="right" sx={numeric}>{rpBn(lang, p.cost_rp)}</TableCell>
-                    <TableCell align="right" sx={numeric}>{rpBn(lang, p.capex_rp, 0)}</TableCell>
-                    <TableCell align="right" sx={numeric}>{num(lang, p.co2_t)} t</TableCell>
-                    <TableCell align="right">
-                      <Chip label={`${signed(lang, delta)}%`} size="small" color={delta < 0 ? 'success' : delta > 0 ? 'error' : 'default'} variant={delta === 0 ? 'outlined' : 'filled'} />
-                    </TableCell>
-                    <TableCell align="right" sx={numeric}>{num(lang, p.reliability_pct, 1)}%</TableCell>
-                    <TableCell align="right" sx={numeric}>{num(lang, p.plug_in_trip_share_pct)}%</TableCell>
-                    <TableCell align="right" sx={numeric}>{p.chargers.length}</TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            {t(lang, 'tableTitle')}
+            <Box component="span" sx={{ ml: 1, fontSize: '0.85rem', fontWeight: 500, color: 'text.secondary' }}>{planName}</Box>
+          </Typography>
+          <EstimateChip label={t(lang, 'estimate')} hint={t(lang, 'estimateHint')} />
+        </Box>
+
+        <Box sx={{ overflowX: 'auto' }}>
+          <Box component="table" sx={{ width: '100%', borderCollapse: 'separate', borderSpacing: 0 }}>
+            <thead>
+              <tr>
+                <Box component="th" sx={{ textAlign: 'left' }} />
+                <Box component="th" scope="col" sx={{ px: 1.5, py: 1, textAlign: 'right', fontSize: '0.8rem', fontWeight: 700, color: 'text.secondary' }}>
+                  {t(lang, 'todayShort')}
+                </Box>
+                {ids.map((id) => {
+                  const active = id === activeId;
+                  const s = results[id].scenario;
+                  return (
+                    <Box component="th" scope="col" key={id} sx={{ px: 1.5, py: 1, textAlign: 'right', bgcolor: active ? '#e3f5f1' : 'transparent', borderRadius: active ? '12px 12px 0 0' : 0 }}>
+                      <Typography sx={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>{s.available_from_year}</Typography>
+                      <Typography sx={{ fontSize: '0.72rem', color: 'text.secondary', lineHeight: 1.2 }}>{scenarioShort(id, lang, lang === 'id' ? s.label_id : s.label_en)}</Typography>
+                    </Box>
+                  );
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, r) => (
+                <tr key={row.label}>
+                  <Box component="th" scope="row" sx={{ ...cellSx, pl: 0, textAlign: 'left', fontWeight: 600, whiteSpace: 'normal' }}>{row.label}</Box>
+                  <Box component="td" sx={{ ...cellSx, color: 'text.secondary' }}>{row.today}</Box>
+                  {ids.map((id) => {
+                    const active = id === activeId;
+                    return (
+                      <Box component="td" key={id} sx={{ ...cellSx, fontWeight: active ? 700 : 500, bgcolor: active ? '#e3f5f1' : 'transparent', borderRadius: active && r === rows.length - 1 ? '0 0 12px 12px' : 0 }}>
+                        {row.cell(pick(id))}
+                      </Box>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );

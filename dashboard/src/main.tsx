@@ -18,12 +18,12 @@ const theme = createTheme({
       main: '#4DB6AC',
     },
     background: {
-      default: '#F0F7F6', // Slight teal tint on surface
+      default: '#f3f6f5',
       paper: '#FFFFFF',   
     },
     text: {
-        primary: '#004D40', // Deep teal for text
-        secondary: '#00695C',
+        primary: '#0c2a2e',
+        secondary: '#51676a',
     }
   },
   typography: {
@@ -33,11 +33,11 @@ const theme = createTheme({
       },
       h4: {
           fontWeight: 400,
-          color: '#004D40',
+          color: '#0c2a2e',
       },
       h6: {
           fontWeight: 500,
-          color: '#004D40',
+          color: '#0c2a2e',
       },
       subtitle2: {
            fontWeight: 500,
@@ -53,7 +53,8 @@ const theme = createTheme({
               root: {
                   backgroundImage: 'none',
                   boxShadow: 'none',
-                  backgroundColor: '#E0F2F1', // Teal-50
+                  backgroundColor: '#ffffff',
+                  border: '1px solid #dde6e4',
                   borderRadius: 24,
               }
           }
@@ -96,7 +97,7 @@ const theme = createTheme({
           styleOverrides: {
               root: {
                   backgroundColor: '#F0F7F6',
-                  color: '#004D40',
+                  color: '#0c2a2e',
                   boxShadow: 'none',
               }
           }

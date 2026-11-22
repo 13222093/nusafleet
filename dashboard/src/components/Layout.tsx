@@ -1,26 +1,12 @@
-// Navigation rail layout from the Kopibara dashboard, extended with a second
-// page (Data & Assumptions) and a language toggle.
+// App shell: one slim dark bar (wordmark, two tabs, language) and a short footer.
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Drawer from '@mui/material/Drawer';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
+import ButtonBase from '@mui/material/ButtonBase';
 import Typography from '@mui/material/Typography';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import DirectionsBoatIcon from '@mui/icons-material/DirectionsBoat';
-import FactCheckIcon from '@mui/icons-material/FactCheck';
+import { Ship } from 'lucide-react';
 
 import { t } from '../i18n';
 import type { Lang } from '../types';
-
-const drawerWidth = 88; // Small "Rail" width
 
 export type Page = 'plan' | 'data';
 
@@ -32,165 +18,73 @@ interface LayoutProps {
   onPage: (page: Page) => void;
 }
 
+const INK = '#06252b';
+const MINT = '#7fe3d2';
+
 export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
-  const navItems: { id: Page; text: string; icon: React.ReactNode }[] = [
-    { id: 'plan', text: t(lang, 'navPlan'), icon: <DashboardIcon /> },
-    { id: 'data', text: t(lang, 'navData'), icon: <FactCheckIcon /> },
+  const tabs: { id: Page; text: string }[] = [
+    { id: 'plan', text: t(lang, 'navPlan') },
+    { id: 'data', text: t(lang, 'navData') },
   ];
 
-  const langToggle = (
-    <ToggleButtonGroup
-      size="small"
-      exclusive
-      value={lang}
-      onChange={(_e, value: Lang | null) => value && onLang(value)}
-      aria-label="Language"
-      orientation="vertical"
-      sx={{ bgcolor: 'background.paper', '& .MuiToggleButton-root': { borderRadius: 3, px: 1.5, py: 0.5, fontWeight: 600 } }}
-    >
-      <ToggleButton value="id">ID</ToggleButton>
-      <ToggleButton value="en">EN</ToggleButton>
-    </ToggleButtonGroup>
-  );
-
-  const drawer = (
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', py: 2 }}>
-      {/* Rail Logo/Icon */}
-      <Box sx={{ mb: 4, mt: 1, color: 'primary.main', p: 1 }}>
-        <DirectionsBoatIcon sx={{ fontSize: 28, color: 'primary.main' }} />
-      </Box>
-
-      <List sx={{ width: '100%', px: 1 }}>
-        {navItems.map((item) => {
-          const active = page === item.id;
-          return (
-            <ListItem key={item.id} disablePadding sx={{ display: 'block', mb: 3 }}>
-              <ListItemButton
-                selected={active}
-                onClick={() => onPage(item.id)}
-                sx={{
-                  minHeight: 0,
-                  justifyContent: 'center',
-                  p: 0,
-                  flexDirection: 'column',
-                  bgcolor: 'transparent',
-                  '&:hover': { bgcolor: 'transparent' },
-                  '&.Mui-selected': { bgcolor: 'transparent', '&:hover': { bgcolor: 'transparent' } },
-                }}
-              >
-                {/* Active Indicator Pill */}
-                <Box
-                  sx={{
-                    width: 56,
-                    height: 32,
-                    borderRadius: 16,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    bgcolor: active ? 'primary.light' : 'transparent',
-                    mb: 0.5,
-                    transition: 'background-color 0.2s',
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 0, color: active ? 'text.primary' : 'text.secondary' }}>
-                    {item.icon}
-                  </ListItemIcon>
-                </Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontSize: '0.72rem',
-                    lineHeight: 1.2,
-                    fontWeight: active ? 700 : 500,
-                    color: active ? 'text.primary' : 'text.secondary',
-                    textAlign: 'center',
-                  }}
-                >
-                  {item.text}
-                </Typography>
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
-
-      <Box sx={{ mt: 'auto', mb: 1 }}>{langToggle}</Box>
-    </Box>
-  );
-
   return (
-    <Box sx={{ display: 'flex' }}>
-      {/* Mobile App Bar */}
-      <AppBar position="fixed" sx={{ display: { sm: 'none' } }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <DirectionsBoatIcon sx={{ color: 'primary.main' }} />
-            <Typography variant="h6" noWrap component="div" sx={{ color: 'text.primary', fontWeight: 'bold' }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
+      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: INK, color: '#ffffff' }}>
+        <Box sx={{ maxWidth: 1320, mx: 'auto', px: { xs: 2, md: 3 }, height: 56, display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 3 } }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: MINT }}>
+            <Ship size={22} />
+            <Typography component="span" sx={{ fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.01em', color: '#ffffff' }}>
               NusaFleet
             </Typography>
-          </Stack>
-          <ToggleButtonGroup
-            size="small"
-            exclusive
-            value={page}
-            onChange={(_e, value: Page | null) => value && onPage(value)}
-          >
-            {navItems.map((item) => (
-              <ToggleButton key={item.id} value={item.id} aria-label={item.text}>
-                {item.icon}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-        </Toolbar>
-      </AppBar>
+          </Box>
+          <Typography component="span" sx={{ display: { xs: 'none', lg: 'block' }, fontSize: '0.85rem', color: 'rgba(255,255,255,0.7)' }}>
+            {t(lang, 'tagline')}
+          </Typography>
 
-      {/* Navigation Rail */}
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }} aria-label="navigation rail">
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', sm: 'block' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-              borderRight: 'none',
-              bgcolor: 'background.default',
-              overflowX: 'hidden',
-            },
-          }}
-          open
-        >
-          {drawer}
-        </Drawer>
+          <Box sx={{ flexGrow: 1 }} />
+
+          <Box component="nav" sx={{ display: 'flex', alignSelf: 'stretch', gap: { xs: 0.5, md: 1 } }}>
+            {tabs.map((tab) => {
+              const active = page === tab.id;
+              return (
+                <ButtonBase
+                  key={tab.id}
+                  onClick={() => onPage(tab.id)}
+                  aria-current={active ? 'page' : undefined}
+                  sx={{ px: { xs: 1, md: 1.5 }, fontSize: '0.9rem', fontWeight: 600, fontFamily: 'inherit', whiteSpace: 'nowrap', color: active ? '#ffffff' : 'rgba(255,255,255,0.7)', borderBottom: '3px solid', borderColor: active ? MINT : 'transparent', borderTop: '3px solid transparent', '&:hover': { color: '#ffffff' }, '&.Mui-focusVisible': { outline: `2px solid ${MINT}`, outlineOffset: -4 } }}
+                >
+                  {tab.text}
+                </ButtonBase>
+              );
+            })}
+          </Box>
+
+          <Box role="group" aria-label="Language" sx={{ display: 'flex', p: '3px', borderRadius: '999px', bgcolor: 'rgba(255,255,255,0.1)' }}>
+            {(['id', 'en'] as Lang[]).map((code) => (
+              <ButtonBase
+                key={code}
+                onClick={() => onLang(code)}
+                aria-pressed={lang === code}
+                sx={{ px: 1.25, height: 26, borderRadius: '999px', fontSize: '0.78rem', fontWeight: 700, fontFamily: 'inherit', color: lang === code ? INK : 'rgba(255,255,255,0.8)', bgcolor: lang === code ? MINT : 'transparent', '&.Mui-focusVisible': { outline: `2px solid ${MINT}`, outlineOffset: 2 } }}
+              >
+                {code.toUpperCase()}
+              </ButtonBase>
+            ))}
+          </Box>
+        </Box>
       </Box>
 
-      {/* Main Content */}
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: { xs: 2, sm: 3 },
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
-          minHeight: '100vh',
-          bgcolor: 'background.default',
-          maxWidth: '100vw',
-          overflowX: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <Toolbar sx={{ display: { sm: 'none' } }} />
+      <Box component="main" sx={{ flexGrow: 1, width: '100%', maxWidth: 1320, mx: 'auto', px: { xs: 2, md: 3 }, py: { xs: 2, md: 3 } }}>
+        {children}
+      </Box>
 
-        <Box sx={{ maxWidth: 1280, mx: 'auto', flexGrow: 1, width: '100%' }}>{children}</Box>
-
-        {/* Disclaimer Footer */}
-        <Box sx={{ mt: 4, py: 2, borderTop: '1px solid', borderColor: 'divider', textAlign: 'center' }}>
-          <Typography variant="caption" color="text.secondary" component="p" sx={{ m: 0 }}>
-            {t(lang, 'placeholderWarn')}
-          </Typography>
-          <Typography variant="caption" color="text.secondary" component="p" sx={{ m: 0 }}>
-            {t(lang, 'attribution')}
-          </Typography>
+      <Box component="footer" sx={{ maxWidth: 1320, mx: 'auto', px: { xs: 2, md: 3 }, pb: 3, width: '100%' }}>
+        <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'grid', gap: 0.5 }}>
+          {(['neutral', 'placeholderWarn', 'attribution'] as const).map((key) => (
+            <Typography key={key} sx={{ fontSize: '0.75rem', color: 'text.secondary', lineHeight: 1.5 }}>
+              {t(lang, key)}
+            </Typography>
+          ))}
         </Box>
       </Box>
     </Box>

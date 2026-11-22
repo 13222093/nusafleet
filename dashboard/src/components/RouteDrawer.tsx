@@ -82,12 +82,15 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
   const fToday = today.fleet.filter((r) => r.route_id === id);
   const fPlan = plan.fleet.filter((r) => r.route_id === id);
   const trips = (rows: FleetRow[]) => rows.reduce((s, r) => s + r.daily_trips, 0);
-  const endChargers = route ? chargers.filter((c) => c.port_id === route.port_a || c.port_id === route.port_b) : [];
+  // Chargers matter here only if a plug-in vessel actually serves the route
+  const usesShorePower = fPlan.some((r) => (vesselTypes.find((v) => v.type === r.vessel_type)?.kwh_per_nm ?? 0) > 0);
+  const sameFleet = JSON.stringify(fToday.map((r) => [r.vessel_type, r.count, r.daily_trips])) === JSON.stringify(fPlan.map((r) => [r.vessel_type, r.count, r.daily_trips]));
+  const endChargers = route && usesShorePower ? chargers.filter((c) => c.port_id === route.port_a || c.port_id === route.port_b) : [];
   const portName = (pid: string) => ports.find((p) => p.port_id === pid)?.name ?? pid;
   const labels = { todayLabel: t(lang, 'todayShort'), planLabel: t(lang, 'planShort') };
 
   return (
-    <Drawer anchor="right" open={route !== null} onClose={onClose} PaperProps={{ sx: { width: { xs: '100%', sm: 420 }, bgcolor: 'background.paper', borderRadius: { sm: '24px 0 0 24px' } } }}>
+    <Drawer anchor="right" variant="persistent" open={route !== null} onClose={onClose} PaperProps={{ sx: { width: { xs: '100%', sm: 420 }, bgcolor: 'background.paper', borderRadius: { xs: 0, sm: '24px 0 0 24px' }, boxShadow: '-12px 0 40px rgba(6,37,43,0.25)', borderLeft: '1px solid #dde6e4' } }}>
       {route ? (
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
@@ -105,17 +108,21 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
           </Stack>
 
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            <Box sx={{ p: 2, borderRadius: 4, bgcolor: '#f0f7f6' }}>
+            <Box sx={{ p: 2, borderRadius: '16px', bgcolor: '#f0f7f6' }}>
               <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>{t(lang, 'today')}</Typography>
               <Box sx={{ mt: 1 }}><Fleet lang={lang} rows={fToday} vesselTypes={vesselTypes} /></Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{trips(fToday)} {t(lang, 'colTrips').toLowerCase()}</Typography>
             </Box>
-            <Box sx={{ p: 2, borderRadius: 4, bgcolor: '#e0f2f1', border: '2px solid #80cbc4' }}>
+            <Box sx={{ p: 2, borderRadius: '16px', bgcolor: '#e0f2f1', border: '2px solid #80cbc4' }}>
               <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.dark' }}>{t(lang, 'planShort')}</Typography>
               <Box sx={{ mt: 1 }}><Fleet lang={lang} rows={fPlan} vesselTypes={vesselTypes} /></Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{trips(fPlan)} {t(lang, 'colTrips').toLowerCase()}</Typography>
             </Box>
           </Box>
+
+          {sameFleet ? (
+            <Typography sx={{ fontSize: '0.9rem', fontWeight: 600, color: 'text.secondary' }}>{t(lang, 'unchanged')}</Typography>
+          ) : null}
 
           <Stack spacing={2}>
             <Metric label={t(lang, 'cancelledPerYear')} today={kToday.cancelled_trips_per_year} plan={kPlan.cancelled_trips_per_year} format={(v) => num(lang, v)} lowerIsBetter {...labels} />
@@ -129,7 +136,7 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.75 }}>{t(lang, 'chargersHere')}</Typography>
             {endChargers.length === 0 ? (
-              <Typography variant="body2" color="text.secondary">{t(lang, 'none')}</Typography>
+              <Typography variant="body2" color="text.secondary">{t(lang, 'notUsed')}</Typography>
             ) : (
               <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                 {endChargers.map((c) => (
@@ -142,7 +149,7 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
             </Typography>
           </Box>
 
-          {route.notes ? (
+          {route.notes && lang === 'en' ? (
             <Typography variant="caption" color="text.secondary" sx={{ lineHeight: 1.5 }}>
               {t(lang, 'dataNote')}: {route.notes}
             </Typography>
