@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
+import { Check, FileText, Plus } from 'lucide-react';
 import Typography from '@mui/material/Typography';
 
 import { HeatmapChart, ParetoChart } from './components/Charts';
+import { AlternativesPanel } from './components/AlternativesPanel';
 import { ComparisonTable } from './components/ComparisonTable';
 import { PrioritySeg, ScenarioPills, scenarioShort } from './components/Controls';
 import { DataPage } from './components/DataPage';
@@ -15,12 +17,15 @@ import { KpiBand } from './components/HeroPanel';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
 import { MapView } from './components/MapView';
+import { ReportPage } from './components/ReportPage';
 import { RouteDrawer } from './components/RouteDrawer';
 import { WhatIfPanel } from './components/WhatIfPanel';
 import type { Knob } from './components/WhatIfPanel';
-import { t } from './i18n';
+import { num, t } from './i18n';
 import { useLiveSolve } from './live';
 import type { Overrides } from './live';
+import { recommend } from './recommend';
+import type { Alternative } from './recommend';
 import type { Lang, ParetoPoint, ScenarioResult, Summary } from './types';
 
 async function loadJson<T>(name: string): Promise<T> {
@@ -37,7 +42,7 @@ function indexOfLabel(points: ParetoPoint[], label: ParetoPoint['label']): numbe
 
 const PLAY_STEP_MS = 3200;
 
-type Tab = 'fleet' | 'pareto' | 'heat' | 'compare' | 'whatif';
+type Tab = 'fleet' | 'analysis' | 'compare' | 'alts' | 'whatif';
 
 function App() {
   const [lang, setLang] = useState<Lang>('id');
@@ -52,6 +57,7 @@ function App() {
   const [overrides, setOverrides] = useState<Overrides>({});
   const [playing, setPlaying] = useState(false);
   const [tab, setTab] = useState<Tab>('fleet');
+  const [alts, setAlts] = useState<Alternative[]>([]);
   const live = useLiveSolve(scenarioId, overrides);
 
   useEffect(() => {
@@ -108,6 +114,7 @@ function App() {
   if (failed) return shell(<Alert severity="error">{t(lang, 'loadError')}</Alert>);
   if (!summary || !results[scenarioId]) return shell(<Typography color="text.secondary">{t(lang, 'loading')}</Typography>);
   if (page === 'data') return shell(<DataPage lang={lang} summary={summary} />);
+  if (page === 'report') return shell(<ReportPage lang={lang} summary={summary} results={results} alts={alts} onBack={() => setPage('plan')} />);
 
   const result = results[scenarioId];
   const index = Math.min(planIndex, result.pareto.length - 1);
@@ -147,9 +154,9 @@ function App() {
 
   const tabs: { id: Tab; label: string }[] = [
     { id: 'fleet', label: t(lang, 'tabFleet') },
-    { id: 'pareto', label: t(lang, 'tabPareto') },
-    { id: 'heat', label: t(lang, 'tabHeat') },
+    { id: 'analysis', label: t(lang, 'tabAnalysis') },
     { id: 'compare', label: t(lang, 'tabCompare') },
+    { id: 'alts', label: alts.length ? `${t(lang, 'tabAlts')} (${alts.length})` : t(lang, 'tabAlts') },
     // The live sliders need the solver API; without it the tab is left out
     ...(live.apiOnline === true ? [{ id: 'whatif' as Tab, label: t(lang, 'tabWhatIf') }] : []),
   ];
@@ -158,6 +165,31 @@ function App() {
     setOverrides({});
     setPlanIndex(i);
   };
+
+  const rec = recommend(result);
+  // A saved alternative is named after what produced it, so the list and the report stay readable
+  const altName = live.result
+    ? `${t(lang, 'tabWhatIf')} (${[overrides.diesel !== undefined ? `${t(lang, 'wiDiesel').toLowerCase()} ${num(lang, overrides.diesel)}` : null, overrides.elec !== undefined ? `${t(lang, 'wiElec').toLowerCase()} ${num(lang, overrides.elec)}` : null, overrides.carbon !== undefined ? `${t(lang, 'wiCarbon').toLowerCase()} ${num(lang, overrides.carbon)}` : null].filter(Boolean).join(', ')}), ${scenarioName(scenarioId)}`
+    : `${planName}, ${scenarioName(scenarioId)}`;
+  const altId = live.result ? `live:${scenarioId}:${JSON.stringify(overrides)}` : `preset:${scenarioId}:${index}`;
+  const alreadySaved = alts.some((a) => a.id === altId);
+  const saveAlt = () => {
+    if (alreadySaved) return;
+    setAlts((list) => [...list, { id: altId, name: altName, scenarioId, plan, base, index: live.result ? null : index, overrides: live.result ? overrides : null }]);
+    setTab('alts');
+  };
+  const showAlt = (alt: Alternative) => {
+    setPlaying(false);
+    setMapView('plan');
+    setScenarioId(alt.scenarioId);
+    if (alt.overrides) {
+      setOverrides(alt.overrides);
+    } else {
+      setOverrides({});
+      setPlanIndex(alt.index ?? 0);
+    }
+  };
+  const actionSx = { height: 38, gap: 0.75, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 700, border: '1px solid #dde6e4', '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } } as const;
 
   return shell(
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 436px' }, gap: 2, height: { lg: 'calc(100vh - 56px - 48px)' }, minHeight: { lg: 640 } }}>
@@ -201,6 +233,17 @@ function App() {
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minHeight: 0, overflowY: { lg: 'auto' }, pr: { lg: 0.5 } }}>
         <KpiBand lang={lang} plan={plan} base={base} caption={`${planName}, ${scenarioName(scenarioId)}`} />
 
+        <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
+          <ButtonBase onClick={saveAlt} disabled={alreadySaved} sx={{ ...actionSx, flex: 1, bgcolor: alreadySaved ? '#e3f5f1' : '#06252b', color: alreadySaved ? '#00695c' : '#ffffff', borderColor: alreadySaved ? '#b8e2da' : '#06252b' }}>
+            {alreadySaved ? <Check size={16} /> : <Plus size={16} />}
+            {t(lang, alreadySaved ? 'savedAlt' : 'saveAlt')}
+          </ButtonBase>
+          <ButtonBase onClick={() => setPage('report')} sx={{ ...actionSx, flex: 1, bgcolor: '#ffffff', color: 'text.primary' }}>
+            <FileText size={16} />
+            {t(lang, 'makeReport')}
+          </ButtonBase>
+        </Box>
+
         <Box role="tablist" aria-label={t(lang, 'detailTabs')} sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, flexShrink: 0 }}>
           {tabs.map((x) => {
             const on = x.id === shownTab;
@@ -220,8 +263,24 @@ function App() {
 
         <Box role="tabpanel" sx={{ flexShrink: 0 }}>
           {shownTab === 'fleet' ? <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} /> : null}
-          {shownTab === 'pareto' ? <ParetoChart lang={lang} results={results} activeId={scenarioId} selectedIndex={index} onSelect={pickPoint} /> : null}
-          {shownTab === 'heat' ? <HeatmapChart lang={lang} result={result} /> : null}
+          {shownTab === 'analysis' ? (
+            <Box sx={{ display: 'grid', gap: 2 }}>
+              <ParetoChart lang={lang} results={results} activeId={scenarioId} selectedIndex={index} onSelect={pickPoint} />
+              <HeatmapChart lang={lang} result={result} />
+            </Box>
+          ) : null}
+          {shownTab === 'alts' ? (
+            <AlternativesPanel
+              lang={lang}
+              alts={alts}
+              onShow={showAlt}
+              onRemove={(id) => setAlts((list) => list.filter((a) => a.id !== id))}
+              recommendation={rec}
+              recommendationBase={result.baseline.kpis}
+              scenarioName={scenarioName(scenarioId)}
+              onShowRecommendation={() => pickPoint(rec.index)}
+            />
+          ) : null}
           {shownTab === 'compare' ? <ComparisonTable lang={lang} results={results} activeId={scenarioId} planLabel={sliderPlan.label ?? 'balanced'} /> : null}
           {shownTab === 'whatif' ? <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} /> : null}
         </Box>

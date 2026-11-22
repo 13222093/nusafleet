@@ -345,3 +345,31 @@ body {
         bottom: 190px;
     }
 }
+
+/* ---------- Report: print as a clean document ---------- */
+@page {
+    margin: 16mm;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    body,
+    #root > div {
+        background: #ffffff !important;
+    }
+
+    main {
+        padding: 0 !important;
+        max-width: none !important;
+    }
+
+    .report {
+        border: 0 !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+    }
+}

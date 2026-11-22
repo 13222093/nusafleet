@@ -8,7 +8,7 @@ import { Ship } from 'lucide-react';
 import { t } from '../i18n';
 import type { Lang } from '../types';
 
-export type Page = 'plan' | 'data';
+export type Page = 'plan' | 'report' | 'data';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,12 +24,13 @@ const MINT = '#7fe3d2';
 export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
   const tabs: { id: Page; text: string }[] = [
     { id: 'plan', text: t(lang, 'navPlan') },
+    { id: 'report', text: t(lang, 'navReport') },
     { id: 'data', text: t(lang, 'navData') },
   ];
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
-      <Box component="header" sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: INK, color: '#ffffff' }}>
+      <Box component="header" className="no-print" sx={{ position: 'sticky', top: 0, zIndex: 1100, bgcolor: INK, color: '#ffffff' }}>
         <Box sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, height: 56, display: 'flex', alignItems: 'center', gap: { xs: 1.5, md: 3 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: MINT }}>
             <Ship size={22} />
@@ -78,7 +79,7 @@ export function Layout({ children, lang, onLang, page, onPage }: LayoutProps) {
         {children}
       </Box>
 
-      <Box component="footer" sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, pb: 3, width: '100%' }}>
+      <Box component="footer" className="no-print" sx={{ maxWidth: 1760, mx: 'auto', px: { xs: 2, md: 3 }, pb: 3, width: '100%' }}>
         <Box sx={{ borderTop: '1px solid', borderColor: 'divider', pt: 2, display: 'grid', gap: 0.5 }}>
           {(['neutral', 'placeholderWarn', 'attribution'] as const).map((key) => (
             <Typography key={key} sx={{ fontSize: '0.75rem', color: 'text.secondary', lineHeight: 1.5 }}>
