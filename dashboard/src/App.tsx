@@ -181,7 +181,10 @@ function App() {
         </Grid>
       </Grid>
 
-      <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} apiOnline={live.apiOnline} />
+      {/* On a static host there is no solver API, so the live sliders are left out there */}
+      {live.apiOnline === false && !['localhost', '127.0.0.1'].includes(window.location.hostname) ? null : (
+        <WhatIfPanel lang={lang} knobs={knobs} overrides={overrides} onChange={setOverrides} state={live.state} message={live.message} apiOnline={live.apiOnline} />
+      )}
 
       {/* Fleet table */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
