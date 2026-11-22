@@ -1,7 +1,6 @@
 // Page composition follows the Kopibara dashboard (header, KPI grid, chart
 // rows, fleet table), re-targeted to the NusaFleet scenario outputs.
 import { useEffect, useState } from 'react';
-import { Banknote, CalendarCheck, Leaf, PlugZap, ShieldCheck } from 'lucide-react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -19,11 +18,11 @@ import { CarbonSensitivityChart, HeatmapChart, ParetoChart, VesselMixChart } fro
 import { ComparisonTable } from './components/ComparisonTable';
 import { DataPage } from './components/DataPage';
 import { FleetTable } from './components/FleetTable';
-import { KPICard } from './components/KPICard';
+import { HeroPanel } from './components/HeroPanel';
 import { Layout } from './components/Layout';
 import type { Page } from './components/Layout';
 import { MapView } from './components/MapView';
-import { num, rpBn, signed, t } from './i18n';
+import { num, rpBn, t } from './i18n';
 import type { Lang, ScenarioResult, Summary } from './types';
 
 async function loadJson<T>(name: string): Promise<T> {
@@ -81,11 +80,6 @@ function App() {
   const base = result.baseline.kpis;
   const scenarioLabel = (id: string) => (lang === 'id' ? results[id].scenario.label_id : results[id].scenario.label_en);
 
-  const costDelta = plan.cost_rp - base.annual_cost_rp;
-  const co2Delta = plan.co2_t - base.co2_t;
-  const cancelledAvoided = ((plan.reliability_pct - base.reliability_pct) / 100) * base.scheduled_trips_per_year;
-  const bn = lang === 'id' ? 'miliar' : 'bn';
-  const estimate = { estimateLabel: t(lang, 'estimate'), estimateHint: t(lang, 'estimateHint') };
   const namedPlans = result.pareto.map((p, i) => ({ p, i })).filter(({ p }) => p.label !== null);
 
   const selectScenario = (id: string) => {
@@ -159,62 +153,9 @@ function App() {
     <Box sx={{ flexGrow: 1 }}>
       {header}
 
-      {/* KPI Grid */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid size={{ xs: 12, sm: 6, md: 2.4 }} sx={{ display: 'flex' }}>
-          <KPICard
-            title={t(lang, 'kpiCost')}
-            value={rpBn(lang, plan.cost_rp)}
-            icon={Banknote}
-            note={`${signed(lang, costDelta / 1e9, 1)} ${bn} ${t(lang, 'vsToday')}`}
-            tone={costDelta <= 0 ? 'good' : 'bad'}
-            {...estimate}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 2.4 }} sx={{ display: 'flex' }}>
-          <KPICard
-            title={t(lang, 'kpiCo2')}
-            value={num(lang, plan.co2_t)}
-            unit="t"
-            icon={Leaf}
-            note={`${signed(lang, (100 * co2Delta) / base.co2_t)}% ${t(lang, 'vsToday')}`}
-            tone={co2Delta <= 0 ? 'good' : 'bad'}
-            {...estimate}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 2.4 }} sx={{ display: 'flex' }}>
-          <KPICard
-            title={t(lang, 'kpiReliability')}
-            value={`${num(lang, plan.reliability_pct, 1)}%`}
-            icon={ShieldCheck}
-            note={`${t(lang, 'today')}: ${num(lang, base.reliability_pct, 1)}%`}
-            {...estimate}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 2.4 }} sx={{ display: 'flex' }}>
-          <KPICard
-            title={t(lang, 'kpiCancelled')}
-            value={num(lang, cancelledAvoided)}
-            unit={t(lang, 'perYear')}
-            icon={CalendarCheck}
-            tone="good"
-            {...estimate}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 2.4 }} sx={{ display: 'flex' }}>
-          <KPICard
-            title={t(lang, 'kpiCapex')}
-            value={rpBn(lang, plan.capex_rp, 0)}
-            icon={PlugZap}
-            note={`${t(lang, 'kpiChargers')}: ${plan.chargers.length}`}
-            {...estimate}
-          />
-        </Grid>
-      </Grid>
-
-      {/* Map + fleet */}
-      <Grid container spacing={4} sx={{ mb: 4, alignItems: 'stretch' }}>
-        <Grid size={{ xs: 12, lg: 7 }}>
+      {/* Hero: the map is the page, the three headline numbers sit beside it */}
+      <Grid container spacing={3} sx={{ mb: 4, alignItems: 'stretch' }}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <Card elevation={2} sx={{ height: '100%' }}>
             <CardHeader title={t(lang, 'mapTitle')} subheader={t(lang, 'mapNote')} titleTypographyProps={{ variant: 'h6', fontWeight: 'bold' }} subheaderTypographyProps={{ variant: 'body2' }} />
             <CardContent sx={{ pt: 0 }}>
@@ -222,11 +163,8 @@ function App() {
             </CardContent>
           </Card>
         </Grid>
-        <Grid size={{ xs: 12, lg: 5 }}>
-          <Stack spacing={4} sx={{ height: '100%' }}>
-            <VesselMixChart lang={lang} fleet={plan.fleet_plan} vesselTypes={summary.vessel_types} />
-            <CarbonSensitivityChart lang={lang} result={result} />
-          </Stack>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <HeroPanel lang={lang} plan={plan} base={base} scenarioLabel={scenarioLabel(scenarioId)} />
         </Grid>
       </Grid>
 
@@ -234,6 +172,19 @@ function App() {
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid size={{ xs: 12 }}>
           <FleetTable lang={lang} fleet={plan.fleet_plan} chargers={plan.chargers} vesselTypes={summary.vessel_types} />
+        </Grid>
+      </Grid>
+
+      <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
+        {t(lang, 'exploreTitle')}
+      </Typography>
+
+      <Grid container spacing={4} sx={{ mb: 4, alignItems: 'stretch' }}>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <VesselMixChart lang={lang} fleet={plan.fleet_plan} vesselTypes={summary.vessel_types} />
+        </Grid>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <CarbonSensitivityChart lang={lang} result={result} />
         </Grid>
       </Grid>
 

@@ -17,6 +17,15 @@ export const VESSEL_COLOR: Record<string, string> = {
   fastcraft: "#e87ba4",
 };
 
+// Same hues, stepped for the dark sea basemap of the route map.
+export const VESSEL_COLOR_MAP: Record<string, string> = {
+  diesel_old: "#5b9ff0",
+  diesel_new: "#f07a45",
+  hybrid: "#2fd39a",
+  electric: "#ffc233",
+  fastcraft: "#f08db3",
+};
+
 export const NO_SERVICE_COLOR = "#8a8984";
 export const CHARGER_COLOR = "#0ca30c";
 

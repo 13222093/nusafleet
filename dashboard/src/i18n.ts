@@ -35,8 +35,8 @@ const STRINGS = {
     en: "Route map and recommended vessel types",
   },
   mapNote: {
-    id: "Warna garis: jenis kapal dengan trip terbanyak di rute itu. Cincin hijau: pelabuhan dengan stasiun pengisian daya.",
-    en: "Line colour: the vessel type with the most trips on that route. Green ring: port with a charging station.",
+    id: "Warna garis: jenis kapal dengan trip terbanyak di rute itu. Arahkan kursor ke rute untuk rinciannya.",
+    en: "Line colour: the vessel type with the most trips on that route. Hover a route for details.",
   },
   legendCharger: { id: "Stasiun pengisian daya", en: "Charging station" },
   fleetTable: { id: "Rencana armada per rute", en: "Fleet plan by route" },
@@ -130,6 +130,32 @@ const STRINGS = {
     id: "Kapal mana di rute mana, dan di mana mengisi dayanya",
     en: "Which vessel on which route, and where to charge it",
   },
+  heroLead: {
+    id: "Dibanding armada saat ini, rencana ini berarti:",
+    en: "Compared with today's fleet, this plan means:",
+  },
+  heroCheaper: { id: "lebih hemat per tahun", en: "saved per year" },
+  heroCostlier: { id: "lebih mahal per tahun", en: "more per year" },
+  heroCo2Less: { id: "lebih sedikit per tahun", en: "less per year" },
+  heroCo2More: { id: "lebih banyak per tahun", en: "more per year" },
+  heroTripsAvoided: {
+    id: "tidak batal karena gelombang, per tahun",
+    en: "not cancelled by waves, per year",
+  },
+  heroTripsMore: {
+    id: "tambahan batal karena gelombang, per tahun",
+    en: "more cancelled by waves, per year",
+  },
+  trips: { id: "trip", en: "trips" },
+  todayShort: { id: "Saat ini", en: "Today" },
+  planShort: { id: "Rencana", en: "Plan" },
+  insetTitle: { id: "Ternate, Tidore, Sofifi", en: "Ternate, Tidore, Sofifi" },
+  legendWidth: {
+    id: "Tebal garis: penumpang per hari",
+    en: "Line width: passengers per day",
+  },
+  paxPerDay: { id: "penumpang per hari", en: "passengers per day" },
+  exploreTitle: { id: "Jelajahi analisisnya", en: "Explore the analysis" },
   loading: { id: "Memuat data...", en: "Loading data..." },
   loadError: {
     id: "Data tidak ditemukan. Jalankan `uv run python main.py` terlebih dahulu.",
