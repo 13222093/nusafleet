@@ -15,8 +15,7 @@ import { CoopStrip, PrioritySeg, ScenarioPills, scenarioShort } from './componen
 import { DataPage } from './components/DataPage';
 import { FleetStrip } from './components/FleetTable';
 import { KpiBand } from './components/HeroPanel';
-import { Layout } from './components/Layout';
-import type { Page } from './components/Layout';
+import { Layout, NotFound } from './components/Layout';
 import { MapView, vesselShort } from './components/MapView';
 import { ReportPage } from './components/ReportPage';
 import { RouteDrawer } from './components/RouteDrawer';
@@ -26,13 +25,14 @@ import type { Knob } from './components/WhatIfPanel';
 import { num, t } from './i18n';
 import { vesselSpecs } from './cooperation';
 import { useLiveSolve } from './live';
+import { usePageRoute } from './routes';
 import type { Overrides } from './live';
 import { recommend } from './recommend';
 import type { Alternative } from './recommend';
 import type { Lang, ParetoPoint, ScenarioResult, Summary } from './types';
 
 async function loadJson<T>(name: string): Promise<T> {
-  const response = await fetch(`./data/${name}.json`);
+  const response = await fetch(`/data/${name}.json`);
   if (!response.ok) throw new Error(`${name}: ${response.status}`);
   return (await response.json()) as T;
 }
@@ -61,7 +61,7 @@ type Tab = 'fleet' | 'analysis' | 'compare' | 'alts' | 'whatif';
 
 function App() {
   const [lang, setLang] = useState<Lang>('id');
-  const [page, setPage] = useState<Page>('plan');
+  const [page, setPage] = usePageRoute(lang);
   const [summary, setSummary] = useState<Summary | null>(null);
   const [results, setResults] = useState<Record<string, ScenarioResult>>({});
   const [scenarioId, setScenarioId] = useState('');
@@ -127,6 +127,7 @@ function App() {
     </Layout>
   );
 
+  if (page === 'notfound') return shell(<NotFound lang={lang} onHome={() => setPage('plan')} />);
   if (failed) return shell(<Alert severity="error">{t(lang, 'loadError')}</Alert>);
   if (!summary || !results[scenarioId]) return shell(<Typography color="text.secondary">{t(lang, 'loading')}</Typography>);
   if (page === 'data') return shell(<DataPage lang={lang} summary={summary} />);
@@ -315,7 +316,7 @@ function App() {
                     ))}
                   </Box>
                 )}
-                <ButtonBase onClick={() => setPage('coop')} sx={{ mt: 1.5, fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 500, color: '#0f1417', borderRadius: '2px', textDecoration: 'underline', textUnderlineOffset: '3px', textDecorationThickness: '1px', transition: 'text-underline-offset 160ms', '&:hover': { textUnderlineOffset: '5px', textDecorationColor: '#b5157a' }, '&.Mui-focusVisible': { outline: '2px solid #b5157a', outlineOffset: 2 } }}>
+                <ButtonBase component="a" href="/kerja-sama" onClick={(e: React.MouseEvent) => { e.preventDefault(); setPage('coop'); }} sx={{ mt: 1, py: '6px', fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 500, color: '#0f1417', borderRadius: '2px', textDecoration: 'underline', textUnderlineOffset: '3px', textDecorationThickness: '1px', transition: 'text-underline-offset 160ms', '&:hover': { textUnderlineOffset: '5px', textDecorationColor: '#b5157a' }, '&.Mui-focusVisible': { outline: '2px solid #b5157a', outlineOffset: 2 } }}>
                   {t(lang, 'specOpen')}
                 </ButtonBase>
               </Box>

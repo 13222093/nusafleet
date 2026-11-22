@@ -9,7 +9,7 @@ export const UI = {
   surface: '#ffffff',
   ink: '#0f1417',
   muted: '#52606a',
-  faint: '#8d9aa3',
+  faint: '#5f6b73',
   line: '#d6dee3',
   lineStrong: '#b4c2ca',
   accent: '#b5157a',

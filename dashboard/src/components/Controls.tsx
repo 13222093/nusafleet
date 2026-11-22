@@ -33,10 +33,10 @@ const sheet = {
 
 /** Names the axis a control sets: the model has two, supply and priority. */
 const axisLabel = {
-  display: { xs: 'none', lg: 'flex' },
+  display: 'flex',
   alignItems: 'center',
-  px: 1.25,
-  maxWidth: 74,
+  px: { xs: 0.75, lg: 1.25 },
+  maxWidth: { xs: 58, lg: 74 },
   fontSize: '0.68rem',
   fontStyle: 'italic',
   lineHeight: 1.15,
@@ -67,7 +67,7 @@ export function ScenarioPills({ lang, ids, results, activeId, onSelect, stationC
         aria-pressed={playing}
         aria-label={t(lang, playing ? 'pause' : 'play')}
         title={t(lang, playing ? 'pause' : 'play')}
-        sx={{ width: 44, flexShrink: 0, color: playing ? '#ffffff' : UI.ink, bgcolor: playing ? UI.ink : 'transparent', borderRight: `1px solid ${UI.line}`, borderRadius: { xs: '2px 0 0 2px', lg: 0 }, ...focusRing }}
+        sx={{ width: 44, flexShrink: 0, color: playing ? '#ffffff' : UI.ink, bgcolor: playing ? UI.ink : 'transparent', transition: 'background-color 160ms, color 160ms', '&:hover': { bgcolor: UI.ink, color: '#ffffff' }, borderRight: `1px solid ${UI.line}`, borderRadius: { xs: '2px 0 0 2px', lg: 0 }, ...focusRing }}
       >
         {playing ? <Pause size={15} strokeWidth={1.75} /> : <Play size={15} strokeWidth={1.75} />}
       </ButtonBase>
@@ -84,14 +84,14 @@ export function ScenarioPills({ lang, ids, results, activeId, onSelect, stationC
             aria-label={`${s.available_from_year}, ${full}, ${stations} ${t(lang, 'stations')}`}
             title={full}
             onClick={() => onSelect(id)}
-            sx={{ position: 'relative', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', px: 1.5, py: 0.75, minWidth: { xs: 64, md: 108 }, borderLeft: i > 0 ? `1px solid ${UI.line}` : 'none', fontFamily: 'inherit', textAlign: 'left', transition: 'background-color 120ms', bgcolor: active ? UI.bg : 'transparent', '&:hover': { bgcolor: UI.bg }, ...focusRing }}
+            sx={{ position: 'relative', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', px: 1.5, py: 0.75, minWidth: { xs: 64, md: 108 }, borderLeft: i > 0 ? `1px solid ${UI.line}` : 'none', fontFamily: 'inherit', textAlign: 'left', transition: 'background-color 120ms', bgcolor: active ? UI.bg : 'transparent', '&:hover': { bgcolor: UI.bg }, '&:hover .step-rule': { transform: 'scaleX(1)' }, ...focusRing }}
           >
             <Box component="span" sx={{ fontSize: '0.95rem', fontWeight: active ? 500 : 400, color: active ? UI.ink : UI.muted, fontVariantNumeric: 'tabular-nums', lineHeight: 1.2 }}>{s.available_from_year}</Box>
             <Box component="span" sx={{ display: { xs: 'none', md: 'block' }, fontSize: '0.7rem', color: UI.muted, lineHeight: 1.3, whiteSpace: 'nowrap' }}>
               {scenarioShort(id, lang, full)}
               {stations > 0 ? <Box component="span" sx={{ ml: 0.75, fontFamily: MONO, color: UI.accent }}>{num(lang, stations)} {t(lang, 'stations')}</Box> : null}
             </Box>
-            {active ? <Box aria-hidden="true" sx={{ position: 'absolute', left: 0, right: 0, bottom: -1, height: 2, bgcolor: UI.ink }} /> : null}
+            <Box aria-hidden="true" className="step-rule" sx={{ position: 'absolute', left: 0, right: 0, bottom: -1, height: 2, bgcolor: active ? UI.ink : UI.accent, transform: active ? 'scaleX(1)' : 'scaleX(0)', transformOrigin: 'left center', transition: 'transform 300ms cubic-bezier(.16,1,.3,1)' }} />
           </ButtonBase>
         );
       })}

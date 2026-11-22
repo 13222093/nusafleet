@@ -14,8 +14,8 @@ import type { ChargerRow, FleetRow, Lang, Port, Route, VesselType } from '../typ
 import { vesselShort } from '../components/MapView';
 import { FRAME_SIZE, arcLatLon, toScene } from './geo';
 
-const MODEL_URL = './twin/twin.v2.glb';
-const SEA_URL = './twin/sea.v3.webp';
+const MODEL_URL = '/twin/twin.v2.glb';
+const SEA_URL = '/twin/sea.v3.webp';
 const KM_PER_MW = 2.4; // charger column height
 const PLUG_IN = new Set(['hybrid', 'electric']);
 const LOCAL_ROUTES = new Set(['TTE_TID', 'TTE_SOF']);
@@ -284,17 +284,18 @@ function Lanes({ lanes, lang, selected, onClick }: { lanes: Lane[]; lang: Lang; 
   );
 }
 
-const WATERS: { id: string; en: string; lat: number; lon: number; big?: boolean }[] = [
-  { id: 'Laut Maluku', en: 'Molucca Sea', lat: 1.2, lon: 126.8, big: true },
-  { id: 'Teluk Kao', en: 'Kao Bay', lat: 0.98, lon: 127.8 },
-  { id: 'Selat Morotai', en: 'Morotai Strait', lat: 2.0, lon: 128.14 },
+// Placed clear of ports and route lanes; the strait name only shows once zoomed in
+const WATERS: { id: string; en: string; lat: number; lon: number; big?: boolean; local?: boolean }[] = [
+  { id: 'Laut Maluku', en: 'Molucca Sea', lat: 0.62, lon: 126.78, big: true },
+  { id: 'Teluk Kao', en: 'Kao Bay', lat: 0.9, lon: 127.92 },
+  { id: 'Selat Morotai', en: 'Morotai Strait', lat: 2.16, lon: 128.17, local: true },
 ];
 
 function Waters({ lang }: { lang: Lang }) {
   return (
     <>
       {WATERS.map((w) => (
-        <Html key={w.id} position={toScene(w.lat, w.lon, 0.2)} center zIndexRange={[8, 5]} className={w.big ? 'twin-water twin-water-big' : 'twin-water'}>
+        <Html key={w.id} position={toScene(w.lat, w.lon, 0.2)} center zIndexRange={[8, 5]} className={`twin-water${w.big ? ' twin-water-big' : ''}${w.local ? ' twin-local' : ''}`}>
           {lang === 'id' ? w.id : w.en}
         </Html>
       ))}

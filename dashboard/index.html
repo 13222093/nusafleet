@@ -2,12 +2,53 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NusaFleet</title>
+    <title>NusaFleet: rencana feri dan stasiun pengisian Maluku Utara</title>
+    <meta name="description" content="Model relief 3D Maluku Utara yang menghitung kapal mana untuk lima rute feri dan di pelabuhan mana stasiun pengisian dibangun, untuk pasokan listrik 2026, 2027 dan 2031." />
+    <link rel="canonical" href="https://nusafleet.vercel.app/" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#f4f7f8" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="NusaFleet" />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:title" content="NusaFleet: rencana feri dan stasiun pengisian Maluku Utara" />
+    <meta property="og:description" content="Lima rute, tiga skenario pasokan listrik, satu model relief: kapal mana di rute mana, dan di mana ia mengisi daya." />
+    <meta property="og:url" content="https://nusafleet.vercel.app/" />
+    <meta property="og:image" content="https://nusafleet.vercel.app/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Model relief Maluku Utara dengan rute feri bergaris putus dan angka penghematan biaya serta CO2" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NusaFleet: rencana feri dan stasiun pengisian Maluku Utara" />
+    <meta name="twitter:image" content="https://nusafleet.vercel.app/og.jpg" />
+
+    <!-- The plan data is needed for the first paint: fetch it in parallel with the bundle -->
+    <link rel="preload" href="/data/summary.json" as="fetch" crossorigin />
+    <link rel="preload" href="/data/A_grid.json" as="fetch" crossorigin />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "NusaFleet",
+        "url": "https://nusafleet.vercel.app/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Any",
+        "inLanguage": ["id", "en"],
+        "description": "Perencana armada feri dan lokasi stasiun pengisian untuk lima rute di Maluku Utara, dengan tiga skenario pasokan listrik.",
+        "license": "https://opensource.org/licenses/MIT"
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Shown until the app mounts, and to crawlers that do not run JavaScript -->
+      <main style="max-width: 760px; margin: 0 auto; padding: 96px 24px; font-family: system-ui, sans-serif; color: #0f1417">
+        <h1 style="font-size: 28px; line-height: 1.15; margin: 0 0 12px">Rencana feri dan stasiun pengisian untuk lima rute Maluku Utara, 2026 sampai 2031</h1>
+        <p style="font-size: 16px; line-height: 1.55; margin: 0; color: #52606a">NusaFleet menghitung jenis dan jumlah kapal untuk rute Ternate ke Tidore, Sofifi, Jailolo dan Batang Dua serta Tobelo ke Daruba, beserta pelabuhan yang perlu stasiun pengisian, untuk pasokan listrik PLN 2026, PLN dengan surya 2027, dan pembangkit terapung Halmahera Utara 2031.</p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

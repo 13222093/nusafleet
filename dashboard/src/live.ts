@@ -38,6 +38,13 @@ export function useLiveSolve(scenarioId: string, overrides: Overrides) {
   const { diesel, elec, carbon } = overrides;
 
   useEffect(() => {
+    // A deployed site only probes an API it was built to use; a local API is for local runs
+    const localApi = /localhost|127\.0\.0\.1|\[::1\]/.test(API_URL);
+    const localPage = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(window.location.hostname);
+    if (localApi && !localPage) {
+      setApiOnline(false);
+      return;
+    }
     fetch(`${API_URL}/health`)
       .then((r) => setApiOnline(r.ok))
       .catch(() => setApiOnline(false));

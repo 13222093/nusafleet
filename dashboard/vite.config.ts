@@ -3,8 +3,8 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
 export default defineConfig({
-    // Relative base so the built site works from any static host or sub-path.
-    base: "./",
+    // Absolute base: the app has real routes (/kerja-sama, /laporan, /data)
+    base: "/",
     plugins: [react()],
     resolve: {
         alias: {

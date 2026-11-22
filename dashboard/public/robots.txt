@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nusafleet.vercel.app/sitemap.xml
