@@ -1,44 +1,72 @@
-@import url('https://fonts.cdnfonts.com/css/google-sans');
+/* Paper palette: stone, ink, one cobalt accent. Tokens mirror src/colors.ts. */
+:root {
+    --bg: #f4f7f8;
+    --surface: #ffffff;
+    --ink: #0f1417;
+    --muted: #52606a;
+    --faint: #8d9aa3;
+    --line: #d6dee3;
+    --line-strong: #b4c2ca;
+    --accent: #b5157a;
+    --font: "Archivo Variable", "Archivo", "Arial Narrow", system-ui, sans-serif;
+    --mono: var(--font);
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+}
 
 body {
     margin: 0;
     padding: 0;
+    background: var(--bg);
 }
 
-/* ---------- Route map (Leaflet), styled as a sea chart ---------- */
+::selection {
+    background: #f7deec;
+}
+
+body {
+    font-family: var(--font);
+}
+
+/* ---------- Map stage (3D model or 2D chart) ---------- */
 .map-stage {
     position: relative;
     height: 100%;
+    background: var(--bg);
+}
+
+.twin-canvas {
+    position: absolute !important;
+    inset: 0;
+    touch-action: none;
 }
 
 .leaflet-container {
-    font-family: "Product Sans", "Google Sans", "Segoe UI", Roboto, system-ui, sans-serif;
+    font-family: var(--font);
 }
 
 .map {
     height: 100%;
     z-index: 0;
-    background: #06252b;
+    background: #eef3f5;
 }
 
-/* Grey label-free tiles tinted to a deep teal sea with lighter land */
+/* Light grey tiles warmed slightly towards the paper tone */
 .map .leaflet-tile-pane,
 .map-inset-canvas .leaflet-tile-pane {
-    filter: sepia(1) hue-rotate(128deg) saturate(1.7) brightness(1.05) contrast(1.15);
+    filter: sepia(0.25) saturate(0.7) brightness(1.02);
 }
 
 .map .leaflet-control-attribution {
-    background: rgba(6, 37, 43, 0.7);
-    color: rgba(255, 255, 255, 0.6);
+    background: rgba(244, 247, 248, 0.85);
+    color: var(--muted);
     font-size: 10px;
-    border-radius: 0 8px 0 0;
 }
 
 .map .leaflet-control-attribution a {
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--muted);
 }
 
-/* Overlays on the map */
+/* Overlays */
 .map-top {
     position: absolute;
     top: 12px;
@@ -48,26 +76,40 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 8px;
     pointer-events: none;
+}
+
+.map-top > * {
+    pointer-events: auto;
 }
 
 .map-bottom {
     position: absolute;
     left: 12px;
-    bottom: 28px;
+    bottom: 12px;
     z-index: 500;
-    /* Stay clear of the inset in the opposite corner */
-    max-width: calc(100% - 48px - min(38%, 330px));
+    max-width: calc(100% - 24px);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    pointer-events: none;
+}
+
+.map-bottom > * {
+    pointer-events: auto;
+}
+
+/* The 2D map keeps its inset in the opposite corner */
+.map-stage:not(.twin-stage) .map-bottom {
+    max-width: calc(100% - 48px - min(38%, 330px));
 }
 
 .map-row {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
 }
@@ -78,93 +120,86 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    border: 1px solid rgba(127, 227, 210, 0.45);
-    background: rgba(6, 37, 43, 0.9);
-    color: #7fe3d2;
+    border-radius: 3px;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
     cursor: pointer;
+    transition: border-color 120ms;
 }
 
 .map-reset:hover {
-    color: #ffffff;
+    border-color: var(--ink);
 }
 
 .map-reset:focus-visible {
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
 
-/* Zoom buttons in the same dark style, below the control bar */
 .map .leaflet-top.leaflet-right {
-    top: 100px;
+    top: 64px;
 }
 
 .map .leaflet-control-zoom {
-    border: 1px solid rgba(127, 227, 210, 0.45);
-    border-radius: 12px;
+    border: 1px solid var(--line) !important;
+    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    box-shadow: none;
 }
 
 .map .leaflet-control-zoom a {
     width: 34px;
     height: 34px;
     line-height: 34px;
-    background: rgba(6, 37, 43, 0.92);
-    color: #7fe3d2;
-    border-bottom-color: rgba(127, 227, 210, 0.25);
+    background: var(--surface);
+    color: var(--ink);
+    border-bottom-color: var(--line);
 }
 
 .map .leaflet-control-zoom a:hover {
-    background: #0d3f44;
-    color: #ffffff;
+    background: var(--bg);
 }
 
-.map-top > * {
-    pointer-events: auto;
-}
-
-.map-hint {
-    padding: 5px 12px;
-    border-radius: 999px;
-    background: rgba(6, 37, 43, 0.85);
-    border: 1px solid rgba(127, 227, 210, 0.35);
-    color: #d8f3ee;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-/* Segmented control: one pill track, the pressed option filled */
+/* Segmented control: white track, the pressed option in ink */
 .seg {
     display: inline-flex;
     padding: 3px;
     gap: 2px;
-    border-radius: 999px;
-    background: rgba(6, 37, 43, 0.9);
-    border: 1px solid rgba(127, 227, 210, 0.45);
+    border-radius: 3px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
 }
 
 .seg button {
     border: 0;
     height: 28px;
-    padding: 0 14px;
-    border-radius: 999px;
+    padding: 0 12px;
+    border-radius: 2px;
     background: transparent;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--muted);
     font: inherit;
-    font-size: 13px;
-    font-weight: 700;
+    font-family: var(--font);
+    font-size: 12.5px;
+    font-weight: 400;
     cursor: pointer;
     white-space: nowrap;
+    transition: background-color 160ms, color 160ms;
+}
+
+.seg button:hover {
+    color: var(--ink);
 }
 
 .seg button[aria-pressed="true"] {
-    background: #7fe3d2;
-    color: #06252b;
+    background: var(--ink);
+    color: #ffffff;
+    font-weight: 500;
+    cursor: default;
 }
 
 .seg button:focus-visible {
-    outline: 2px solid #ffffff;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
 
@@ -172,14 +207,15 @@ body {
     max-width: 100%;
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 6px 16px;
-    padding: 8px 14px;
-    border-radius: 12px;
-    background: rgba(6, 37, 43, 0.88);
-    border: 1px solid rgba(127, 227, 210, 0.3);
-    color: #e6f6f3;
+    padding: 7px 12px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    font-family: var(--font);
     font-size: 12px;
-    font-weight: 600;
 }
 
 .legend-item {
@@ -190,27 +226,27 @@ body {
 }
 
 .legend-note {
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 500;
+    color: var(--muted);
 }
 
-.swatch-line {
-    width: 20px;
-    height: 5px;
-    border-radius: 3px;
+.legend-column {
+    width: 7px;
+    height: 13px;
+    border-radius: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 0 2px #f7deec;
 }
 
 .map-inset {
     position: absolute;
-    right: 14px;
-    bottom: 14px;
+    right: 12px;
+    bottom: 12px;
     width: min(38%, 330px);
     z-index: 500;
-    border-radius: 16px;
+    border-radius: 8px;
     overflow: hidden;
-    border: 2px solid #7fe3d2;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    background: #06252b;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
 }
 
 .map-inset-title {
@@ -218,37 +254,38 @@ body {
     top: 8px;
     left: 8px;
     z-index: 600;
-    padding: 3px 9px;
-    border-radius: 6px;
-    background: #06252b;
-    color: #7fe3d2;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--ink);
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 .map-inset-canvas {
     height: 190px;
-    background: #06252b;
+    background: #eef3f5;
 }
 
-/* Labels drawn by us (the basemap has none) */
+/* Labels on the 2D map */
 .route-label.leaflet-tooltip {
-    background: rgba(6, 37, 43, 0.94);
-    border: 1px solid rgba(127, 227, 210, 0.45);
-    border-radius: 999px;
-    color: #ffffff;
-    font-size: 12px;
-    font-weight: 600;
-    padding: 3px 10px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 11.5px;
+    font-weight: 400;
+    padding: 2px 7px;
     box-shadow: none;
     white-space: nowrap;
 }
 
 .route-dot {
     display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
+    width: 7px;
+    height: 7px;
+    border-radius: 1px;
     margin-right: 6px;
 }
 
@@ -256,22 +293,23 @@ body {
     background: transparent;
     border: 0;
     box-shadow: none;
-    color: #e6f6f3;
-    font-size: 12.5px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
+    color: var(--ink);
+    font-family: var(--font);
+    font-size: 12px;
+    font-weight: 500;
     padding: 0;
-    text-shadow: 0 0 4px #041418, 0 0 4px #041418, 0 0 4px #041418;
+    text-shadow: 0 0 3px #ffffff, 0 0 3px #ffffff, 0 0 3px #ffffff;
     white-space: nowrap;
 }
 
 .map-tip.leaflet-tooltip {
-    border: 0;
-    border-radius: 12px;
-    font-size: 13px;
-    padding: 8px 12px;
-    color: #0c2a2e;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-family: var(--font);
+    font-size: 12.5px;
+    padding: 8px 10px;
+    color: var(--ink);
+    box-shadow: 0 6px 20px rgba(15, 20, 23, 0.10);
 }
 
 .route-label.leaflet-tooltip::before,
@@ -283,40 +321,168 @@ body {
     cursor: pointer;
 }
 
-/* One symbol for a charging station: white disc, mint ring, dark bolt */
 .charger-icon {
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    background: #ffffff;
-    border: 3px solid #7fe3d2;
+    border-radius: 4px;
+    background: var(--accent);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 0 1px var(--accent);
 }
 
 .legend-charger {
-    width: 20px;
-    height: 20px;
-    border-width: 2px;
+    width: 18px;
+    height: 18px;
 }
 
-/* A ring that expands and fades around ports with a charging station */
 .charger-pulse {
     transform-box: fill-box;
     transform-origin: center;
-    animation: charger-pulse 2.2s ease-out infinite;
+    animation: charger-pulse 2.4s var(--ease-out) infinite;
     pointer-events: none;
 }
 
 @keyframes charger-pulse {
     0% {
-        transform: scale(0.55);
-        opacity: 0.9;
+        transform: scale(0.6);
+        opacity: 0.7;
     }
     100% {
-        transform: scale(1.9);
+        transform: scale(1.8);
         opacity: 0;
     }
+}
+
+/* ---------- Labels in the 3D model (drei Html), set like chart lettering ---------- */
+/* Land names upright, water names italic, everything haloed in paper white */
+.twin-port {
+    transform: translate(9px, -50%);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-stretch: 92%;
+    letter-spacing: 0.005em;
+    color: var(--ink);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 0 0 2px #fff, 0 0 3px #fff, 0 0 5px #fff;
+    transition: opacity 220ms;
+}
+
+.twin-tag {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    font-size: 11.5px;
+    font-style: italic;
+    font-stretch: 88%;
+    color: var(--ink);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    text-shadow: 0 0 2px #fff, 0 0 3px #fff, 0 0 6px #fff;
+    transition: opacity 220ms;
+}
+
+.twin-tag b {
+    font-style: normal;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.twin-tag.is-on {
+    z-index: 5;
+}
+
+.twin-tag-sub {
+    font-style: normal;
+    font-size: 10.5px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.twin-water {
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 400;
+    font-stretch: 110%;
+    letter-spacing: 0.14em;
+    color: #3f6f8c;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.9;
+}
+
+.twin-water-big {
+    font-size: 17px;
+    letter-spacing: 0.32em;
+}
+
+.twin-tick {
+    transform: translateY(16px);
+    font-size: 10px;
+    font-stretch: 85%;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.twin-tick-lat {
+    transform: translateX(-34px);
+}
+
+.twin-kw {
+    padding: 1px 5px;
+    border-radius: 2px;
+    background: var(--accent);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    font-stretch: 88%;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 400ms;
+}
+
+.twin-far .twin-local:not(.is-on) {
+    opacity: 0;
+}
+
+.twin-north {
+    position: absolute;
+    top: 74px;
+    right: 14px;
+    z-index: 400;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink);
+    pointer-events: none;
+}
+
+.twin-north-needle {
+    width: 30px;
+    height: 30px;
+    will-change: transform;
+}
+
+.twin-credit {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    z-index: 400;
+    font-size: 10px;
+    font-stretch: 88%;
+    color: var(--faint);
+    pointer-events: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -327,8 +493,8 @@ body {
 }
 
 @media (max-width: 700px) {
-    .map-hint,
-    .legend-note {
+    .legend-note,
+    .twin-credit {
         display: none;
     }
 
@@ -340,9 +506,14 @@ body {
         height: 150px;
     }
 
-    .map-bottom {
+    .map-stage:not(.twin-stage) .map-bottom {
         max-width: calc(100% - 24px);
-        bottom: 190px;
+        bottom: 172px;
+    }
+
+    .map-legend {
+        font-size: 11px;
+        gap: 4px 10px;
     }
 }
 

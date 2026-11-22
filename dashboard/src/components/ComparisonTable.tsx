@@ -39,7 +39,7 @@ export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2, mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+          <Typography variant="h6" sx={{ fontWeight: 500 }}>
             {t(lang, 'tableTitle')}
             <Box component="span" sx={{ ml: 1, fontSize: '0.85rem', fontWeight: 500, color: 'text.secondary' }}>{planName}</Box>
           </Typography>
@@ -51,15 +51,15 @@ export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
             <thead>
               <tr>
                 <Box component="th" sx={{ textAlign: 'left' }} />
-                <Box component="th" scope="col" sx={{ px: 0.75, py: 1, textAlign: 'right', fontSize: '0.75rem', fontWeight: 700, color: 'text.secondary', verticalAlign: 'bottom' }}>
+                <Box component="th" scope="col" sx={{ px: 0.75, py: 1, textAlign: 'right', fontSize: '0.75rem', fontWeight: 500, color: 'text.secondary', verticalAlign: 'bottom' }}>
                   {t(lang, 'todayShort')}
                 </Box>
                 {ids.map((id) => {
                   const active = id === activeId;
                   const s = results[id].scenario;
                   return (
-                    <Box component="th" scope="col" key={id} sx={{ px: 0.75, py: 1, textAlign: 'right', verticalAlign: 'bottom', bgcolor: active ? '#e3f5f1' : 'transparent', borderRadius: active ? '12px 12px 0 0' : 0 }}>
-                      <Typography sx={{ fontSize: '1rem', fontWeight: 700, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>{s.available_from_year}</Typography>
+                    <Box component="th" scope="col" key={id} sx={{ px: 0.75, py: 1, textAlign: 'right', verticalAlign: 'bottom', bgcolor: active ? '#eef3f5' : 'transparent', borderRadius: active ? '12px 12px 0 0' : 0 }}>
+                      <Typography sx={{ fontSize: '1rem', fontWeight: 500, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>{s.available_from_year}</Typography>
                       <Typography sx={{ fontSize: '0.68rem', color: 'text.secondary', lineHeight: 1.2 }}>{scenarioShort(id, lang, lang === 'id' ? s.label_id : s.label_en)}</Typography>
                     </Box>
                   );
@@ -74,7 +74,7 @@ export function ComparisonTable({ lang, results, activeId, planLabel }: Props) {
                   {ids.map((id) => {
                     const active = id === activeId;
                     return (
-                      <Box component="td" key={id} sx={{ ...cellSx, fontWeight: active ? 700 : 500, bgcolor: active ? '#e3f5f1' : 'transparent', borderRadius: active && r === rows.length - 1 ? '0 0 12px 12px' : 0 }}>
+                      <Box component="td" key={id} sx={{ ...cellSx, fontWeight: active ? 700 : 500, bgcolor: active ? '#eef3f5' : 'transparent', borderRadius: active && r === rows.length - 1 ? '0 0 12px 12px' : 0 }}>
                         {row.cell(pick(id))}
                       </Box>
                     );

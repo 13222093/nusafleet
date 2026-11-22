@@ -1,108 +1,77 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import '@fontsource-variable/archivo/standard.css'
+import '@fontsource-variable/archivo/standard-italic.css'
 import App from './App'
 import './index.css'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
+import { FONT, UI } from './colors';
+
 const theme = createTheme({
   palette: {
     mode: 'light',
-    primary: {
-      main: '#009688', // Seafoam Blue / Teal
-      light: '#80CBC4',
-      dark: '#00695C',
-      contrastText: '#FFFFFF',
-    },
-    secondary: {
-      main: '#4DB6AC',
-    },
-    background: {
-      default: '#f3f6f5',
-      paper: '#FFFFFF',   
-    },
-    text: {
-        primary: '#0c2a2e',
-        secondary: '#51676a',
-    }
+    primary: { main: UI.ink, light: UI.muted, dark: '#000000', contrastText: '#ffffff' },
+    secondary: { main: UI.accent },
+    background: { default: UI.bg, paper: UI.surface },
+    text: { primary: UI.ink, secondary: UI.muted },
+    divider: UI.line,
   },
   typography: {
-      fontFamily: '"Product Sans", "Google Sans", "Segoe UI", Roboto, system-ui, sans-serif',
-      allVariants: {
-          fontFamily: '"Product Sans", "Google Sans", "Segoe UI", Roboto, system-ui, sans-serif',
-      },
-      h4: {
-          fontWeight: 400,
-          color: '#0c2a2e',
-      },
-      h6: {
-          fontWeight: 500,
-          color: '#0c2a2e',
-      },
-      subtitle2: {
-           fontWeight: 500,
-           letterSpacing: 0.1,
-      }
+    fontFamily: FONT,
+    allVariants: { fontFamily: FONT, letterSpacing: '-0.005em' },
+    h4: { fontWeight: 300, letterSpacing: '-0.02em', color: UI.ink },
+    h5: { fontWeight: 400, letterSpacing: '-0.015em' },
+    h6: { fontWeight: 500, color: UI.ink },
+    subtitle2: { fontWeight: 500 },
   },
-  shape: {
-    borderRadius: 24, // M3 allows up to 28px for large containers
-  },
+  shape: { borderRadius: 8 },
   components: {
-      MuiCard: {
-          styleOverrides: {
-              root: {
-                  backgroundImage: 'none',
-                  boxShadow: 'none',
-                  backgroundColor: '#ffffff',
-                  border: '1px solid #dde6e4',
-                  borderRadius: 24,
-              }
-          }
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: { fontFeatureSettings: '"ss01", "tnum" 0', WebkitFontSmoothing: 'antialiased' },
       },
-      MuiPaper: {
-          styleOverrides: {
-              root: {
-                  backgroundImage: 'none',
-              },
-              rounded: {
-                   borderRadius: 24,
-              }
-          }
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: { backgroundImage: 'none', boxShadow: 'none', backgroundColor: UI.surface, border: `1px solid ${UI.line}`, borderRadius: 10 },
       },
-      MuiButton: {
-          styleOverrides: {
-              root: {
-                  borderRadius: 20,
-                  textTransform: 'none',
-                  boxShadow: 'none',
-                  '&:hover': {
-                      boxShadow: 'none',
-                  }
-              },
-              contained: {
-                  backgroundColor: '#009688',
-                  color: '#FFFFFF',
-              }
-          }
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: { backgroundImage: 'none' },
+        rounded: { borderRadius: 10 },
+        elevation: { boxShadow: '0 1px 2px rgba(15,20,23,0.06), 0 8px 24px rgba(15,20,23,0.06)' },
       },
-      MuiDrawer: {
-          styleOverrides: {
-              paper: {
-                  backgroundColor: '#E0F2F1', // Rail background
-                  borderRight: 'none',
-              }
-          }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: { borderRadius: 6, textTransform: 'none', boxShadow: 'none', fontWeight: 500, '&:hover': { boxShadow: 'none' } },
+        contained: { backgroundColor: UI.ink, color: '#ffffff' },
       },
-      MuiAppBar: {
-          styleOverrides: {
-              root: {
-                  backgroundColor: '#F0F7F6',
-                  color: '#0c2a2e',
-                  boxShadow: 'none',
-              }
-          }
-      }
-  }
+    },
+    MuiSlider: {
+      styleOverrides: {
+        root: { color: UI.ink, height: 2 },
+        thumb: { width: 14, height: 14, boxShadow: 'none', '&:hover, &.Mui-focusVisible': { boxShadow: `0 0 0 6px ${UI.accentSoft}` } },
+        rail: { opacity: 1, backgroundColor: UI.line },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: { backgroundColor: UI.surface, borderLeft: `1px solid ${UI.line}`, boxShadow: '0 0 40px rgba(15,20,23,0.10)' },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: { backgroundColor: UI.ink, fontSize: 12, fontWeight: 400, borderRadius: 6, padding: '6px 10px' },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: { root: { backgroundColor: UI.bg, color: UI.ink, boxShadow: 'none' } },
+    },
+  },
 });
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

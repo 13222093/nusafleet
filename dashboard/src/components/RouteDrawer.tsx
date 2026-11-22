@@ -53,21 +53,21 @@ function Metric({ label, today, plan, format, lowerIsBetter, todayLabel, planLab
   const max = Math.max(today, plan, 1e-9);
   const better = lowerIsBetter ? plan < today : plan > today;
   const same = Math.abs(plan - today) < 1e-9;
-  const planColor = same ? '#009688' : better ? '#2e7d32' : '#c62828';
+  const planColor = same ? '#52606a' : better ? '#0f1417' : '#9c4410';
   const bar = (name: string, value: number, color: string) => (
     <Box sx={{ display: 'grid', gridTemplateColumns: '64px 1fr', alignItems: 'center', columnGap: 1 }}>
       <Typography variant="caption" color="text.secondary">{name}</Typography>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Box sx={{ height: 12, width: `${(68 * value) / max}%`, minWidth: 4, bgcolor: color, borderRadius: '0 4px 4px 0', transition: 'width 0.4s ease' }} />
-        <Typography variant="caption" sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{format(value)}</Typography>
+        <Typography variant="caption" sx={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' }}>{format(value)}</Typography>
       </Box>
     </Box>
   );
   return (
     <Box>
-      <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.5 }}>{label}</Typography>
+      <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>{label}</Typography>
       <Stack spacing={0.5}>
-        {bar(todayLabel, today, '#9fb8b4')}
+        {bar(todayLabel, today, '#8d9aa3')}
         {bar(planLabel, plan, planColor)}
       </Stack>
     </Box>
@@ -90,13 +90,13 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
   const labels = { todayLabel: t(lang, 'todayShort'), planLabel: t(lang, 'planShort') };
 
   return (
-    <Drawer anchor="right" variant="persistent" open={route !== null} onClose={onClose} PaperProps={{ sx: { top: { sm: 56 }, height: { sm: 'calc(100% - 56px)' }, width: { xs: '100%', sm: 436 }, bgcolor: 'background.paper', borderRadius: { xs: 0, sm: '24px 0 0 24px' }, boxShadow: '-12px 0 40px rgba(6,37,43,0.25)', borderLeft: '1px solid #dde6e4' } }}>
+    <Drawer anchor="right" variant="persistent" open={route !== null} onClose={onClose} PaperProps={{ sx: { top: { sm: 56 }, height: { sm: 'calc(100% - 56px)' }, width: { xs: '100%', sm: 436 }, bgcolor: 'background.paper', borderRadius: { xs: 0, sm: '24px 0 0 24px' }, boxShadow: '-12px 0 40px rgba(15,20,23,0.25)', borderLeft: '1px solid #d6dee3' } }}>
       {route ? (
         <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', gap: 2.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
             <Box>
               <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>{t(lang, 'colRoute')}</Typography>
-              <Typography variant="h5" component="h2" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{route.name}</Typography>
+              <Typography variant="h5" component="h2" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{route.name}</Typography>
             </Box>
             <IconButton onClick={onClose} aria-label={t(lang, 'close')}><CloseIcon /></IconButton>
           </Stack>
@@ -108,13 +108,13 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
           </Stack>
 
           <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            <Box sx={{ p: 2, borderRadius: '16px', bgcolor: '#f0f7f6' }}>
-              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>{t(lang, 'today')}</Typography>
+            <Box sx={{ p: 2, borderRadius: '3px', bgcolor: '#f4f7f8' }}>
+              <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 500 }}>{t(lang, 'today')}</Typography>
               <Box sx={{ mt: 1 }}><Fleet lang={lang} rows={fToday} vesselTypes={vesselTypes} /></Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{trips(fToday)} {t(lang, 'colTrips').toLowerCase()}</Typography>
             </Box>
-            <Box sx={{ p: 2, borderRadius: '16px', bgcolor: '#e0f2f1', border: '2px solid #80cbc4' }}>
-              <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.dark' }}>{t(lang, 'planShort')}</Typography>
+            <Box sx={{ p: 2, borderRadius: '3px', bgcolor: '#eef3f5', border: '2px solid #b4c2ca' }}>
+              <Typography variant="caption" sx={{ fontWeight: 500, color: 'primary.dark' }}>{t(lang, 'planShort')}</Typography>
               <Box sx={{ mt: 1 }}><Fleet lang={lang} rows={fPlan} vesselTypes={vesselTypes} /></Box>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>{trips(fPlan)} {t(lang, 'colTrips').toLowerCase()}</Typography>
             </Box>
@@ -134,7 +134,7 @@ export function RouteDrawer({ lang, route, onClose, today, plan, chargers, ports
           <Divider />
 
           <Box>
-            <Typography variant="body2" sx={{ fontWeight: 700, mb: 0.75 }}>{t(lang, 'chargersHere')}</Typography>
+            <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.75 }}>{t(lang, 'chargersHere')}</Typography>
             {endChargers.length === 0 ? (
               <Typography variant="body2" color="text.secondary">{t(lang, 'notUsed')}</Typography>
             ) : (

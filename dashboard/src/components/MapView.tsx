@@ -7,7 +7,7 @@ import { divIcon } from 'leaflet';
 import type { LatLngBoundsExpression } from 'leaflet';
 import { AttributionControl, CircleMarker, MapContainer, Marker, Polyline, Rectangle, TileLayer, Tooltip, ZoomControl, useMap } from 'react-leaflet';
 
-import { NO_SERVICE_COLOR, VESSEL_COLOR_MAP, VESSEL_ORDER } from '../colors';
+import { NO_SERVICE_COLOR, UI, VESSEL_COLOR_MAP, VESSEL_DASH, VESSEL_ORDER } from '../colors';
 import { num, t } from '../i18n';
 import type { StringKey } from '../i18n';
 import type { ChargerRow, FleetRow, Lang, Port, Route, VesselType } from '../types';
@@ -23,6 +23,8 @@ interface Props {
   onRouteClick: (routeId: string) => void;
   view: 'plan' | 'today';
   onView: (view: 'plan' | 'today') => void;
+  /** Switch to the 3D model; absent when WebGL is not available. */
+  onMode?: (mode: '2d' | '3d') => void;
   /** Controls shown as a bar floating over the top of the map. */
   top: ReactNode;
 }
@@ -41,7 +43,7 @@ const MAIN_BOUNDS: LatLngBoundsExpression = [
   [2.2, 128.5],
 ];
 // Label-free dark basemap, tinted towards deep teal in index.css
-const TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+const TILE_URL = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}';
 const TILE_ATTRIBUTION = 'Tiles &copy; Esri, HERE, Garmin, &copy; OpenStreetMap contributors';
 
 const LABEL_SIDE: Record<string, Side> = { TTE: 'left', TID: 'bottom', SOF: 'right', BTD: 'top', JAI: 'right', TOB: 'left', DAR: 'right' };
@@ -50,7 +52,7 @@ const INSET_ROUTE_SIDE: Record<string, Side> = { TTE_TID: 'bottom', TTE_SOF: 'to
 const OFFSET: Record<Side, [number, number]> = { left: [-14, 0], right: [14, 0], top: [0, -14], bottom: [0, 14] };
 
 const SHORT_NAME: Record<string, StringKey> = { diesel_old: 'vOld', diesel_new: 'vNew', hybrid: 'vHybrid', electric: 'vElectric', fastcraft: 'vFast' };
-const BOLT = '<svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#06252b"/></svg>';
+const BOLT = '<svg viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="#ffffff"/></svg>';
 const CHARGER_ICON = divIcon({ className: 'charger-icon', html: BOLT, iconSize: [24, 24], iconAnchor: [12, 12] });
 
 export function vesselLabel(vesselTypes: VesselType[], type: string, lang: Lang): string {
@@ -92,7 +94,7 @@ function Graticule() {
   return (
     <>
       {lines.map((line, i) => (
-        <Polyline key={i} positions={line} pathOptions={{ color: '#ffffff', weight: 1, opacity: 0.07 }} interactive={false} />
+        <Polyline key={i} positions={line} pathOptions={{ color: UI.ink, weight: 1, opacity: 0.06 }} interactive={false} />
       ))}
     </>
   );
@@ -124,10 +126,10 @@ function Layers({ lang, routes, ports, fleet, chargers, inset, selectedRouteId, 
         const side = inset ? INSET_ROUTE_SIDE[route.route_id] : undefined;
         return (
           <Fragment key={`${route.route_id}-${mix}-${inset}-${selected}`}>
-            <Polyline positions={path} pathOptions={{ color: selected ? '#ffffff' : '#041418', weight: weight + (selected ? 8 : 5), opacity: 0.9, lineCap: 'round' }} interactive={false} />
+            <Polyline positions={path} pathOptions={{ color: '#ffffff', weight: weight + (selected ? 8 : 5), opacity: 0.95, lineCap: 'round' }} interactive={false} />
             {/* Wide invisible line so thin routes are still easy to click */}
             <Polyline positions={path} pathOptions={{ color: '#ffffff', weight: 22, opacity: 0 }} eventHandlers={{ click: () => onRouteClick(route.route_id) }} />
-            <Polyline positions={path} pathOptions={{ color, weight, opacity: 1, lineCap: 'round', className: 'route-line' }} eventHandlers={{ click: () => onRouteClick(route.route_id) }}>
+            <Polyline positions={path} pathOptions={{ color: selected && !['hybrid', 'electric'].includes(rows[0]?.vessel_type ?? '') ? UI.ink : color, weight: Math.max(2.5, weight * 0.55), opacity: 1, lineCap: 'butt', dashArray: rows.length && VESSEL_DASH[rows[0].vessel_type] ? VESSEL_DASH[rows[0].vessel_type]!.map((v) => v * 1.4).join(' ') : rows.length ? undefined : '3 5', className: 'route-line' }} eventHandlers={{ click: () => onRouteClick(route.route_id) }}>
               <Tooltip sticky className="map-tip">
                 <strong>{route.name}</strong>
                 <br />
@@ -163,13 +165,13 @@ function Layers({ lang, routes, ports, fleet, chargers, inset, selectedRouteId, 
           <Fragment key={`${port.port_id}-${hasCharger}-${inset}`}>
             {hasCharger ? (
               <>
-                <CircleMarker center={[port.lat, port.lon]} radius={17} pathOptions={{ color: '#7fe3d2', weight: 3, fill: false, className: 'charger-pulse' }} interactive={false} />
+                <CircleMarker center={[port.lat, port.lon]} radius={17} pathOptions={{ color: UI.accent, weight: 2, fill: false, className: 'charger-pulse' }} interactive={false} />
                 <Marker position={[port.lat, port.lon]} icon={CHARGER_ICON} interactive={false} keyboard={false}>
                   {name}
                 </Marker>
               </>
             ) : (
-              <CircleMarker center={[port.lat, port.lon]} radius={5} pathOptions={{ color: '#ffffff', weight: 2, fillColor: '#06252b', fillOpacity: 1 }} interactive={false}>
+              <CircleMarker center={[port.lat, port.lon]} radius={5} pathOptions={{ color: UI.ink, weight: 2, fillColor: '#ffffff', fillOpacity: 1 }} interactive={false}>
                 {name}
               </CircleMarker>
             )}
@@ -229,7 +231,7 @@ function Boats({ routes, ports, vesselTypes, fleet, inset }: LayerProps) {
                 key={`${route.route_id}-${row.vessel_type}-${k}`}
                 center={[path[lo][0] + (path[lo + 1][0] - path[lo][0]) * f, path[lo][1] + (path[lo + 1][1] - path[lo][1]) * f]}
                 radius={inset ? 6 : 5}
-                pathOptions={{ color: '#ffffff', weight: 2, fillColor: VESSEL_COLOR_MAP[row.vessel_type], fillOpacity: 1 }}
+                pathOptions={{ color: '#ffffff', weight: 1.5, fillColor: VESSEL_COLOR_MAP[row.vessel_type], fillOpacity: 1 }}
                 interactive={false}
               />
             );
@@ -258,7 +260,7 @@ function FitController({ resetKey }: { resetKey: number }) {
 }
 
 export function MapView(props: Props) {
-  const { lang, fleet, view, onView, top } = props;
+  const { lang, fleet, view, onView, onMode, top } = props;
   const [resetKey, setResetKey] = useState(0);
   const usedTypes = VESSEL_ORDER.filter((type) => fleet.some((row) => row.vessel_type === type));
 
@@ -270,7 +272,7 @@ export function MapView(props: Props) {
         <TileLayer attribution={TILE_ATTRIBUTION} url={TILE_URL} />
         <AttributionControl prefix={false} position="bottomleft" />
         <Graticule />
-        <Rectangle bounds={INSET_BOUNDS} pathOptions={{ color: '#7fe3d2', weight: 1.5, dashArray: '4 4', fill: false }} interactive={false} />
+        <Rectangle bounds={INSET_BOUNDS} pathOptions={{ color: UI.ink, weight: 1, dashArray: '3 4', fill: false }} interactive={false} />
         <Layers {...props} inset={false} />
         <Boats {...props} inset={false} />
       </MapContainer>
@@ -287,6 +289,12 @@ export function MapView(props: Props) {
               {t(lang, 'planShort')}
             </button>
           </div>
+          {onMode ? (
+            <div className="seg" role="group" aria-label={t(lang, 'viewMode')}>
+              <button type="button" aria-pressed={false} onClick={() => onMode('3d')}>{t(lang, 'view3d')}</button>
+              <button type="button" aria-pressed={true}>{t(lang, 'view2d')}</button>
+            </div>
+          ) : null}
           <button type="button" className="map-reset" onClick={() => setResetKey((k) => k + 1)} title={t(lang, 'resetView')} aria-label={t(lang, 'resetView')}>
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg>
           </button>
@@ -294,7 +302,7 @@ export function MapView(props: Props) {
       <div className="map-legend">
         {usedTypes.map((type) => (
           <span key={type} className="legend-item">
-            <span className="swatch-line" style={{ background: VESSEL_COLOR_MAP[type] }} />
+            <svg width="22" height="6" aria-hidden="true"><line x1="1" y1="3" x2="21" y2="3" stroke={VESSEL_COLOR_MAP[type]} strokeWidth="2.2" strokeDasharray={VESSEL_DASH[type]?.map((v) => v * 0.7).join(' ')} /></svg>
             {vesselShort(type, lang)}
           </span>
         ))}

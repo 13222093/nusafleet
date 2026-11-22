@@ -50,12 +50,12 @@ interface Props {
 export function FleetStrip({ lang, routes, today, plan, safetyToday, safetyPlan }: Props) {
   const used = VESSEL_ORDER.filter((type) => [...today, ...plan].some((r) => r.vessel_type === type));
   const trips = (rows: FleetRow[]) => rows.reduce((s, r) => s + r.daily_trips, 0);
-  const head = { fontSize: '0.75rem', fontWeight: 700, color: 'text.secondary' } as const;
+  const head = { fontSize: '0.75rem', fontWeight: 500, color: 'text.secondary' } as const;
 
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
+        <Typography variant="h6" sx={{ fontWeight: 500, mb: 2 }}>
           {t(lang, 'fleetTitle')}
         </Typography>
 
@@ -92,7 +92,7 @@ export function FleetStrip({ lang, routes, today, plan, safetyToday, safetyPlan 
           ))}
           <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary', ml: 'auto' }}>
             {t(lang, 'safetyAvg')}{' '}
-            <Box component="span" sx={{ color: 'text.primary', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>
+            <Box component="span" sx={{ color: 'text.primary', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
               {num(lang, safetyToday, 1)} {'→'} {num(lang, safetyPlan, 1)}
             </Box>{' '}
             / 5

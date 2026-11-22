@@ -193,6 +193,13 @@ const STRINGS = {
     en: "The plan with the lowest annual cost.",
   },
   remove: { id: "Hapus", en: "Remove" },
+  view3d: { id: "3D", en: "3D" },
+  view2d: { id: "Peta", en: "Map" },
+  viewMode: { id: "Mode tampilan", en: "View mode" },
+  loadingModel: { id: "Memuat model relief", en: "Loading the relief model" },
+  hint3d: { id: "Seret untuk memutar, gulir untuk zoom, klik rute untuk rinciannya.", en: "Drag to orbit, scroll to zoom, click a route for details." },
+  gridLinked: { id: "terhubung ke pasokan Halmahera Utara", en: "linked to the Halmahera Utara supply" },
+  chargerUse: { id: "kW dipakai dari kapasitas", en: "kW used of capacity" },
   resetView: { id: "Kembali ke tampilan awal", en: "Reset the view" },
   zoomHint: {
     id: "Scroll untuk zoom. Klik rute untuk rinciannya.",

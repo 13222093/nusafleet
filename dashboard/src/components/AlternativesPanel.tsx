@@ -38,7 +38,7 @@ function Numbers({ lang, plan, base }: { lang: Lang; plan: ParetoPoint; base: Kp
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, auto)', justifyContent: 'space-between', columnGap: 1, mt: 1 }}>
       {items.map(([value, label]) => (
         <Box key={label}>
-          <Typography sx={{ fontSize: '0.95rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{value}</Typography>
+          <Typography sx={{ fontSize: '0.95rem', fontWeight: 500, fontVariantNumeric: 'tabular-nums', lineHeight: 1.2, whiteSpace: 'nowrap' }}>{value}</Typography>
           <Typography sx={{ fontSize: '0.7rem', color: 'text.secondary', lineHeight: 1.2 }}>{label}</Typography>
         </Box>
       ))}
@@ -46,7 +46,7 @@ function Numbers({ lang, plan, base }: { lang: Lang; plan: ParetoPoint; base: Kp
   );
 }
 
-const action = { height: 30, px: 1.25, gap: 0.5, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.78rem', fontWeight: 700, border: '1px solid #dde6e4', color: 'text.primary', '&:hover': { borderColor: '#06252b' }, '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } } as const;
+const action = { height: 30, px: 1.25, gap: 0.5, borderRadius: '3px', fontFamily: 'inherit', fontSize: '0.78rem', fontWeight: 500, border: '1px solid #d6dee3', color: 'text.primary', '&:hover': { borderColor: '#0f1417' }, '&.Mui-focusVisible': { outline: '2px solid #b5157a', outlineOffset: 2 } } as const;
 
 export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation, recommendationBase, scenarioName, onShowRecommendation }: Props) {
   const cheapest = alts.length > 1 ? alts.reduce((a, b) => (b.plan.cost_rp < a.plan.cost_rp ? b : a)).id : null;
@@ -54,10 +54,10 @@ export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation
 
   return (
     <Box sx={{ display: 'grid', gap: 2 }}>
-      <Box sx={{ p: 2.5, borderRadius: '20px', bgcolor: '#e3f5f1', border: '1px solid #b8e2da' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#00695c' }}>
+      <Box sx={{ p: 2.5, borderRadius: '4px', bgcolor: '#eef3f5', border: '1px solid #b4c2ca' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: '#0f1417' }}>
           <Lightbulb size={18} />
-          <Typography sx={{ fontSize: '0.8rem', fontWeight: 700 }}>
+          <Typography sx={{ fontSize: '0.8rem', fontWeight: 500 }}>
             {t(lang, 'recTitle')}, {scenarioName}
           </Typography>
         </Box>
@@ -66,7 +66,7 @@ export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation
         <Typography sx={{ mt: 1, fontSize: '0.75rem', color: 'text.secondary' }}>
           {t(lang, 'totalCost')} {rpBn(lang, recommendation.point.cost_rp)}, {t(lang, 'kpiCapex').toLowerCase()} {rpBn(lang, recommendation.point.capex_rp, 0)}
         </Typography>
-        <ButtonBase onClick={onShowRecommendation} sx={{ ...action, mt: 1.5, bgcolor: '#06252b', color: '#ffffff', borderColor: '#06252b' }}>
+        <ButtonBase onClick={onShowRecommendation} sx={{ ...action, mt: 1.5, bgcolor: '#0f1417', color: '#ffffff', borderColor: '#0f1417' }}>
           <Eye size={14} />
           {t(lang, 'showOnMap')}
         </ButtonBase>
@@ -74,7 +74,7 @@ export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation
 
       <Card>
         <CardContent sx={{ p: 2.5, '&:last-child': { pb: 2.5 } }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+          <Typography variant="h6" sx={{ fontWeight: 500, mb: 0.5 }}>
             {t(lang, 'altTitle')}
           </Typography>
           {alts.length === 0 ? (
@@ -84,11 +84,11 @@ export function AlternativesPanel({ lang, alts, onShow, onRemove, recommendation
               {alts.map((alt, k) => (
                 <Box key={alt.id} sx={{ py: 1.75, borderTop: k === 0 ? 'none' : '1px solid', borderColor: 'divider' }}>
                   <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1, flexWrap: 'wrap' }}>
-                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 700, lineHeight: 1.3 }}>
+                    <Typography sx={{ fontSize: '0.9rem', fontWeight: 500, lineHeight: 1.3 }}>
                       {String.fromCharCode(65 + k)}. {alt.name}
                     </Typography>
-                    {alt.id === cheapest ? <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: '#8a5a00' }}>{t(lang, 'cheapest').toLowerCase()}</Typography> : null}
-                    {alt.id === cleanest ? <Typography sx={{ fontSize: '0.7rem', fontWeight: 700, color: '#00695c' }}>{t(lang, 'cleanest').toLowerCase()}</Typography> : null}
+                    {alt.id === cheapest ? <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#52606a' }}>{t(lang, 'cheapest').toLowerCase()}</Typography> : null}
+                    {alt.id === cleanest ? <Typography sx={{ fontSize: '0.7rem', fontWeight: 500, color: '#0f1417' }}>{t(lang, 'cleanest').toLowerCase()}</Typography> : null}
                   </Box>
                   <Numbers lang={lang} plan={alt.plan} base={alt.base} />
                   <Box sx={{ display: 'flex', gap: 1, mt: 1.25 }}>

@@ -4,7 +4,6 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import type { LucideIcon } from 'lucide-react';
 
 interface KPICardProps {
@@ -22,13 +21,9 @@ interface KPICardProps {
 
 export function EstimateChip({ label, hint }: { label: string; hint: string }) {
   return (
-    <Chip
-      label={label}
-      title={hint}
-      size="small"
-      variant="outlined"
-      sx={{ height: 20, fontSize: '0.68rem', fontWeight: 600, color: '#8a5a00', borderColor: '#e0b860', bgcolor: '#fff8e1' }}
-    />
+    <Box component="span" title={hint} sx={{ fontSize: '0.75rem', fontStyle: 'italic', color: '#52606a', borderBottom: '1px dotted #8d9aa3', cursor: 'help', whiteSpace: 'nowrap' }}>
+      {label}
+    </Box>
   );
 }
 

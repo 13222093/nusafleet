@@ -4,8 +4,6 @@
 // power supply is one scenario among three.
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import { Anchor, ArrowRight, Compass, Ship } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { COOP_EVENTS, COOP_SOURCE, vesselSpecs } from '../cooperation';
@@ -61,13 +59,13 @@ const COPY = {
   },
 } as const;
 
-const th = { textAlign: 'right', fontSize: '0.72rem', fontWeight: 700, color: '#51676a', padding: '6px 8px', borderBottom: '1.5px solid #0c2a2e', verticalAlign: 'bottom', lineHeight: 1.25 } as const;
-const td = { textAlign: 'right', fontSize: '0.85rem', padding: '7px 8px', borderBottom: '1px solid #dde6e4', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } as const;
+const th = { textAlign: 'right', fontSize: '0.72rem', fontWeight: 500, color: '#52606a', padding: '6px 8px', borderBottom: '1.5px solid #0f1417', verticalAlign: 'bottom', lineHeight: 1.25 } as const;
+const td = { textAlign: 'right', fontSize: '0.85rem', padding: '7px 8px', borderBottom: '1px solid #d6dee3', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } as const;
 
 /** The requirement sheet as a table. Used on this page and in the report. */
 export function SpecTable({ lang, rows }: { lang: Lang; rows: SpecRow[] }) {
   const c = COPY[lang];
-  if (rows.length === 0) return <Typography sx={{ fontSize: '0.9rem', color: '#51676a', lineHeight: 1.5 }}>{c.specEmpty}</Typography>;
+  if (rows.length === 0) return <Typography sx={{ fontSize: '0.9rem', color: '#52606a', lineHeight: 1.5 }}>{c.specEmpty}</Typography>;
   const dash = '–';
   return (
     <Box sx={{ overflowX: 'auto' }}>
@@ -109,16 +107,13 @@ export function coopProposals(lang: Lang, rows: SpecRow[]): string[] {
   return [c.p1, pilot ? c.p2pilot(pilot.routeName, vesselShort(pilot.vesselType, lang)) : c.p2none, c.p3];
 }
 
-function Column({ icon: Icon, title, items, dark }: { icon: LucideIcon; title: string; items: readonly string[]; dark?: boolean }) {
+function Shore({ title, items, align = 'left' }: { title: string; items: readonly string[]; align?: 'left' | 'right' }) {
   return (
-    <Box sx={{ p: 3, borderRadius: '20px', bgcolor: dark ? '#06252b' : '#ffffff', color: dark ? '#ffffff' : 'inherit', border: '1px solid', borderColor: dark ? '#06252b' : '#dde6e4' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: dark ? '#7fe3d2' : '#00695c' }}>
-        <Icon size={20} />
-        <Typography sx={{ fontSize: '0.95rem', fontWeight: 700 }}>{title}</Typography>
-      </Box>
-      <Box component="ul" sx={{ m: 0, mt: 1.5, pl: 2.25, display: 'grid', gap: 0.75 }}>
+    <Box sx={{ textAlign: { xs: 'left', md: align } }}>
+      <Typography component="h2" sx={{ fontSize: { xs: '1.6rem', md: '2rem' }, fontWeight: 600, fontStretch: '75%', lineHeight: 1, letterSpacing: '-0.01em' }}>{title}</Typography>
+      <Box component="ul" sx={{ m: 0, mt: 2, p: 0, listStyle: 'none', display: 'grid', gap: 1 }}>
         {items.map((item) => (
-          <Box component="li" key={item} sx={{ fontSize: '0.9rem', lineHeight: 1.45, color: dark ? 'rgba(255,255,255,0.85)' : 'inherit' }}>
+          <Box component="li" key={item} sx={{ fontSize: '0.95rem', lineHeight: 1.45, color: 'text.secondary' }}>
             {item}
           </Box>
         ))}
@@ -129,8 +124,8 @@ function Column({ icon: Icon, title, items, dark }: { icon: LucideIcon; title: s
 
 function Block({ title, sub, children }: { title: string; sub?: string; children: ReactNode }) {
   return (
-    <Box component="section" sx={{ mt: 4 }}>
-      <Typography component="h2" sx={{ fontSize: '1.2rem', fontWeight: 700 }}>
+    <Box component="section" sx={{ mt: 6 }}>
+      <Typography component="h2" sx={{ fontSize: '1.5rem', fontWeight: 600, fontStretch: '80%' }}>
         {title}
       </Typography>
       {sub ? <Typography sx={{ fontSize: '0.85rem', color: 'text.secondary', mb: 1.5 }}>{sub}</Typography> : <Box sx={{ mb: 1.5 }} />}
@@ -149,61 +144,66 @@ interface Props {
 export function CoopPage({ lang, summary, plan, planName }: Props) {
   const c = COPY[lang];
   const rows = vesselSpecs(summary.routes, plan, summary.vessel_types);
-  const arrow = (
-    <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', color: '#51676a' }}>
-      <ArrowRight size={22} />
-    </Box>
-  );
 
   return (
     <Box sx={{ maxWidth: 1100, mx: 'auto' }}>
-      <Typography component="h1" sx={{ fontSize: { xs: '1.8rem', md: '2.4rem' }, fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+      <Typography component="h1" sx={{ fontSize: { xs: '2.6rem', md: '4.2rem' }, fontWeight: 600, fontStretch: '72%', lineHeight: 0.95, letterSpacing: '-0.015em' }}>
         {c.title}
       </Typography>
       <Typography sx={{ mt: 1.5, fontSize: '1.05rem', lineHeight: 1.6, maxWidth: 820, color: 'text.secondary' }}>{c.lead}</Typography>
 
-      <Box sx={{ mt: 3, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr auto 1fr auto 1fr' }, gap: 2, alignItems: 'stretch' }}>
-        <Column icon={Anchor} title={c.indonesia} items={c.indonesiaItems} />
-        {arrow}
-        <Column icon={Compass} title={c.tool} items={c.toolItems} dark />
-        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', color: '#51676a', transform: 'scaleX(-1)' }}>
-          <ArrowRight size={22} />
+      <Box component="section" aria-label={c.tool} sx={{ mt: 4, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1.25fr 1fr' }, columnGap: 3, rowGap: 3, alignItems: 'start' }}>
+        <Shore title={c.indonesia} items={c.indonesiaItems} />
+        <Box sx={{ position: 'relative', pt: { xs: 0, md: 1.5 } }}>
+          {/* The ferry line between the two shores: NusaFleet is the crossing */}
+          <Box aria-hidden="true" sx={{ display: { xs: 'none', md: 'block' }, position: 'absolute', top: 22, left: -24, right: -24, borderTop: '2px dashed #0f1417' }} />
+          <Box aria-hidden="true" sx={{ display: { xs: 'none', md: 'block' }, position: 'absolute', top: 16, left: -30, width: 14, height: 14, borderRadius: '50%', border: '2px solid #0f1417', bgcolor: '#ffffff' }} />
+          <Box aria-hidden="true" sx={{ display: { xs: 'none', md: 'block' }, position: 'absolute', top: 16, right: -30, width: 14, height: 14, borderRadius: '50%', border: '2px solid #0f1417', bgcolor: '#ffffff' }} />
+          <Typography component="h2" sx={{ position: 'relative', display: 'inline-block', px: 1, ml: -1, bgcolor: 'background.default', fontSize: '1.05rem', fontWeight: 600, fontStretch: '88%', color: '#b5157a' }}>{c.tool}</Typography>
+          <Box component="ol" sx={{ m: 0, mt: 2.5, p: 0, listStyle: 'none', display: 'grid', gap: 1.25 }}>
+            {c.toolItems.map((item) => (
+              <Box component="li" key={item} sx={{ display: 'grid', gridTemplateColumns: '14px 1fr', gap: 1.25, fontSize: '0.95rem', lineHeight: 1.45 }}>
+                <Box aria-hidden="true" sx={{ mt: '6px', width: 8, height: 8, bgcolor: '#b5157a', transform: 'rotate(45deg)' }} />
+                {item}
+              </Box>
+            ))}
+          </Box>
         </Box>
-        <Column icon={Ship} title={c.russia} items={c.russiaItems} />
+        <Shore title={c.russia} items={c.russiaItems} align="right" />
       </Box>
 
       <Block title={c.timeline}>
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: `repeat(${COOP_EVENTS.length}, 1fr)` }, gap: 2, position: 'relative' }}>
           {COOP_EVENTS.map((e) => (
-            <Box key={e.when.en} sx={{ pt: 2, borderTop: '3px solid #009688' }}>
-              <Typography sx={{ fontSize: '1.1rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>{e.when[lang]}</Typography>
-              <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, color: '#00695c', mt: 0.25 }}>{e.short[lang]}</Typography>
+            <Box key={e.when.en} sx={{ pt: 2, borderTop: '3px solid #b5157a' }}>
+              <Typography sx={{ fontSize: '1.1rem', fontWeight: 500, fontVariantNumeric: 'tabular-nums', lineHeight: 1.1 }}>{e.when[lang]}</Typography>
+              <Typography sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#0f1417', mt: 0.25 }}>{e.short[lang]}</Typography>
               <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.5, mt: 0.75 }}>{e.text[lang]}</Typography>
             </Box>
           ))}
         </Box>
-        <Typography sx={{ mt: 2, fontSize: '0.78rem', color: '#8a5a00', fontWeight: 600 }}>{COOP_SOURCE[lang]}</Typography>
+        <Typography sx={{ mt: 2, fontSize: '0.78rem', color: '#52606a', fontWeight: 600 }}>{COOP_SOURCE[lang]}</Typography>
       </Block>
 
       <Block title={c.spec} sub={`${c.specFor}: ${planName}`}>
-        <Box sx={{ p: { xs: 2, md: 3 }, borderRadius: '20px', bgcolor: '#ffffff', border: '1px solid #dde6e4' }}>
+        <Box sx={{ pt: 1.5, borderTop: '3px solid #0f1417' }}>
           <SpecTable lang={lang} rows={rows} />
           <Typography sx={{ mt: 2, fontSize: '0.8rem', color: 'text.secondary', lineHeight: 1.5 }}>{c.specNote}</Typography>
         </Box>
       </Block>
 
       <Block title={c.proposals}>
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' }, gap: 2 }}>
+        <Box component="ol" sx={{ m: 0, p: 0, listStyle: 'none', borderTop: '3px solid #0f1417' }}>
           {coopProposals(lang, rows).map((text, i) => (
-            <Box key={text} sx={{ p: 2.5, borderRadius: '20px', bgcolor: '#ffffff', border: '1px solid #dde6e4' }}>
-              <Typography sx={{ fontSize: '1.6rem', fontWeight: 700, color: '#009688', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{i + 1}</Typography>
-              <Typography sx={{ mt: 1, fontSize: '0.92rem', lineHeight: 1.5 }}>{text}</Typography>
+            <Box component="li" key={text} sx={{ display: 'grid', gridTemplateColumns: { xs: '40px 1fr', md: '72px 1fr' }, alignItems: 'baseline', py: 2, borderBottom: '1px solid #d6dee3' }}>
+              <Typography component="span" sx={{ fontSize: { xs: '1.6rem', md: '2.4rem' }, fontWeight: 500, fontStretch: '72%', color: '#b5157a', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{i + 1}</Typography>
+              <Typography sx={{ fontSize: '1.02rem', lineHeight: 1.5, maxWidth: 760 }}>{text}</Typography>
             </Box>
           ))}
         </Box>
       </Block>
 
-      <Typography sx={{ mt: 4, p: 2, borderRadius: '16px', bgcolor: '#e3f5f1', fontSize: '0.88rem', lineHeight: 1.5 }}>{c.neutral}</Typography>
+      <Typography sx={{ mt: 4, fontSize: '0.85rem', fontStyle: 'italic', color: 'text.secondary', lineHeight: 1.5, maxWidth: 820 }}>{c.neutral}</Typography>
     </Box>
   );
 }

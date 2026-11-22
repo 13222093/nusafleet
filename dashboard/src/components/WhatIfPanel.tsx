@@ -44,14 +44,14 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
       <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
         <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2} sx={{ mb: 2.5, minHeight: 32 }}>
           <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.2 }}>{t(lang, 'whatIfTitle')}</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 500, lineHeight: 1.2 }}>{t(lang, 'whatIfTitle')}</Typography>
             <Typography sx={{ fontSize: '0.85rem', color: 'text.secondary' }}>{t(lang, 'whatIfShort')}</Typography>
           </Box>
           <Stack direction="row" spacing={1} alignItems="center">
             {state === 'loading' ? <Chip size="small" icon={<CircularProgress size={12} />} label={t(lang, 'wiLoading')} /> : null}
             {state === 'ready' ? <Chip size="small" color="primary" label={t(lang, 'wiLive')} /> : null}
             {active ? (
-              <Button size="small" variant="outlined" startIcon={<RotateCcw size={14} />} onClick={() => onChange({})} sx={{ borderRadius: '999px' }}>
+              <Button size="small" variant="outlined" startIcon={<RotateCcw size={14} />} onClick={() => onChange({})} sx={{ borderRadius: '3px' }}>
                 {t(lang, 'wiReset')}
               </Button>
             ) : null}
@@ -59,7 +59,7 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
         </Stack>
 
         {state === 'error' && message ? (
-          <Alert severity="error" variant="outlined" sx={{ mb: 2, borderRadius: '12px' }}>
+          <Alert severity="error" variant="outlined" sx={{ mb: 2, borderRadius: '3px' }}>
             {message}
           </Alert>
         ) : null}
@@ -71,8 +71,8 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
             return (
               <Box key={knob.key}>
                 <Stack direction="row" justifyContent="space-between" alignItems="baseline" spacing={1}>
-                  <Typography sx={{ fontSize: '0.9rem', fontWeight: 700 }}>{t(lang, knob.label)}</Typography>
-                  <Typography sx={{ fontWeight: 700, fontVariantNumeric: 'tabular-nums', color: changed ? 'primary.dark' : 'text.primary', whiteSpace: 'nowrap' }}>
+                  <Typography sx={{ fontSize: '0.9rem', fontWeight: 500 }}>{t(lang, knob.label)}</Typography>
+                  <Typography sx={{ fontWeight: 500, fontVariantNumeric: 'tabular-nums', color: changed ? 'primary.dark' : 'text.primary', whiteSpace: 'nowrap' }}>
                     Rp {num(lang, value)}
                     <Typography component="span" sx={{ fontSize: '0.75rem', color: 'text.secondary', ml: 0.5 }}>{knob.unit}</Typography>
                   </Typography>
@@ -88,8 +88,8 @@ export function WhatIfPanel({ lang, knobs, overrides, onChange, state, message }
                   getAriaValueText={(v: number) => `Rp ${num(lang, v)} ${knob.unit}`}
                   sx={{
                     height: 6,
-                    '& .MuiSlider-thumb': { width: 22, height: 22, bgcolor: '#ffffff', border: '4px solid #00695c' },
-                    '& .MuiSlider-mark': { width: 3, height: 14, bgcolor: '#0c2a2e', opacity: 1 },
+                    '& .MuiSlider-thumb': { width: 22, height: 22, bgcolor: '#ffffff', border: '4px solid #0f1417' },
+                    '& .MuiSlider-mark': { width: 3, height: 14, bgcolor: '#0f1417', opacity: 1 },
                   }}
                 />
                 <Stack direction="row" justifyContent="space-between">

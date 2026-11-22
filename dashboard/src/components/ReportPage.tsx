@@ -141,15 +141,15 @@ const COPY = {
 
 const KEY_ASSUMPTIONS = ['diesel_price_rp_per_l', 'carbon_price_rp_per_tco2', 'discount_rate', 'budget_rp', 'min_avg_safety', 'service_level', 'load_factor', 'operating_hours_per_day'];
 
-const th = { textAlign: 'left', fontSize: '0.75rem', fontWeight: 700, color: '#51676a', padding: '6px 10px 6px 0', borderBottom: '1.5px solid #0c2a2e', verticalAlign: 'bottom' } as const;
-const td = { fontSize: '0.85rem', padding: '7px 10px 7px 0', borderBottom: '1px solid #dde6e4', verticalAlign: 'top', lineHeight: 1.4 } as const;
+const th = { textAlign: 'left', fontSize: '0.75rem', fontWeight: 500, color: '#52606a', padding: '6px 10px 6px 0', borderBottom: '1.5px solid #0f1417', verticalAlign: 'bottom' } as const;
+const td = { fontSize: '0.85rem', padding: '7px 10px 7px 0', borderBottom: '1px solid #d6dee3', verticalAlign: 'top', lineHeight: 1.4 } as const;
 const tdNum = { ...td, textAlign: 'right', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } as const;
 const thNum = { ...th, textAlign: 'right' } as const;
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Box component="section" sx={{ mt: 4, breakInside: 'avoid-page' }}>
-      <Typography component="h2" sx={{ fontSize: '1.15rem', fontWeight: 700, mb: 1.25 }}>
+      <Typography component="h2" sx={{ fontSize: '1.15rem', fontWeight: 500, mb: 1.25 }}>
         {title}
       </Typography>
       {children}
@@ -193,27 +193,27 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
   findings.push(recPorts.length ? c.f3(recPorts.join(', ')) : c.f3none);
   findings.push(c.f4);
 
-  const button = { height: 36, px: 2, gap: 0.75, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 700 } as const;
+  const button = { height: 36, px: 2, gap: 0.75, borderRadius: '3px', fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 500 } as const;
 
   return (
     <Box>
       <Box className="no-print" sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, mb: 2, maxWidth: 860, mx: 'auto' }}>
-        <ButtonBase onClick={onBack} sx={{ ...button, border: '1px solid #dde6e4', bgcolor: '#ffffff' }}>
+        <ButtonBase onClick={onBack} sx={{ ...button, border: '1px solid #d6dee3', bgcolor: '#ffffff' }}>
           <ArrowLeft size={16} />
           {c.back}
         </ButtonBase>
-        <ButtonBase onClick={() => window.print()} sx={{ ...button, bgcolor: '#06252b', color: '#ffffff' }}>
+        <ButtonBase onClick={() => window.print()} sx={{ ...button, bgcolor: '#0f1417', color: '#ffffff' }}>
           <Printer size={16} />
           {c.print}
         </ButtonBase>
       </Box>
 
-      <Box className="report" sx={{ maxWidth: 860, mx: 'auto', bgcolor: '#ffffff', border: '1px solid #dde6e4', borderRadius: '16px', p: { xs: 3, md: 6 }, color: '#0c2a2e' }}>
-        <Typography sx={{ fontSize: '0.8rem', fontWeight: 700, color: '#00695c' }}>NusaFleet</Typography>
-        <Typography component="h1" sx={{ fontSize: '1.8rem', fontWeight: 700, lineHeight: 1.2, mt: 0.5 }}>
+      <Box className="report" sx={{ maxWidth: 860, mx: 'auto', bgcolor: '#ffffff', border: '1px solid #d6dee3', borderRadius: '3px', p: { xs: 3, md: 6 }, color: '#0f1417' }}>
+        <Typography sx={{ fontSize: '0.8rem', fontWeight: 500, color: '#0f1417' }}>NusaFleet</Typography>
+        <Typography component="h1" sx={{ fontSize: '1.8rem', fontWeight: 500, lineHeight: 1.2, mt: 0.5 }}>
           {c.title}
         </Typography>
-        <Typography sx={{ fontSize: '0.85rem', color: '#51676a', mt: 1 }}>
+        <Typography sx={{ fontSize: '0.85rem', color: '#52606a', mt: 1 }}>
           {new Date().toLocaleDateString(lang === 'id' ? 'id-ID' : 'en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}. {c.sub}
         </Typography>
 
@@ -229,9 +229,9 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
             const changes = routeChanges(summary.routes, r.baseline.fleet_plan, r.baseline.routes, rec.point);
             return (
               <Box key={id} sx={{ mt: 2.5, breakInside: 'avoid-page' }}>
-                <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 700 }}>
+                <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 500 }}>
                   {scenarioName(id)}
-                  <Box component="span" sx={{ fontWeight: 400, color: '#51676a', fontSize: '0.85rem', ml: 1 }}>
+                  <Box component="span" sx={{ fontWeight: 400, color: '#52606a', fontSize: '0.85rem', ml: 1 }}>
                     {lang === 'id' ? r.scenario.label_id : r.scenario.label_en}, {c.from} {r.scenario.available_from_year}
                   </Box>
                 </Typography>
@@ -239,8 +239,8 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
                 <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'max-content 1fr' }, columnGap: 3, rowGap: 0.4, mb: 1.5 }}>
                   {facts(rec.point, r.baseline.kpis).map(([label, value]) => (
                     <Box key={label} sx={{ display: 'contents' }}>
-                      <Typography sx={{ fontSize: '0.85rem', color: '#51676a' }}>{label}</Typography>
-                      <Typography sx={{ fontSize: '0.85rem', fontWeight: 700, fontVariantNumeric: 'tabular-nums' }}>{value}</Typography>
+                      <Typography sx={{ fontSize: '0.85rem', color: '#52606a' }}>{label}</Typography>
+                      <Typography sx={{ fontSize: '0.85rem', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>{value}</Typography>
                     </Box>
                   ))}
                 </Box>
@@ -259,7 +259,7 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
                       <tr key={ch.route.route_id}>
                         <Box component="td" sx={{ ...td, fontWeight: 600 }}>{ch.route.name}</Box>
                         <Box component="td" sx={td}>{mix(ch.from)}</Box>
-                        <Box component="td" sx={{ ...td, fontWeight: ch.changed ? 700 : 400, color: ch.changed ? '#0c2a2e' : '#51676a' }}>{ch.changed ? mix(ch.to) : c.same}</Box>
+                        <Box component="td" sx={{ ...td, fontWeight: ch.changed ? 700 : 400, color: ch.changed ? '#0f1417' : '#52606a' }}>{ch.changed ? mix(ch.to) : c.same}</Box>
                         <Box component="td" sx={tdNum}>
                           {num(lang, ch.today?.cancelled_trips_per_year ?? 0)} {'→'} {num(lang, ch.plan?.cancelled_trips_per_year ?? 0)}
                         </Box>
@@ -369,12 +369,12 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
               </Box>
             ))}
           </Box>
-          <Typography sx={{ fontSize: '0.78rem', color: '#8a5a00', fontWeight: 600, mb: 2 }}>{COOP_SOURCE[lang]}</Typography>
-          <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 700, mb: 0.5 }}>
+          <Typography sx={{ fontSize: '0.78rem', color: '#52606a', fontWeight: 600, mb: 2 }}>{COOP_SOURCE[lang]}</Typography>
+          <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 500, mb: 0.5 }}>
             {c.s7spec}: {current.name}
           </Typography>
           <SpecTable lang={lang} rows={specRows} />
-          <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 700, mt: 2.5, mb: 0.5 }}>
+          <Typography component="h3" sx={{ fontSize: '1rem', fontWeight: 500, mt: 2.5, mb: 0.5 }}>
             {c.s7prop}
           </Typography>
           <Box component="ol" sx={{ m: 0, pl: 2.5 }}>
@@ -386,7 +386,7 @@ export function ReportPage({ lang, summary, results, alts, current, onBack }: Pr
           </Box>
         </Section>
 
-        <Typography sx={{ fontSize: '0.75rem', color: '#51676a', mt: 4, pt: 2, borderTop: '1px solid #dde6e4', lineHeight: 1.5 }}>{c.footer}</Typography>
+        <Typography sx={{ fontSize: '0.75rem', color: '#52606a', mt: 4, pt: 2, borderTop: '1px solid #d6dee3', lineHeight: 1.5 }}>{c.footer}</Typography>
       </Box>
       {/* t is used so the estimate wording stays shared with the rest of the app */}
       <Typography className="no-print" sx={{ maxWidth: 860, mx: 'auto', mt: 1.5, fontSize: '0.75rem', color: 'text.secondary' }}>

@@ -1,6 +1,6 @@
 // Page composition: headline band, then one dark console (controls + map),
 // then the supporting analysis. Built on the Kopibara dashboard stack.
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -21,6 +21,7 @@ import { MapView, vesselShort } from './components/MapView';
 import { ReportPage } from './components/ReportPage';
 import { RouteDrawer } from './components/RouteDrawer';
 import { WhatIfPanel } from './components/WhatIfPanel';
+import { UI } from './colors';
 import type { Knob } from './components/WhatIfPanel';
 import { num, t } from './i18n';
 import { vesselSpecs } from './cooperation';
@@ -44,6 +45,18 @@ function indexOfLabel(points: ParetoPoint[], label: ParetoPoint['label']): numbe
 
 const PLAY_STEP_MS = 3200;
 
+// The 3D twin is its own chunk: three.js loads only when the model is shown
+const TwinView = lazy(() => import('./twin/TwinView'));
+
+function hasWebGL(): boolean {
+  try {
+    const c = document.createElement('canvas');
+    return Boolean(c.getContext('webgl2') ?? c.getContext('webgl'));
+  } catch {
+    return false;
+  }
+}
+
 type Tab = 'fleet' | 'analysis' | 'compare' | 'alts' | 'whatif';
 
 function App() {
@@ -55,6 +68,7 @@ function App() {
   const [planIndex, setPlanIndex] = useState(0);
   const [failed, setFailed] = useState(false);
   const [mapView, setMapView] = useState<'plan' | 'today'>('plan');
+  const [mode, setMode] = useState<'2d' | '3d'>(() => (hasWebGL() ? '3d' : '2d'));
   const [routeId, setRouteId] = useState<string | null>(null);
   const [overrides, setOverrides] = useState<Overrides>({});
   const [playing, setPlaying] = useState(false);
@@ -190,7 +204,7 @@ function App() {
       setPlanIndex(alt.index ?? 0);
     }
   };
-  const actionSx = { height: 38, gap: 0.75, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.85rem', fontWeight: 700, border: '1px solid #dde6e4', '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } } as const;
+  const actionSx = { height: 38, gap: 0.75, borderRadius: '3px', fontFamily: 'inherit', fontSize: '0.84rem', fontWeight: 500, border: `1px solid ${UI.lineStrong}`, transition: 'background-color 120ms, border-color 120ms', '&.Mui-focusVisible': { outline: `2px solid ${UI.accent}`, outlineOffset: 2 } } as const;
 
   const currentName = `${live.result ? altName : `${planName}, ${scenarioName(scenarioId)}`}`;
   if (page === 'report') return shell(<ReportPage lang={lang} summary={summary} results={results} alts={alts} current={{ name: currentName, plan }} onBack={() => setPage('plan')} />);
@@ -199,40 +213,53 @@ function App() {
 
   return shell(
     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) 436px' }, gap: 2, height: { lg: 'calc(100vh - 56px - 48px)' }, minHeight: { lg: 640 } }}>
-      {/* Left: one dark console, controls on top and the map filling the rest */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 0, borderRadius: '24px', overflow: 'hidden', bgcolor: '#06252b' }}>
+      {/* Left: the model (or the 2D chart) with the controls over it */}
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: 0, borderRadius: '4px', overflow: 'hidden', bgcolor: UI.bg, border: `1px solid ${UI.line}` }}>
         <Box sx={{ flex: 1, minHeight: { xs: 520, lg: 0 } }}>
-          <MapView
-            lang={lang}
-            routes={summary.routes}
-            ports={summary.ports}
-            vesselTypes={summary.vessel_types}
-            fleet={mapView === 'today' ? todayFleet : plan.fleet_plan}
-            chargers={mapView === 'today' ? [] : plan.chargers}
-            selectedRouteId={routeId}
-            onRouteClick={setRouteId}
-            view={mapView}
-            onView={setMapView}
-            top={
-              <>
-                <ScenarioPills
-                  lang={lang}
-                  ids={summary.scenario_ids}
-                  results={results}
-                  activeId={scenarioId}
-                  onSelect={(id) => {
-                    setPlaying(false);
-                    selectScenario(id);
-                  }}
-                  stationCount={(id) => results[id].pareto[indexOfLabel(results[id].pareto, currentLabel ?? 'balanced')].chargers.length}
-                  playing={playing}
-                  onPlay={play}
+          {(() => {
+            const shared = {
+              lang,
+              routes: summary.routes,
+              ports: summary.ports,
+              vesselTypes: summary.vessel_types,
+              fleet: mapView === 'today' ? todayFleet : plan.fleet_plan,
+              chargers: mapView === 'today' ? [] : plan.chargers,
+              selectedRouteId: routeId,
+              onRouteClick: setRouteId,
+              view: mapView,
+              onView: setMapView,
+              onMode: setMode,
+              top: (
+                <>
+                  <ScenarioPills
+                    lang={lang}
+                    ids={summary.scenario_ids}
+                    results={results}
+                    activeId={scenarioId}
+                    onSelect={(id) => {
+                      setPlaying(false);
+                      selectScenario(id);
+                    }}
+                    stationCount={(id) => results[id].pareto[indexOfLabel(results[id].pareto, currentLabel ?? 'balanced')].chargers.length}
+                    playing={playing}
+                    onPlay={play}
+                  />
+                  <PrioritySeg lang={lang} points={result.pareto} index={index} onSelect={pickPoint} />
+                  <CoopStrip lang={lang} year={result.scenario.available_from_year} />
+                </>
+              ),
+            };
+            return mode === '3d' ? (
+              <Suspense fallback={<Box sx={{ height: '100%', display: 'grid', placeItems: 'center', color: UI.muted, fontSize: '0.85rem' }}>{t(lang, 'loadingModel')}</Box>}>
+                <TwinView
+                  {...shared}
+                  linkedPorts={mapView === 'plan' && scenarioId.startsWith('C') ? summary.ports.filter((p) => p.connected_to_halut_supply).map((p) => p.port_id) : []}
                 />
-                <PrioritySeg lang={lang} points={result.pareto} index={index} onSelect={pickPoint} />
-                <CoopStrip lang={lang} year={result.scenario.available_from_year} />
-              </>
-            }
-          />
+              </Suspense>
+            ) : (
+              <MapView {...shared} />
+            );
+          })()}
         </Box>
       </Box>
 
@@ -241,7 +268,7 @@ function App() {
         <KpiBand lang={lang} plan={plan} base={base} caption={`${planName}, ${scenarioName(scenarioId)}`} />
 
         <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
-          <ButtonBase onClick={saveAlt} disabled={alreadySaved} sx={{ ...actionSx, flex: 1, bgcolor: alreadySaved ? '#e3f5f1' : '#06252b', color: alreadySaved ? '#00695c' : '#ffffff', borderColor: alreadySaved ? '#b8e2da' : '#06252b' }}>
+          <ButtonBase onClick={saveAlt} disabled={alreadySaved} sx={{ ...actionSx, flex: 1, bgcolor: alreadySaved ? '#eef3f5' : '#0f1417', color: alreadySaved ? '#0f1417' : '#ffffff', borderColor: alreadySaved ? '#b4c2ca' : '#0f1417' }}>
             {alreadySaved ? <Check size={16} /> : <Plus size={16} />}
             {t(lang, alreadySaved ? 'savedAlt' : 'saveAlt')}
           </ButtonBase>
@@ -251,7 +278,7 @@ function App() {
           </ButtonBase>
         </Box>
 
-        <Box role="tablist" aria-label={t(lang, 'detailTabs')} sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, flexShrink: 0 }}>
+        <Box role="tablist" aria-label={t(lang, 'detailTabs')} sx={{ display: 'flex', flexWrap: 'wrap', flexShrink: 0, borderBottom: `1px solid ${UI.line}` }}>
           {tabs.map((x) => {
             const on = x.id === shownTab;
             return (
@@ -260,7 +287,7 @@ function App() {
                 role="tab"
                 aria-selected={on}
                 onClick={() => setTab(x.id)}
-                sx={{ height: 32, px: 1.2, borderRadius: '999px', fontFamily: 'inherit', fontSize: '0.78rem', fontWeight: 700, whiteSpace: 'nowrap', color: on ? '#ffffff' : 'text.secondary', bgcolor: on ? '#06252b' : '#ffffff', border: '1px solid', borderColor: on ? '#06252b' : '#dde6e4', '&:hover': { borderColor: '#06252b' }, '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } }}
+                sx={{ height: 36, px: 0.25, mr: 2, fontFamily: 'inherit', fontSize: '0.84rem', fontWeight: on ? 500 : 400, whiteSpace: 'nowrap', color: on ? UI.ink : UI.muted, boxShadow: on ? `inset 0 -1.5px 0 ${UI.ink}` : 'none', transition: 'color 120ms', '&:hover': { color: UI.ink }, '&.Mui-focusVisible': { outline: `2px solid ${UI.accent}`, outlineOffset: 2 } }}
               >
                 {x.label}
               </ButtonBase>
@@ -272,8 +299,8 @@ function App() {
           {shownTab === 'fleet' ? (
             <Box sx={{ display: 'grid', gap: 2 }}>
               <FleetStrip lang={lang} routes={summary.routes} today={todayFleet} plan={plan.fleet_plan} safetyToday={base.avg_safety_score} safetyPlan={plan.avg_safety_score} />
-              <Box sx={{ p: 2.5, borderRadius: '24px', bgcolor: '#ffffff', border: '1px solid #dde6e4' }}>
-                <Typography sx={{ fontSize: '1rem', fontWeight: 700, mb: 1 }}>{t(lang, 'specShort')}</Typography>
+              <Box sx={{ p: 2.5, borderRadius: '4px', bgcolor: '#ffffff', border: '1px solid #d6dee3' }}>
+                <Typography sx={{ fontSize: '1rem', fontWeight: 500, mb: 1 }}>{t(lang, 'specShort')}</Typography>
                 {specRows.length === 0 ? (
                   <Typography sx={{ fontSize: '0.88rem', color: 'text.secondary' }}>{t(lang, 'specNone')}</Typography>
                 ) : (
@@ -287,7 +314,7 @@ function App() {
                     ))}
                   </Box>
                 )}
-                <ButtonBase onClick={() => setPage('coop')} sx={{ mt: 1.5, gap: 0.5, fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 700, color: '#00695c', borderRadius: '8px', '&.Mui-focusVisible': { outline: '2px solid #009688', outlineOffset: 2 } }}>
+                <ButtonBase onClick={() => setPage('coop')} sx={{ mt: 1.5, gap: 0.5, fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 500, color: '#0f1417', borderRadius: '3px', '&.Mui-focusVisible': { outline: '2px solid #b5157a', outlineOffset: 2 } }}>
                   {t(lang, 'specOpen')}
                   <ArrowRight size={14} />
                 </ButtonBase>
