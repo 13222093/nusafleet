@@ -1,0 +1,35 @@
+{
+  "voice": "af_heart",
+  "speed": 0.96,
+  "team": {
+    "name": "[TEAM NAME]",
+    "institution": "[INSTITUTION]",
+    "members": "[MEMBER NAMES]"
+  },
+  "scenes": [
+    {
+      "id": "s1_hook",
+      "text": "Indonesia is seventeen thousand islands. For millions of people, the road to school, to hospital and to market is a ferry. Many of those ferries are old, burn diesel, and stay in port when the waves rise. In July twenty twenty-five, one of them, the Tunu Pratama Jaya, sank in the Bali Strait."
+    },
+    {
+      "id": "s2_intro",
+      "text": "We are a team of Indonesian students. We believe the most important challenge in maritime affairs today is keeping island communities connected by sea, safely and cleanly."
+    },
+    {
+      "id": "s3_challenge",
+      "text": "Take North Maluku. Ternate, Tidore, Halmahera and Morotai depend on five ferry routes that carry about five thousand passengers a day. By our estimate, the seven diesel ferries on those routes cost seventy-four billion rupiah a year to run, and emit nine and a half thousand tonnes of CO2. Renewing a fleet is three decisions made at once: which ship, on which route, charged at which port. Today those decisions are made one vessel at a time, without data on waves, passengers or power. And the timing matters. In June twenty twenty-six, Russia and Indonesia formed a shipbuilding working group that offers greener ship designs. In October, an agreement followed to supply power from two floating units to North Halmahera. New ships and new electricity are heading for the same province. The plan for using them has to come first."
+    },
+    {
+      "id": "s4_product",
+      "text": "So we built NusaFleet. It answers one question: which ship should sail which route, and where should it charge? The islands are a relief model built from satellite elevation data, drawn like a nautical chart. You pick a power supply: today's grid, grid plus solar, or the floating units in twenty thirty-one. You pick a priority, from cheapest to cleanest. An optimisation model then chooses the fleet for every route, and the ports that get charging stations. In the balanced plan, new ferries cut CO2 by a third and save one point eight billion rupiah a year. They also handle higher waves, so ninety-three more trips sail each year. Move to the cleanest plan in twenty thirty-one, and the chart is corrected. An electric ferry runs Ternate to Jailolo, hybrids serve Sofifi and Morotai, three ports get charging stations, and emissions fall by half. Click a route to compare today with the plan, save the alternatives you like, and print the report."
+    },
+    {
+      "id": "s5_coop",
+      "text": "For Russia and Indonesia, NusaFleet produces something shipbuilders can use: a requirement sheet for every new vessel. Passengers, speed, range, wave limit and charging power, route by route. We propose handing that sheet to the shipbuilding working group, running one pilot route, and keeping the data together with students from both countries. The model is open source, built on the optimisation engine of team Kopibara."
+    },
+    {
+      "id": "s6_close",
+      "text": "Island communities need ferries that sail on time, in any season, without poisoning the sea they cross. We are the generation that will ride those ferries, and build them. NusaFleet is where we start. Thank you."
+    }
+  ]
+}

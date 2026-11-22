@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>NusaFleet video scenes</title>
+<style>
+  @font-face { font-family: "Archivo"; src: url("archivo.woff2") format("woff2-variations"); font-weight: 100 900; font-stretch: 62% 125%; }
+  @font-face { font-family: "Archivo"; src: url("archivo-italic.woff2") format("woff2-variations"); font-weight: 100 900; font-stretch: 62% 125%; font-style: italic; }
+  :root { --bg: #f4f7f8; --ink: #0f1417; --muted: #52606a; --line: #d6dee3; --accent: #b5157a; --water: #3f6f8c; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink); font-family: "Archivo", sans-serif; -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; inset: 0; }
+  .layer { position: absolute; inset: 0; }
+  .abs { position: absolute; }
+  .display { font-weight: 600; font-stretch: 72%; letter-spacing: -0.015em; line-height: 0.92; }
+  .label { font-size: 26px; color: var(--muted); }
+  .italic { font-style: italic; }
+  .num { font-variant-numeric: tabular-nums; }
+  .rule { height: 4px; background: var(--ink); transform-origin: left center; }
+  svg { position: absolute; inset: 0; overflow: visible; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// ---------------------------------------------------------------- helpers
+const W = 1920, H = 1080;
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const ease = (x) => 1 - Math.pow(1 - clamp(x), 4);          // expo-ish out, the site's easing
+const inOut = (x) => { x = clamp(x); return x < 0.5 ? 8 * x ** 4 : 1 - Math.pow(-2 * x + 2, 4) / 2; };
+const prog = (t, start, dur = 0.7) => ease((t - start) / dur);
+const fade = (t, start, end, d = 0.5) => clamp((t - start) / d) * (1 - clamp((t - (end - d)) / d));
+const stage = document.getElementById('stage');
+let CUES = {};
+
+function el(html) { const d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstElementChild; }
+/** Text that rises into place when its cue starts. */
+function rise(text, x, y, size, t, start, opts = {}) {
+  const p = prog(t, start, opts.dur ?? 0.8);
+  const o = opts.out !== undefined ? 1 - clamp((t - opts.out) / 0.45) : 1;
+  return `<div class="abs ${opts.cls ?? 'display'}" style="left:${x}px;top:${y}px;font-size:${size}px;opacity:${p * o};transform:translateY(${(1 - p) * 26}px);color:${opts.color ?? 'var(--ink)'};${opts.css ?? ''}">${text}</div>`;
+}
+const cue = (scene, i) => (CUES[scene]?.[i]?.start ?? 0);
+
+// ---------------------------------------------------------------- chart
+// The chart image covers lon 126.2..128.6, lat 0.35..2.35, like the 3D model
+const PORTS = { TTE: [0.767, 127.378, 'Ternate'], TID: [0.734, 127.392, 'Tidore'], SOF: [0.737, 127.56, 'Sofifi'], JAI: [1.058, 127.47, 'Jailolo'], TOB: [1.728, 128.008, 'Tobelo'], DAR: [2.05, 128.283, 'Daruba'], BTD: [1.3, 126.38, 'Mayau'] };
+const ROUTES = [['TTE', 'TID', 0.16], ['TTE', 'SOF', -0.16], ['TTE', 'JAI', 0.16], ['TOB', 'DAR', -0.16], ['TTE', 'BTD', 0.16]];
+function chartXY([lat, lon], box) { return [box.x + (lon - 126.2) / 2.4 * box.w, box.y + (2.35 - lat) / 2.0 * box.h]; }
+function arcPath(a, b, bend, box) {
+  const cLat = (a[0] + b[0]) / 2 - (b[1] - a[1]) * bend, cLon = (a[1] + b[1]) / 2 + (b[0] - a[0]) * bend;
+  const [x1, y1] = chartXY(a, box), [cx, cy] = chartXY([cLat, cLon], box), [x2, y2] = chartXY(b, box);
+  return `M${x1.toFixed(1)},${y1.toFixed(1)} Q${cx.toFixed(1)},${cy.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+}
+/** The chart with ports and dashed ferry routes drawn in from `drawStart`. */
+function chart(t, box, { opacity = 1, drawStart = 1e9, portStart = 1e9, labels = true, magenta = [] } = {}) {
+  let svg = `<svg width="${W}" height="${H}">`;
+  ROUTES.forEach(([a, b, bend], i) => {
+    const d = arcPath(PORTS[a], PORTS[b], bend, box);
+    const p = prog(t, drawStart + i * 0.55, 1.4);
+    const plug = magenta.includes(`${a}_${b}`);
+    svg += `<path d="${d}" fill="none" stroke="#ffffff" stroke-width="${box.w / 130}" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${1 - p}" opacity=".92"/>`;
+    svg += `<path d="${d}" fill="none" stroke="${plug ? '#b5157a' : '#0f1417'}" stroke-width="${box.w / 330}" ${plug ? '' : `stroke-dasharray="${box.w / 90} ${box.w / 180}"`} mask="url(#m${i})"/>`;
+    svg += `<mask id="m${i}"><path d="${d}" fill="none" stroke="#fff" stroke-width="${box.w / 60}" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${1 - p}"/></mask>`;
+  });
+  Object.entries(PORTS).forEach(([id, port], i) => {
+    const [x, y] = chartXY(port, box);
+    const p = prog(t, portStart + i * 0.12, 0.5);
+    const r = box.w / 150;
+    svg += `<g opacity="${p}"><circle cx="${x}" cy="${y}" r="${r * 1.45}" fill="#0f1417"/><circle cx="${x}" cy="${y}" r="${r * 0.8}" fill="#fff"/></g>`;
+    if (labels) svg += `<text x="${x + r * 2.2}" y="${y + r * 0.7}" font-size="${Math.max(16, box.w / 58)}" font-weight="600" fill="#0f1417" opacity="${p}" style="paint-order:stroke;stroke:#fff;stroke-width:5px;font-stretch:90%">${port[2]}</text>`;
+  });
+  svg += '</svg>';
+  return `<div class="layer" style="opacity:${opacity}"><img src="chart.jpg" style="position:absolute;left:${box.x}px;top:${box.y}px;width:${box.w}px;height:${box.h}px"/>${svg}</div>`;
+}
+
+// ---------------------------------------------------------------- scenes
+const SCENES = {
+  // Hook: the archipelago, the ferry as the road, the cost of old hulls
+  s1_hook(t) {
+    const c = (i) => cue('s1_hook', i);
+    const zoom = 1.18 - 0.14 * inOut(t / 19);
+    const bw = 2400 * 0.6 * zoom, bh = 2000 * 0.6 * zoom;
+    const box = { x: W / 2 - bw * 0.52, y: H / 2 - bh * 0.5, w: bw, h: bh };
+    let h = chart(t, box, { opacity: 0.55 * fade(t, -1, c(3) + 0.6, 0.8), drawStart: c(1) + 0.6, portStart: 0.2, labels: false });
+    // 1: seventeen thousand islands
+    const n = Math.round(17000 * ease((t - 0.15) / 1.6));
+    h += `<div class="abs" style="left:0;top:0;width:${W}px;height:${H}px;background:radial-gradient(ellipse at 28% 50%, rgba(244,247,248,.96) 0%, rgba(244,247,248,.85) 42%, rgba(244,247,248,0) 75%)"></div>`;
+    h += rise(n.toLocaleString('en-US'), 150, 300, 300, t, 0.1, { out: c(1) - 0.2, cls: 'display num' });
+    h += rise('islands', 160, 610, 64, t, 0.6, { out: c(1) - 0.2, cls: 'display italic', color: 'var(--water)' });
+    // 2: school, hospital, market, all by ferry
+    ['school', 'hospital', 'market'].forEach((w, i) => { h += rise(w, 150, 250 + i * 150, 150, t, c(1) + 0.9 + i * 0.55, { out: c(2) - 0.2 }); });
+    h += rise('are a ferry ride away', 158, 720, 54, t, c(1) + 3.0, { out: c(2) - 0.2, cls: 'display italic', color: 'var(--accent)' });
+    // 3: old, diesel, docked when the waves rise
+    const amp = 6 + 46 * ease((t - c(2) - 2.2) / 2.2);
+    let wave = '';
+    for (let x = 0; x <= W; x += 12) wave += `${x === 0 ? 'M' : 'L'}${x},${830 + Math.sin(x / 70 + t * 2.1) * amp * (0.6 + 0.4 * Math.sin(x / 410))}`;
+    const wv = fade(t, c(2), c(3), 0.5);
+    h += `<svg width="${W}" height="${H}" style="opacity:${wv}"><path d="${wave}" fill="none" stroke="#3f6f8c" stroke-width="5"/><path d="${wave} L${W},${H} L0,${H} Z" fill="#c4e1f0" opacity=".55"/></svg>`;
+    ['Old hulls.', 'Burning diesel.', 'Docked when the waves rise.'].forEach((w, i) => { h += rise(w, 150, 230 + i * 140, i === 2 ? 110 : 120, t, c(2) + 0.2 + i * [0, 0.9, 1.8][i] / Math.max(1, i), { out: c(3) - 0.2, color: i === 2 ? 'var(--accent)' : 'var(--ink)' }); });
+    // 4: the Tunu Pratama Jaya
+    const s4 = c(3);
+    h += rise('July 2025', 150, 300, 46, t, s4 + 0.6, { cls: 'label num' });
+    h += rise('KMP Tunu Pratama Jaya', 150, 360, 150, t, s4 + 1.6);
+    h += rise('sank in the Bali Strait', 156, 530, 64, t, s4 + 3.4, { cls: 'display italic', color: 'var(--water)' });
+    h += `<div class="abs rule" style="left:150px;top:640px;width:880px;transform:scaleX(${prog(t, s4 + 3.9, 1.2)})"></div>`;
+    return h;
+  },
+
+  // Introduction: who we are, and the answer to the question
+  s2_intro(t) {
+    const team = window.TEAM ?? {};
+    const c1 = cue('s2_intro', 1);
+    let h = '';
+    h += rise('NusaFleet', 150, 210, 210, t, 0.1, { out: c1 - 0.25 });
+    h += rise(team.name ?? '', 158, 450, 60, t, 0.6, { out: c1 - 0.25, cls: 'display', color: 'var(--accent)' });
+    h += rise(team.institution ?? '', 158, 530, 40, t, 0.9, { out: c1 - 0.25, cls: 'label' });
+    h += rise(team.members ?? '', 158, 590, 32, t, 1.1, { out: c1 - 0.25, cls: 'label' });
+    h += rise('The most important challenge in maritime affairs today', 150, 220, 44, t, c1 + 0.1, { cls: 'label' });
+    h += rise('Keeping island communities', 150, 300, 150, t, c1 + 0.5);
+    h += rise('connected by sea,', 150, 440, 150, t, c1 + 1.3, { color: 'var(--accent)' });
+    h += rise('safely and cleanly.', 150, 580, 150, t, c1 + 2.6);
+    h += `<div class="abs" style="left:150px;top:590px;width:940px;height:6px;background:var(--accent);transform-origin:left;transform:scaleX(${prog(t, c1 + 1.9, 1.0)})"></div>`;
+    return h;
+  },
+
+  // The challenge: North Maluku in numbers, three decisions, and the timing
+  s3_challenge(t) {
+    const c = (i) => cue('s3_challenge', i);
+    let h = '';
+    // Part 1 (cues 0..2): the chart on the right, numbers on the left
+    const p1 = fade(t, -1, c(3), 0.6);
+    if (p1 > 0) {
+      const box = { x: 690, y: 0, w: 1250, h: 1042 };
+      h += `<div class="layer" style="opacity:${p1}">${chart(t, box, { drawStart: c(1) + 0.5, portStart: 0.3 })}</div>`;
+      h += `<div class="abs" style="left:0;top:0;width:820px;height:${H}px;background:linear-gradient(90deg, var(--bg) 82%, rgba(244,247,248,0));opacity:${p1}"></div>`;
+      h += rise('North Maluku', 120, 130, 130, t, 0.1, { out: c(3) - 0.5 });
+      const rows = [
+        [c(1) + 1.2, '5', 'ferry routes'],
+        [c(1) + 4.4, '5,390', 'passengers a day'],
+        [c(2) + 1.0, '7', 'diesel ferries'],
+        [c(2) + 3.6, 'Rp 74.4 bn', 'a year to run'],
+        [c(2) + 7.0, '9,512 t', 'CO₂ a year'],
+      ];
+      rows.forEach(([s, v, l], i) => {
+        h += rise(`<span class="num">${v}</span> <span style="font-size:.42em;font-weight:400;font-stretch:100%;color:var(--muted)">${l}</span>`, 124, 300 + i * 118, 96, t, s, { out: c(3) - 0.5 });
+      });
+      h += rise('estimate', 128, 900, 26, t, c(2) + 7.6, { out: c(3) - 0.5, cls: 'label italic' });
+    }
+    // Part 2 (cues 3..5): three decisions made at once
+    const p2 = fade(t, c(3) - 0.2, c(6), 0.5);
+    if (p2 > 0) {
+      h += `<div class="layer" style="opacity:${p2}">`;
+      h += rise('Renewing a fleet is three decisions, made at once', 150, 170, 52, t, c(3) + 0.1, { cls: 'label' });
+      ['Which ship.', 'Which route.', 'Which port.'].forEach((w, i) => {
+        h += rise(w, 150 + i * 560, 300, 104, t, c(4) + 0.15 + i * 1.0);
+        h += `<div class="abs" style="left:${155 + i * 560}px;top:430px;width:440px;height:5px;background:${i === 2 ? 'var(--accent)' : 'var(--ink)'};transform-origin:left;transform:scaleX(${prog(t, c(4) + 0.5 + i * 1.0, 0.9)})"></div>`;
+      });
+      h += rise('Today: one vessel at a time, without data on waves, passengers or power.', 150, 580, 52, t, c(5) + 0.3, { cls: 'display italic', color: 'var(--muted)' });
+      h += '</div>';
+    }
+    // Part 3 (cues 6..10): the timing, on a true time axis
+    const p3 = fade(t, c(6) - 0.2, c(10) + 0.4, 0.5);
+    if (p3 > 0) {
+      const ax = (v) => 150 + ((v - 2025) / 7) * 1620;
+      h += `<div class="layer" style="opacity:${p3}">`;
+      h += rise('And the timing matters.', 150, 150, 120, t, c(6) + 0.05);
+      const today = 2026 + 10.7 / 12;
+      const draw = prog(t, c(6) + 0.6, 1.6);
+      h += `<div class="abs" style="left:150px;top:520px;width:${(ax(today) - 150) * draw}px;border-top:4px solid var(--ink)"></div>`;
+      h += `<div class="abs" style="left:${ax(today)}px;top:520px;width:${(ax(2032) - ax(today)) * clamp((draw - 0.5) * 2)}px;border-top:4px dashed var(--ink)"></div>`;
+      for (let y = 2025; y <= 2032; y += 1) h += `<div class="abs label num" style="left:${ax(y) - 30}px;top:545px;width:60px;text-align:center;font-size:24px;opacity:${draw}">${y}</div>`;
+      const ev = [
+        [2026 + 5 / 12, c(7) + 0.2, 'Jun 2026', 'Shipbuilding working group', 'greener ship designs'],
+        [2026 + 9 / 12, c(8) + 0.2, 'Oct 2026', 'Power agreement', 'two floating units for North Halmahera'],
+        [2031, c(9) + 0.2, '2031', 'New supply', 'new ships and new power, one province'],
+      ];
+      ev.forEach(([at, s, when, what, note], i) => {
+        const p = prog(t, s, 0.6);
+        h += `<div class="abs" style="left:${ax(at) - 11}px;top:511px;width:18px;height:18px;transform:rotate(45deg) scale(${p});background:${at > today ? '#fff' : 'var(--accent)'};border:3px solid var(--accent)"></div>`;
+        const lx = i === 0 ? 150 : i === 1 ? 700 : 1240;
+        h += rise(when, lx, 640, 64, t, s + 0.1, { cls: 'display num', color: at > today ? 'var(--muted)' : 'var(--ink)' });
+        h += rise(what, lx, 715, 40, t, s + 0.35);
+        h += rise(note, lx, 770, 30, t, s + 0.6, { cls: 'label italic' });
+      });
+      h += '</div>';
+    }
+    // Close (cue 10): the plan comes first, then the chart returns for the cut into the model
+    h += rise('The plan has to come first.', 150, 420, 140, t, c(10) + 0.1, { color: 'var(--accent)', out: c(10) + 2.0 });
+    const back = prog(t, c(10) + 1.9, 0.7);
+    if (back > 0) h += `<div class="layer" style="opacity:${back}">${chart(t, { x: 260, y: -160, w: 1560, h: 1300 }, { drawStart: -10, portStart: -10 })}</div>`;
+    return h;
+  },
+
+  // Closing statement
+  s6_close(t) {
+    const c = (i) => cue('s6_close', i);
+    let h = '';
+    h += rise('Ferries that sail on time,', 150, 210, 120, t, 0.1, { out: c(1) - 0.3 });
+    h += rise('in any season,', 150, 340, 120, t, 1.9, { out: c(1) - 0.3 });
+    h += rise('without poisoning the sea they cross.', 150, 470, 120, t, 3.2, { out: c(1) - 0.3, color: 'var(--water)', cls: 'display italic' });
+    h += rise('We will ride them.', 150, 280, 150, t, c(1) + 0.2, { out: c(2) - 0.3 });
+    h += rise('We will build them.', 150, 430, 150, t, c(1) + 1.6, { out: c(2) - 0.3, color: 'var(--accent)' });
+    h += rise('NusaFleet is where we start.', 150, 330, 130, t, c(2) + 0.1);
+    h += rise('Thank you.', 150, 520, 80, t, c(3) + 0.05, { cls: 'display italic', color: 'var(--muted)' });
+    return h;
+  },
+
+  // End card
+  end(t) {
+    const team = window.TEAM ?? {};
+    let h = '';
+    h += rise('NusaFleet', 150, 240, 220, t, 0.1);
+    h += rise('nusafleet.vercel.app', 158, 490, 52, t, 0.5, { cls: 'display', color: 'var(--accent)' });
+    h += rise([team.name, team.institution].filter(Boolean).join(', '), 158, 580, 40, t, 0.8, { cls: 'label' });
+    h += rise('Optimisation engine adapted from team Kopibara (MIT licence). Relief: Copernicus DEM GLO-90. Narration: Kokoro TTS.', 158, 820, 26, t, 1.1, { cls: 'label' });
+    h += rise('LAUTARA 2026, Russia-Indonesia Maritime Hackathon', 158, 870, 26, t, 1.2, { cls: 'label italic' });
+    return h;
+  },
+};
+
+window.setup = (cues, team) => { CUES = cues; window.TEAM = team; };
+window.renderAt = (scene, t) => { stage.innerHTML = SCENES[scene](t); };
+window.imagesReady = () => Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((r) => { i.onload = r; i.onerror = r; })))).then(() => document.fonts.ready);
+</script>
+</body>
+</html>
